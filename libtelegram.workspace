@@ -2,5 +2,6 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="LibTelegram">
 		<Project filename="libtelegram.cbp" />
+		<Project filename="example_echo.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
