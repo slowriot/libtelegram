@@ -3,16 +3,22 @@
 
 #include <functional>
 #include <iostream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/device/array.hpp>
 #define BOOST_CGI_NO_BOOST_FILESYSTEM
 #include <boost/cgi/fcgi.hpp>
 
 namespace telegram {
 
 class listener {
-  std::function<void(std::string const &input)> callback = [](std::string const &input __attribute__((__unused__))){};
+  std::function<void(std::string const&)>                 callback_raw  = [](std::string                 const &input __attribute__((__unused__))){};
+  std::function<void(boost::property_tree::ptree const&)> callback_json = [](boost::property_tree::ptree const &input __attribute__((__unused__))){};
 
 public:
-  void register_callback(std::function<void(std::string const &input)> func);
+  void register_callback_raw( std::function<void(std::string                 const &input)> func);
+  void register_callback_json(std::function<void(boost::property_tree::ptree const &input)> func);
 
   void run();
 
@@ -21,8 +27,13 @@ private:
   int handle_request_async(boost::fcgi::acceptor &acceptor, boost::fcgi::request &request);
 };
 
-void listener::register_callback(std::function<void(std::string const &input)> func) {
-  callback = func;
+void listener::register_callback_raw(std::function<void(std::string const &input)> func) {
+  /// Set a callback to receive the complete raw data, if you want to process the json yourself
+  callback_raw = func;
+}
+void listener::register_callback_json(std::function<void(boost::property_tree::ptree const &input)> func) {
+  /// Set a callback to receive the complete processed json in a boost property tree, if you want to pull out custom data manually
+  callback_json = func;
 }
 
 void listener::run() {
@@ -60,14 +71,28 @@ int listener::handle_request(boost::fcgi::request &request) {
     return boost::fcgi::commit(request, response, boost::fcgi::http::bad_request);
   }
 
-  // generate a reply
+  // deal with the data
+  if(callback_raw) {
+    callback_raw(request.post_buffer());                                        // if the raw callback is set, send the whole buffer straight there
+  }
+  boost::property_tree::ptree tree;                                             // Create empty property tree object
+  try {
+    boost::iostreams::stream<boost::iostreams::array_source> stream(request.post_buffer().data(), request.post_buffer().size()); // wrap the request buffer in a stream, avoiding a copy unlike stringstream
+    boost::property_tree::read_json(stream, tree);                              // Parse the json into the property tree.
+  } catch(std::exception &e) {
+    response << boost::fcgi::content_type("text/html");                         // set a content type for the normal content output
+    std::cerr << "LibTelegram: Received unparseable JSON: " << e.what() << std::endl;
+    response << "Received unparseable JSON";                                    // if we got this far, complain what exactly fucked up
+    return boost::fcgi::commit(request, response, boost::fcgi::http::bad_request);
+  }
+  // the json must be fine, so generate a reply
   response << boost::fcgi::content_type("text/html");                           // set a content type for the normal content output
-  response << "<pre>";
-  response << "hello world from program " << request.script_name();
-  response << "</pre>";
+  response << "OK";
+  if(callback_json) {
+    callback_json(tree);                                                        // if the json callback is set, send the whole tree
+  }
 
-  int const result = boost::fcgi::commit(request, response, 0);                 // commit the response and obtain the result
-  return result;
+  return boost::fcgi::commit(request, response, boost::fcgi::http::ok);         // commit the response and obtain the result
 }
 
 int listener::handle_request_async(boost::fcgi::acceptor &acceptor, boost::fcgi::request &request) {
