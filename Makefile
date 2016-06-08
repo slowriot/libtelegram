@@ -8,7 +8,7 @@ LINKOPTS=-static-libgcc -static-libstdc++ -pthread -flto=jobserver -Wl,--warn-on
 LIBS=-lboost_system
 INCLUDES=-I. \
          -isystem include
-CPPFLAGS=$(DEBUGDEFINES) $(GCCOPTS) $(INCLUDES)
+CPPFLAGS=-DURDL_HEADER_ONLY=1 $(DEBUGDEFINES) $(GCCOPTS) $(INCLUDES)
 LINKFLAGS=$(LINKOPTS)
 
 # colour coding
