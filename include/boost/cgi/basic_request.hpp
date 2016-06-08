@@ -84,9 +84,9 @@ BOOST_CGI_NAMESPACE_BEGIN
     
     /// The environment data, exposed as a `request_data<env_map>`.
     env_data    env;
-    /// The GET (ie. query string) data, exposed as a `request_data<get_map>`.
-    post_data   post;
     /// The POST data, exposed as a `request_data<post_map>`.
+    post_data   post;
+    /// The GET (ie. query string) data, exposed as a `request_data<get_map>`.
     get_data    get;
     /// The form data, which is either the GET or POST data.
     form_data   form;
