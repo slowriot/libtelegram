@@ -98,10 +98,10 @@ int listener::handle_request(boost::fcgi::request &request) {
   if(callback_raw) {
     callback_raw(request.post_buffer());                                        // if the raw callback is set, send the whole buffer straight there
   }
-  boost::property_tree::ptree tree;                                             // Create empty property tree object
+  boost::property_tree::ptree tree;                                             // create empty property tree
   try {
     boost::iostreams::stream<boost::iostreams::array_source> stream(request.post_buffer().data(), request.post_buffer().size()); // wrap the request buffer in a stream, avoiding a copy unlike stringstream
-    boost::property_tree::read_json(stream, tree);                              // Parse the json into the property tree.
+    boost::property_tree::read_json(stream, tree);                              // parse the json into the property tree
   } catch(std::exception &e) {
     response << boost::fcgi::content_type("text/html");                         // set a content type for the normal content output
     std::cerr << "LibTelegram: Received unparseable JSON: " << e.what() << std::endl;

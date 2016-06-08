@@ -5,7 +5,9 @@ DEBUGDEFINES+=-ggdb3 -Og
 GCCOPTS=-std=gnu++1z -Wall -Wextra -Wno-unused-variable -Wno-vla -Wsizeof-pointer-memaccess -Wmissing-declarations -march=native -fexceptions -fexpensive-optimizations -flto -Ofast
 #LINKOPTS=-static -static-libgcc -static-libstdc++ -flto=jobserver -pthread -Wl,--warn-once -Wl,--warn-common
 LINKOPTS=-static-libgcc -static-libstdc++ -pthread -flto=jobserver -Wl,--warn-once -Wl,--warn-common
-LIBS=-lboost_system
+LIBS=-lboost_system \
+     -lssl \
+     -lcrypto
 INCLUDES=-I. \
          -isystem include
 CPPFLAGS=-DURDL_HEADER_ONLY=1 $(DEBUGDEFINES) $(GCCOPTS) $(INCLUDES)
