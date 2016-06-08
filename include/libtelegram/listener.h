@@ -18,9 +18,9 @@ class listener {
   std::function<void(boost::property_tree::ptree const&)> callback_message = [](boost::property_tree::ptree const &input __attribute__((__unused__))){};
 
 public:
-  void register_callback_raw(    std::function<void(std::string                 const &input)> func);
-  void register_callback_json(   std::function<void(boost::property_tree::ptree const &input)> func);
-  void register_callback_message(std::function<void(boost::property_tree::ptree const &input)> func);
+  void set_callback_raw(    std::function<void(std::string                 const &input)> func);
+  void set_callback_json(   std::function<void(boost::property_tree::ptree const &input)> func);
+  void set_callback_message(std::function<void(boost::property_tree::ptree const &input)> func);
 
   void run();
 
@@ -29,15 +29,15 @@ private:
   int handle_request_async(boost::fcgi::acceptor &acceptor, boost::fcgi::request &request);
 };
 
-void listener::register_callback_raw(std::function<void(std::string const &input)> func) {
+void listener::set_callback_raw(std::function<void(std::string const &input)> func) {
   /// Set a callback to receive the complete raw data, if you want to process the json yourself
   callback_raw = func;
 }
-void listener::register_callback_json(std::function<void(boost::property_tree::ptree const &input)> func) {
+void listener::set_callback_json(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive the complete processed json in a boost property tree, if you want to pull out custom data manually
   callback_json = func;
 }
-void listener::register_callback_message(std::function<void(boost::property_tree::ptree const &input)> func) {
+void listener::set_callback_message(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive any messages in property tree format
   callback_message = func;
 }
