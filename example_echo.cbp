@@ -19,6 +19,7 @@
 		<Compiler>
 			<Add directory="include" />
 		</Compiler>
+		<Unit filename="Makefile" />
 		<Unit filename="examples/echo.cpp" />
 		<Unit filename="version.h" />
 		<Extensions>
