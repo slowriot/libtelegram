@@ -13,12 +13,14 @@
 namespace telegram {
 
 class listener {
-  std::function<void(std::string const&)>                 callback_raw  = [](std::string                 const &input __attribute__((__unused__))){};
-  std::function<void(boost::property_tree::ptree const&)> callback_json = [](boost::property_tree::ptree const &input __attribute__((__unused__))){};
+  std::function<void(std::string const&)>                 callback_raw     = [](std::string                 const &input __attribute__((__unused__))){};
+  std::function<void(boost::property_tree::ptree const&)> callback_json    = [](boost::property_tree::ptree const &input __attribute__((__unused__))){};
+  std::function<void(boost::property_tree::ptree const&)> callback_message = [](boost::property_tree::ptree const &input __attribute__((__unused__))){};
 
 public:
-  void register_callback_raw( std::function<void(std::string                 const &input)> func);
-  void register_callback_json(std::function<void(boost::property_tree::ptree const &input)> func);
+  void register_callback_raw(    std::function<void(std::string                 const &input)> func);
+  void register_callback_json(   std::function<void(boost::property_tree::ptree const &input)> func);
+  void register_callback_message(std::function<void(boost::property_tree::ptree const &input)> func);
 
   void run();
 
@@ -34,6 +36,10 @@ void listener::register_callback_raw(std::function<void(std::string const &input
 void listener::register_callback_json(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive the complete processed json in a boost property tree, if you want to pull out custom data manually
   callback_json = func;
+}
+void listener::register_callback_message(std::function<void(boost::property_tree::ptree const &input)> func) {
+  /// Set a callback to receive any messages in property tree format
+  callback_message = func;
 }
 
 void listener::run() {
@@ -90,6 +96,13 @@ int listener::handle_request(boost::fcgi::request &request) {
   response << "OK";
   if(callback_json) {
     callback_json(tree);                                                        // if the json callback is set, send the whole tree
+  }
+  if(callback_message) {                                                        // only check for a message if we've got a callback set
+    try {
+      callback_message(tree.get_child("message"));
+    } catch(std::exception &e) {
+      // this update doesn't include a message - no problem, carry on
+    }
   }
 
   return boost::fcgi::commit(request, response, boost::fcgi::http::ok);         // commit the response and obtain the result
