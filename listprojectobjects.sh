@@ -5,7 +5,13 @@
 projectfile="$1"
 objectdir="$2"
 
-if [ "$projectfile" = "" ] || [ "$objectdir" = "" ]; then
+if [ ! -f "$projectfile" ]; then
+  # if there's no such project file, pass the arguments as if they were objects
+  echo $@
+  exit
+fi
+
+if [ -z "$objectdir" ]; then
   echo "Usage: $0 projectfile objectdir"
   exit 1
 fi
