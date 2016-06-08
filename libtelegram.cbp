@@ -19,7 +19,7 @@
 		<Compiler>
 			<Add directory="include" />
 		</Compiler>
-		<Unit filename="libtelegram.h" />
+		<Unit filename="include/libtelegram/libtelegram.h" />
 		<Unit filename="version.h" />
 		<Extensions>
 			<code_completion />
