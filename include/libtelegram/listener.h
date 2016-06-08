@@ -54,6 +54,11 @@ int listener::handle_request(boost::fcgi::request &request) {
     response << "Request parsing error: " << error.message();
     return boost::fcgi::commit(request, response, boost::fcgi::http::internal_server_error);
   }
+  if(request.method() != "POST") {                                              // is this a post response?
+    response << boost::fcgi::content_type("text/html");                         // set a content type for the normal content output
+    response << "Bad request.";                                                 // this probably didn't come from Telegram, so don't give away any additional information
+    return boost::fcgi::commit(request, response, boost::fcgi::http::bad_request);
+  }
 
   // generate a reply
   response << boost::fcgi::content_type("text/html");                           // set a content type for the normal content output
