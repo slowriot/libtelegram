@@ -22,6 +22,10 @@ public:
   void set_callback_json(   std::function<void(boost::property_tree::ptree const &input)> func);
   void set_callback_message(std::function<void(boost::property_tree::ptree const &input)> func);
 
+  void unset_callback_raw();
+  void unset_callback_json();
+  void unset_callback_message();
+
   void run();
 
 private:
@@ -40,6 +44,19 @@ void listener::set_callback_json(std::function<void(boost::property_tree::ptree 
 void listener::set_callback_message(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive any messages in property tree format
   callback_message = func;
+}
+
+void listener::unset_callback_raw() {
+  /// Helper to unset this callback
+  callback_raw = nullptr;
+}
+void listener::unset_callback_json() {
+  /// Helper to unset this callback
+  callback_json = nullptr;
+}
+void listener::unset_callback_message() {
+  /// Helper to unset this callback
+  callback_message = nullptr;
 }
 
 void listener::run() {
