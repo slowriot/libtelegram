@@ -34,6 +34,8 @@ public:
 
   sender(std::string const &token, std::string const &user_agent = "LibTelegram");
 
+  boost::property_tree::ptree send_json(std::string const &method, boost::property_tree::ptree const &tree);
+
   void send_message(int_fast64_t chat_id,
                     std::string const &text,
                     parse_mode parse = parse_mode::DEFAULT,
@@ -59,6 +61,43 @@ sender::sender(std::string const &this_token,
   urdl_global_options.set_option(urdl::http::request_method("POST"));
 } catch(std::exception const &e) {
   std::cerr << "LibTelegram: Sender: Exception during construction: " << e.what() << std::endl;
+}
+
+boost::property_tree::ptree sender::send_json(std::string const &method,
+                                              boost::property_tree::ptree const &tree) {
+  /// Function to json-encode and send a property tree to the given method, useful if you want to send custom requests
+  std::ostringstream ss;                                                        // a stream buffer for the encoded json
+  std::cerr << "LibTelegram: Sender: DEBUG: json request:" << std::endl;
+  boost::property_tree::write_json(std::cerr, tree);
+  boost::property_tree::write_json(ss, tree);                                   // encode our data as json
+
+  urdl::istream stream;
+  stream.set_options(urdl_global_options);                                      // apply the global options to this stream
+  stream.set_option(urdl::http::request_content_type("application/json"));
+  stream.set_option(urdl::http::request_content(ss.str()));                     // write the stringstream as the request body
+  stream.open_timeout(60000);
+  stream.read_timeout(30000);
+  urdl::url const url(endpoint + method);
+  stream.open(url);
+  if(!stream) {
+    std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << stream.error().message() << std::endl;
+    return boost::property_tree::ptree();                                       // return an empty tree
+  }
+
+  std::string reply;
+  std::getline(stream, reply);                                                  // this returns false as it finishes without a newline
+  if(reply.empty()) {
+    std::cerr << "LibTelegram: Sender: Received empty reply to send_json" << std::endl;
+    return boost::property_tree::ptree();                                       // return an empty tree
+  }
+  boost::iostreams::stream<boost::iostreams::array_source> reply_stream(reply.data(), reply.size());
+  boost::property_tree::ptree reply_tree;                                       // property tree to contain the reply
+  try {
+    boost::property_tree::read_json(reply_stream, reply_tree);                  // parse the reply json into the property tree
+  } catch(std::exception &e) {
+    std::cerr << "LibTelegram: Sender: Received unparseable JSON in reply to send_json: " << e.what() << std::endl;
+  }
+  return reply_tree;
 }
 
 void sender::send_message(int_fast64_t chat_id,
@@ -108,33 +147,11 @@ void sender::send_message(int_fast64_t chat_id,
     tree.put("reply_to_message_id", reply_to_message_id);
   }
   // TODO: handle sendMessage.reply_markup
-  std::ostringstream ss;                                                        // a stream buffer for the encoded json
-  std::cerr << "LibTelegram: Sender: DEBUG: json request:" << std::endl;
-  boost::property_tree::write_json(std::cerr, tree);
-  boost::property_tree::write_json(ss, tree);                                   // encode our data as json
-
-  urdl::istream stream;
-  stream.set_options(urdl_global_options);                                      // apply the global options to this stream
-  stream.set_option(urdl::http::request_content_type("application/json"));
-  stream.set_option(urdl::http::request_content(ss.str()));                     // write the stringstream as the request body
-  stream.open_timeout(60000);
-  stream.read_timeout(30000);
-  urdl::url const url(endpoint + "sendMessage");
-  stream.open(url);
-  if(!stream) {
-    std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << stream.error().message() << std::endl;
-    return;
+  boost::property_tree::ptree reply_tree(send_json("sendMessage", tree));
+  if(reply_tree.get("ok", "") != "true") {
+    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to send_message:" << std::endl;
+    boost::property_tree::write_json(std::cerr, reply_tree);
   }
-
-  boost::property_tree::ptree reply_tree;                                       // property tree to contain the reply
-  try {
-    boost::property_tree::read_json(stream, reply_tree);                        // parse the reply json into the property tree
-  } catch(std::exception &e) {
-    std::cerr << "LibTelegram: Received unparseable JSON in reply to send_message: " << e.what() << std::endl;
-  }
-  // TODO: check the status of the reply
-  std::cerr << "LibTelegram: Sender: DEBUG: json reply:" << std::endl;
-  boost::property_tree::write_json(std::cerr, reply_tree);
 }
 void sender::send_message(std::string channel_name,
                           std::string const &text,
