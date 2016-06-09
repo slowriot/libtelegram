@@ -46,16 +46,16 @@ public:
 
   void send_message(int_fast64_t chat_id,
                     std::string const &text,
+                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
                     parse_mode parse = parse_mode::DEFAULT,
                     web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                    notification_mode notification = notification_mode::DEFAULT,
-                    int_fast32_t reply_to_message_id = reply_to_message_id_none);
+                    notification_mode notification = notification_mode::DEFAULT);
   void send_message(std::string channel_name,
                     std::string const &text,
+                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
                     parse_mode parse = parse_mode::DEFAULT,
                     web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                    notification_mode notification = notification_mode::DEFAULT,
-                    int_fast32_t reply_to_message_id = reply_to_message_id_none);
+                    notification_mode notification = notification_mode::DEFAULT);
 };
 
 sender::sender(std::string const &this_token,
@@ -110,10 +110,10 @@ boost::property_tree::ptree sender::send_json(std::string const &method,
 
 void sender::send_message(int_fast64_t chat_id,
                           std::string const &text,
+                          int_fast32_t reply_to_message_id,
                           parse_mode parse,
                           web_preview_mode web_preview,
-                          notification_mode notification,
-                          int_fast32_t reply_to_message_id) {
+                          notification_mode notification) {
   /// Send a message to a chat id
   std::cerr << "DEBUG: sending message \"" << text << "\" to chat id " << chat_id << std::endl;
   boost::property_tree::ptree tree;                                             // a property tree to put our data into
@@ -163,10 +163,10 @@ void sender::send_message(int_fast64_t chat_id,
 }
 void sender::send_message(std::string channel_name,
                           std::string const &text,
+                          int_fast32_t reply_to_message_id,
                           parse_mode parse,
                           web_preview_mode web_preview,
-                          notification_mode notification,
-                          int_fast32_t reply_to_message_id) {
+                          notification_mode notification) {
   /// Send a message to a channel name
 
 }
