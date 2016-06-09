@@ -52,7 +52,7 @@ sender::sender(std::string const &this_token,
                std::string const &this_user_agent)
   : token(this_token),
     endpoint("https://api.telegram.org/bot" + this_token + "/"),
-    user_agent(user_agent) {
+    user_agent(this_user_agent) {
   /// Construct a sender with the given token
   urdl_global_options.set_option(urdl::http::max_redirects(0));
   urdl_global_options.set_option(urdl::http::user_agent(user_agent));
