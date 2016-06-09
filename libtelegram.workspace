@@ -3,5 +3,6 @@
 	<Workspace title="LibTelegram">
 		<Project filename="libtelegram.cbp" />
 		<Project filename="example_echo.cbp" />
+		<Project filename="example_webfetch.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
