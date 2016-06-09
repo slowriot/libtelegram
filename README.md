@@ -59,14 +59,22 @@ Each example can be built with the included `Makefile`, by using
 of threads to use to build.  Alternatively, just use them as the starting point
 of your own project with your own build system.
 
+# Crossplatform Compatibility #
+All components used in this library should be fully cross-platform compatible;
+that means at the very least Linux, OS X and Windows.  However, it has not been
+tested anywhere but Linux yet, and the examples and their Makefile may require
+modificaiton to build on other platforms.  Let's face it, though, real servers
+are always going to be Linux.
+
 # Why not use one of the other C++ telegram bot frameworks? #
 Have a look at their code for yourself.  The primary alternatives to this project
-are written in a messy java-like style, littered with `using namespace std`.
+are written in a messy java-like style, and littered with `using namespace std`.
 The code is full of unnecessary copies and inefficiencies, and fundamental
 features such as SSL support are often missing.
 
 * Here is a simple echo example from the leading alternative project: [samples/echobot/src/main.cpp](https://github.com/reo7sp/tgbot-cpp/blob/master/samples/echobot/src/main.cpp)
 * And here is the same functionality with LibTelegram: [examples/echo.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo.cpp)
+
 You decide in which style you would prefer to write your next bot!
 
 # Advanced usage #
