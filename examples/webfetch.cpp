@@ -43,7 +43,7 @@ auto main()->int {
       sender.send_message(message_chat_id,                                      // the chat to reply to
                           page.str(),                                           // send the complete collected page
                           message_id,                                           // reply to the sender's message id
-                          telegram::sender::parse_mode::NONE,                   // don't attempt to render HTML elements, see https://core.telegram.org/bots/api#html-style
+                          telegram::sender::parse_mode::HTML,                   // attempt to render HTML elements Telegram supports, see https://core.telegram.org/bots/api#html-style
                           telegram::sender::web_preview_mode::DISABLE,          // don't allow URLs to produce previews
                           telegram::sender::notification_mode::DEFAULT);        // leave notifications at the API default mode
     } catch(std::exception const &e) {
