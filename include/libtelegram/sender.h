@@ -187,7 +187,69 @@ void sender::send_message(std::string channel_name,
                           web_preview_mode web_preview,
                           notification_mode notification) {
   /// Send a message to a channel name
-
+  if(text.empty()) {
+    return;                                                                     // don't attempt to send empty messages
+  }
+  if(text.size() > message_length_limit) {                                      // recursively split this message if it's too long
+    send_message(channel_name,
+                 text.substr(0, message_length_limit),                          // send just the first allowed number of characters in the first half
+                 reply_to_message_id,
+                 parse,
+                 web_preview,
+                 notification);
+    send_message(channel_name,
+                 text.substr(message_length_limit, std::string::npos),          // send the remaining characters - this will subdivide again recursively if need be
+                 reply_to_message_id,
+                 parse,
+                 web_preview,
+                 notification);
+    return;
+  }
+  std::cerr << "DEBUG: sending message \"" << text << "\" to channel name " << channel_name << std::endl;
+  boost::property_tree::ptree tree;                                             // a property tree to put our data into
+  tree.put("chat_id", channel_name);
+  tree.put("text",    text);
+  if(parse != parse_mode::DEFAULT) {                                            // don't waste bandwidth sending the default option
+    switch(parse) {
+    case parse_mode::NONE:
+      break;
+    case parse_mode::MARKDOWN:
+      tree.put("parse_mode", "Markdown");
+      break;
+    case parse_mode::HTML:
+      tree.put("parse_mode", "HTML");
+      break;
+    }
+  }
+  if(web_preview != web_preview_mode::DEFAULT) {                                // don't waste bandwidth sending the default option
+    switch(web_preview) {
+    case web_preview_mode::DISABLE:
+      tree.put("disable_web_page_preview", true);
+      break;
+    case web_preview_mode::ENABLE:
+      tree.put("disable_web_page_preview", false);
+      break;
+    }
+  }
+  if(notification != notification_mode::DEFAULT) {                              // don't waste bandwidth sending the default option
+    switch(notification) {
+    case notification_mode::DISABLE:
+      tree.put("disable_notification", true);
+      break;
+    case notification_mode::ENABLE:
+      tree.put("disable_notification", false);
+      break;
+    }
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree.put("reply_to_message_id", reply_to_message_id);
+  }
+  // TODO: handle sendMessage.reply_markup
+  boost::property_tree::ptree reply_tree(send_json("sendMessage", tree));
+  if(reply_tree.get("ok", "") != "true") {
+    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to send_message:" << std::endl;
+    boost::property_tree::write_json(std::cerr, reply_tree);
+  }
 }
 
 }
