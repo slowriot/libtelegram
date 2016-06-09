@@ -231,6 +231,8 @@ int listener::handle_request(boost::fcgi::request &request) {
   // the json must be fine, so generate a reply
   response << boost::fcgi::content_type("text/html");                           // set a content type for the normal content output
   response << "OK";
+  auto result = boost::fcgi::commit(request, response, boost::fcgi::http::ok);  // commit the response and obtain the result, so we can let Telegram hang up and it won't resend even if callbacks crash
+
   if(callback_json) {
     callback_json(tree);                                                        // if the json callback is set, send the whole tree
   }
@@ -260,7 +262,7 @@ int listener::handle_request(boost::fcgi::request &request) {
     } catch(std::exception &e) {}                                               // this update doesn't include a callback query - no problem, carry on
   }
 
-  return boost::fcgi::commit(request, response, boost::fcgi::http::ok);         // commit the response and obtain the result
+  return result;                                                                // return the cached result
 }
 
 int listener::handle_request_async(boost::fcgi::acceptor &acceptor, boost::fcgi::request &request) {
