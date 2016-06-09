@@ -4,4 +4,5 @@
 #include "listener.h"
 #include "sender.h"
 
+#include "types/chat.h"
 #endif // TELEGRAM_LIBTELEGRAM_H_INCLUDED
