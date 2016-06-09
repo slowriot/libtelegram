@@ -389,6 +389,10 @@ BOOST_CGI_NAMESPACE_BEGIN
                   , callback
                   , impl.stdin_parsed_
                   , env_vars(impl.vars_)["REMOTE_ADDR"]
+                  , 0
+                  , {}
+                  , {}
+                  , {}
                   };
 
         // Parse the current request.
