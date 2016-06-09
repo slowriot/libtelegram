@@ -2,6 +2,14 @@
 #define TELEGRAM_SENDER_H_INCLUDED
 
 #include <string>
+#define URDL_HEADER_ONLY=1
+#ifdef LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
+  #warning "SSL is disabled for outgoing messages - that is such a bad idea."
+  #define URDL_DISABLE_SSL=1
+  #define LIBTELEGRAM_OUTGOING_PROTO "http"
+#else
+  #define LIBTELEGRAM_OUTGOING_PROTO "https"
+#endif // LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
 #include <urdl/istream.hpp>
 
 namespace telegram {
@@ -53,7 +61,7 @@ public:
 sender::sender(std::string const &this_token,
                std::string const &this_user_agent) try
   : token(this_token),
-    endpoint("https://api.telegram.org/bot" + this_token + "/"),
+    endpoint(LIBTELEGRAM_OUTGOING_PROTO "://api.telegram.org/bot" + this_token + "/"),
     user_agent(this_user_agent) {
   /// Construct a sender with the given token
   urdl_global_options.set_option(urdl::http::max_redirects(0));

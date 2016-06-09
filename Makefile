@@ -10,7 +10,7 @@ LIBS=-lboost_system \
      -lcrypto
 INCLUDES=-I. \
          -isystem include
-CPPFLAGS=-DURDL_HEADER_ONLY=1 $(DEBUGDEFINES) $(GCCOPTS) $(INCLUDES)
+CPPFLAGS=$(DEBUGDEFINES) $(GCCOPTS) $(INCLUDES)
 LINKFLAGS=$(DEBUGDEFINES) $(LINKOPTS)
 
 # colour coding
