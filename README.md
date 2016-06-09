@@ -53,6 +53,13 @@ Consult with the [examples](https://github.com/slowriot/libtelegram/blob/master/
 for further instruction - this framework aims to be as easy to use as possible,
 so the examples should be self-documenting.
 
+Simpler examples spend more time explaining simple concepts in comments, while
+the more advanced examples save the comments for the more advanced features.
+For that reason, there's a suggested reading order for the examples:
+1. [examples/echo.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo.cpp)
+1. [examples/echo_ptree.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo_ptree.cpp)
+1. [examples/webfetch.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/webfetch.cpp)
+
 ### How to build the examples ###
 Each example can be built with the included `Makefile`, by using
 `make TARGET=example_echo -j4` where `echo` is the example and `4` is the number
