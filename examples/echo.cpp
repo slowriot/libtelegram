@@ -1,3 +1,5 @@
+/// This example demonstrates a minimal bot that just echoes back what it reads.
+
 #include "libtelegram/libtelegram.h"
 
 auto main()->int {
