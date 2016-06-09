@@ -3,9 +3,8 @@
 
 auto main()->int {
   std::string const token("229029247:AAHfNUvcGS_ttvvulZG3Qi4NmMrjebH8F6w");
-
   telegram::listener listener;
-  telegram::sender sender("token");
+  telegram::sender sender(token);
   listener.set_callback_raw([](std::string const &input){
     std::cerr << "DEBUG: raw callback called with " << input << std::endl;
   });
