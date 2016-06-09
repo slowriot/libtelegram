@@ -83,26 +83,32 @@ void listener::set_callback_raw(std::function<void(std::string const &input)> fu
 }
 void listener::set_callback_json(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive the complete processed json in a boost property tree, if you want to pull out custom data manually
+  /// Returns the entire update - see https://core.telegram.org/bots/api#update
   callback_json = func;
 }
 void listener::set_callback_message(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive any messages in property tree format
+  /// See https://core.telegram.org/bots/api#message
   callback_message = func;
 }
 void listener::set_callback_edited(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive the new versions of edited messages in property tree format
+  /// See https://core.telegram.org/bots/api#message (as with normal messages)
   callback_edited = func;
 }
 void listener::set_callback_inline(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive inline queries in property tree format
+  /// See https://core.telegram.org/bots/api#inlinequery
   callback_inline = func;
 }
 void listener::set_callback_chosen_inline(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive the result of an inline query that was chosen by a user and sent to their chat partner in property tree format
+  /// See https://core.telegram.org/bots/api#choseninlineresult
   callback_chosen_inline = func;
 }
 void listener::set_callback_callback(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive new incoming callback queries in property tree format
+  /// See https://core.telegram.org/bots/api#callbackquery
   callback_callback = func;
 }
 
