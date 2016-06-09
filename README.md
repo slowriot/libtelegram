@@ -56,9 +56,10 @@ so the examples should be self-documenting.
 Simpler examples spend more time explaining simple concepts in comments, while
 the more advanced examples save the comments for the more advanced features.
 For that reason, there's a suggested reading order for the examples:
-1. [examples/echo.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo.cpp)
-1. [examples/echo_ptree.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo_ptree.cpp)
-1. [examples/webfetch.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/webfetch.cpp)
+
+1. Minimal echo: [examples/echo.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo.cpp)
+1. Echo using property trees: [examples/echo_ptree.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo_ptree.cpp)
+1. Fetch a file from the web and read it back: [examples/webfetch.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/webfetch.cpp)
 
 ### How to build the examples ###
 Each example can be built with the included `Makefile`, by using
