@@ -1,4 +1,3 @@
-#include  <cstdlib>
 #include "libtelegram/libtelegram.h"
 
 auto main()->int {
@@ -12,6 +11,5 @@ auto main()->int {
     sender.send_message(message_chat_id, message_sender + " sent \"" + message_text + "\" to chat id " + std::to_string(message_chat_id)); // send our reply from within the callback
   });
   listener.run();                                                               // launch the listener - this call blocks until the fastcgi server drops us
-
   return EXIT_SUCCESS;
 };
