@@ -95,7 +95,7 @@ void listener::set_callback_edited(std::function<void(boost::property_tree::ptre
 }
 void listener::set_callback_inline(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive inline queries in property tree format
-  callback_einline = func;
+  callback_inline = func;
 }
 void listener::set_callback_chosen_inline(std::function<void(boost::property_tree::ptree const &input)> func) {
   /// Set a callback to receive the result of an inline query that was chosen by a user and sent to their chat partner in property tree format
