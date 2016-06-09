@@ -20,12 +20,12 @@ public:
     HTML,
     DEFAULT = NONE
   };
-  enum class web_preview_mode : bool {                                          // whether or not to allow the web preview for links, see https://core.telegram.org/bots/api#sendmessage
+  enum class web_preview_mode : char {                                          // whether or not to allow the web preview for links, see https://core.telegram.org/bots/api#sendmessage
     DISABLE,
     ENABLE,
     DEFAULT = ENABLE
   };
-  enum class notification_mode : bool {                                         // whether to send the message silently, see https://core.telegram.org/bots/api#sendmessage
+  enum class notification_mode : char {                                         // whether to send the message silently, see https://core.telegram.org/bots/api#sendmessage
     DISABLE,
     ENABLE,
     DEFAULT = ENABLE
@@ -49,7 +49,7 @@ public:
 };
 
 sender::sender(std::string const &this_token,
-               std::string const &this_user_agent)
+               std::string const &this_user_agent) try
   : token(this_token),
     endpoint("https://api.telegram.org/bot" + this_token + "/"),
     user_agent(this_user_agent) {
@@ -57,6 +57,8 @@ sender::sender(std::string const &this_token,
   urdl_global_options.set_option(urdl::http::max_redirects(0));
   urdl_global_options.set_option(urdl::http::user_agent(user_agent));
   urdl_global_options.set_option(urdl::http::request_method("POST"));
+} catch(std::exception const &e) {
+  std::cerr << "LibTelegram: Sender: Exception during construction: " << e.what() << std::endl;
 }
 
 void sender::send_message(int_fast64_t chat_id,
@@ -67,7 +69,6 @@ void sender::send_message(int_fast64_t chat_id,
                           int_fast32_t reply_to_message_id) {
   /// Send a message to a chat id
   std::cerr << "DEBUG: sending message \"" << text << "\" to chat id " << chat_id << std::endl;
-  // application/json
   boost::property_tree::ptree tree;                                             // a property tree to put our data into
   tree.put("chat_id", chat_id);
   tree.put("text",    text);
@@ -115,13 +116,13 @@ void sender::send_message(int_fast64_t chat_id,
   urdl::istream stream;
   stream.set_options(urdl_global_options);                                      // apply the global options to this stream
   stream.set_option(urdl::http::request_content_type("application/json"));
-  ///stream.set_option(urdl::http::request_content(ss.str()));                     // write the stringstream as the request body
-  stream.set_option(urdl::http::request_content("getMe"));                      // test
+  stream.set_option(urdl::http::request_content(ss.str()));                     // write the stringstream as the request body
   stream.open_timeout(60000);
   stream.read_timeout(30000);
-  stream.open(endpoint + "sendMessage");
+  urdl::url const url(endpoint + "sendMessage");
+  stream.open(url);
   if(!stream) {
-    std::cerr << "LibTelegram: Sender: Unable to open URL: " << stream.error().message() << std::endl;
+    std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << stream.error().message() << std::endl;
     return;
   }
 
