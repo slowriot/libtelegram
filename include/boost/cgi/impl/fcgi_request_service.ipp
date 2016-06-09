@@ -62,7 +62,7 @@ BOOST_CGI_NAMESPACE_BEGIN
 
        return result;
      }
-     
+
      /// Helper class to asynchronously load a request.
      /**
       * This is just a function object that can be posted to another
@@ -93,7 +93,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        common::parse_options parse_opts_;
        Handler handler_;
      };
-     
+
      struct clear_data
      {
        template<typename T>
@@ -105,7 +105,7 @@ BOOST_CGI_NAMESPACE_BEGIN
   } // namespace detail
 
   namespace fcgi {
- 
+
     /// Close the request.
     template<typename Protocol>
     BOOST_CGI_INLINE int
@@ -124,7 +124,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     BOOST_CGI_INLINE int
     fcgi_request_service<Protocol>::close(
         implementation_type& impl
-      , http::status_code hsc
+      , http::status_code hsc __attribute__((__unused__))
       , int program_status
       , boost::system::error_code& ec)
     {
@@ -133,7 +133,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        * pending data for the connection is read before the request
        * is closed.
        */
-      while(!ec 
+      while(!ec
         && impl.client_.status() < common::stdin_read
         && impl.request_status_ != common::loaded)
       {
@@ -163,7 +163,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       impl.client_.request_id_ = -1;
 	  impl.id_ = 0;
     }
-      
+
     /// Load the request to a point where it can be usefully used.
     /**
      * FastCGI:
@@ -230,7 +230,7 @@ BOOST_CGI_NAMESPACE_BEGIN
         impl.request_status_ = common::closed;
         return ec;
       }
-      
+
       if (opts & common::parse_env)
       {
         read_env_vars(impl, ec);
@@ -246,24 +246,24 @@ BOOST_CGI_NAMESPACE_BEGIN
       {
         if (opts & common::parse_post_only)
         {
-          while(!ec 
+          while(!ec
             && impl.client_.status() < common::stdin_read
             && impl.request_status_ != common::loaded)
           {
             parse_packet(impl, ec);
           }
         }
-        
+
         if (parse_post_vars(impl, ec))
           return ec;
       }
-     
+
       if (opts & common::parse_cookies_only)
           common::request_base<Protocol>::parse_cookie_vars(impl, "HTTP_COOKIE", ec);
 
       return ec;
     }
-    
+
     template<typename Protocol>
     template<typename Handler>
     BOOST_CGI_INLINE
@@ -278,12 +278,12 @@ BOOST_CGI_NAMESPACE_BEGIN
           ec = error::client_not_open;
 
     }
-    
+
     template<typename Protocol>
     template<typename Handler>
     BOOST_CGI_INLINE
     void fcgi_request_service<Protocol>::handle_read_header(
-        implementation_type& impl, 
+        implementation_type& impl,
         common::parse_options opts,
         Handler handler,
         boost::system::error_code& ec,
@@ -308,7 +308,7 @@ BOOST_CGI_NAMESPACE_BEGIN
           handler(error::multiplexing_not_supported);
         }
         else
-        if (spec::get_type(impl.header_buf_) 
+        if (spec::get_type(impl.header_buf_)
             == spec::begin_request::value)
         {
           impl.id_ = id;
@@ -327,7 +327,7 @@ BOOST_CGI_NAMESPACE_BEGIN
           handle_other_request_header(impl);
       }
     }
-        
+
     template<typename Protocol>
     template<typename Handler>
     BOOST_CGI_INLINE
@@ -347,34 +347,34 @@ BOOST_CGI_NAMESPACE_BEGIN
 
       string_type const&
         request_method (env_vars(impl.vars_)["REQUEST_METHOD"]);
-        
+
       if (request_method == "GET")
       {
           if (common::request_base<Protocol>::parse_get_vars(impl, ec))
           return;
       }
       else
-      if (request_method == "POST" 
+      if (request_method == "POST"
           && opts & common::parse_post_only)
       {
         //std::cerr<< "Parsing post vars now.\n";
 
         if (opts & common::parse_post_only)
         {
-          while(!ec 
+          while(!ec
             && impl.client_.status() < common::stdin_read
             && impl.request_status_ != common::loaded)
           {
             parse_packet(impl, ec);
           }
         }
-        
+
         if (parse_post_vars(impl, ec))
 	      return;
       }
       if (opts & common::parse_cookies_only)
           common::request_base<Protocol>::parse_cookie_vars(impl, ec);
-        
+
       if (ec == error::eof) {
         ec = boost::system::error_code();
       }
@@ -393,7 +393,7 @@ BOOST_CGI_NAMESPACE_BEGIN
             )
         );
       */
-        
+
       strand_.post(
         detail::async_load_helper<self_type, Handler>(this, opts, handler)
       );
@@ -417,7 +417,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       impl.client_.bytes_left_
          = boost::lexical_cast<std::size_t>(
              env_vars(impl.vars_)["CONTENT_LENGTH"]);
-      
+
       return base_type::parse_post_vars(
           impl,
           detail::callback_functor<implementation_type, self_type>(impl, this),
@@ -447,7 +447,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       {
         if (this->read_header(impl, ec))
           return ec;
-          
+
         boost::tribool state = this->parse_header(impl);
 
         if (state)
@@ -492,7 +492,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       impl.header_buf_ = header_buffer_type();
       this->get_io_service().poll();
 
-      async_read(*impl.client_.connection(), buffer(impl.header_buf_), [&](boost::system::error_code const &e, std::size_t bytes_transfered) -> void
+      async_read(*impl.client_.connection(), buffer(impl.header_buf_), [&](boost::system::error_code const &e, std::size_t bytes_transfered __attribute__((__unused__))) -> void
       {
         ec = e;
       });
@@ -503,7 +503,7 @@ BOOST_CGI_NAMESPACE_BEGIN
         if (this->get_io_service().stopped())
           ec = error::eof;
       }
-      
+
       return ec;
     }
 
@@ -554,7 +554,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     BOOST_CGI_INLINE void
     fcgi_request_service<Protocol>::handle_other_request_header(implementation_type& /* impl */)
     {
-      //std::cerr<< std::endl << "**FIXME** " << __FILE__ << ":" << __LINE__ 
+      //std::cerr<< std::endl << "**FIXME** " << __FILE__ << ":" << __LINE__
       //  << " handle_other_request_header()" << std::endl;
     }
 
@@ -562,7 +562,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     BOOST_CGI_INLINE boost::system::error_code
     fcgi_request_service<Protocol>::process_abort_request(
         implementation_type& impl, boost::uint16_t id
-      , const unsigned char* buf, std::size_t len
+      , const unsigned char* buf __attribute__((__unused__)), std::size_t len __attribute__((__unused__))
       , boost::system::error_code& ec)
     {
       if (id == fcgi::spec::get_request_id(impl.header_buf_))
@@ -583,13 +583,13 @@ BOOST_CGI_NAMESPACE_BEGIN
     template<typename Protocol>
     BOOST_CGI_INLINE boost::system::error_code
     fcgi_request_service<Protocol>::process_params(
-        implementation_type& impl, boost::uint16_t id
+        implementation_type& impl, boost::uint16_t id __attribute__((__unused__))
       , const unsigned char* buf, std::size_t len
       , boost::system::error_code& ec)
     {
       if (0 == len)
       { // This is the final param record.
-        
+
         impl.client_.status(common::params_read);
         return ec;
       }
@@ -641,8 +641,8 @@ BOOST_CGI_NAMESPACE_BEGIN
 	template<typename Protocol>
     BOOST_CGI_INLINE boost::system::error_code
     fcgi_request_service<Protocol>::process_stdin(
-        implementation_type& impl, boost::uint16_t id
-      , const unsigned char* buf,std::size_t len
+        implementation_type& impl, boost::uint16_t id __attribute__((__unused__))
+      , const unsigned char* buf __attribute__((__unused__)),std::size_t len
       , boost::system::error_code& ec)
     {
       if (0 == len)
@@ -738,7 +738,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       boost::tribool state = this->parse_header(impl);
 
       if (state)
-      { 
+      {
         // the header has been handled and all is ok.
         // **NOOP**
       } else
@@ -821,7 +821,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        // A begin request body is as long as a header, so we can optimise:
        if (read_header(impl, ec))
          return ec;
-        
+
        spec::begin_request packet(impl.header_buf_);
        impl.request_role_ = packet.role();
        impl.client_.role_ = static_cast<common::role_type>(packet.role());
@@ -829,7 +829,7 @@ BOOST_CGI_NAMESPACE_BEGIN
          = packet.flags() & spec::keep_connection;
 
        impl.client_.status_ = common::constructed;
-       
+
        return ec;
     }
 
@@ -845,8 +845,8 @@ BOOST_CGI_NAMESPACE_BEGIN
 	template<typename Protocol>
     BOOST_CGI_INLINE boost::system::error_code
     fcgi_request_service<Protocol>::process_begin_request(
-        implementation_type& impl, boost::uint16_t id
-      , const unsigned char* buf, std::size_t len
+        implementation_type& impl, boost::uint16_t id __attribute__((__unused__))
+      , const unsigned char* buf __attribute__((__unused__)), std::size_t len __attribute__((__unused__))
       , boost::system::error_code& ec)
     {
       if (impl.client_.request_id_ == 0) // ie. hasn't been set yet.
@@ -855,7 +855,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       }
       else
       {
-        //std::cerr<< "**FIXME** Role: " 
+        //std::cerr<< "**FIXME** Role: "
         //  << fcgi::spec::begin_request::get_role(impl.header_buf_) << std::endl;
 
         //implementation_type::client_type::connection_type&

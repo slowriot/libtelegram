@@ -30,7 +30,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     int commit(Request& req, Response& resp, int program_status
               , boost::system::error_code& ec)
     {
-      typedef typename Request::string_type string_type;
+      typedef typename Request::string_type string_type  __attribute__((__unused__));
 #ifdef BOOST_CGI_ENABLE_SESSIONS
       if (!program_status)
       {

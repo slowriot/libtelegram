@@ -91,7 +91,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef typename traits::session_manager_type  session_manager_type;
 #endif // BOOST_CGI_ENABLE_SESSIONS
 
- 
+
   protected:
     // impl_base is the common base class for all request types'
     // implementation_type and should be inherited by it.
@@ -124,7 +124,7 @@ BOOST_CGI_NAMESPACE_BEGIN
         , common::post_map, common::cookie_map
         , common::upload_map, common::session_map
       >   var_map_type;
-      
+
       /// Construct.
       impl_base()
         : service_(NULL)
@@ -137,7 +137,7 @@ BOOST_CGI_NAMESPACE_BEGIN
         , client_()
         , fp_(NULL)
       {}
-      
+
       bool stdin_parsed()                      { return stdin_parsed_;   }
       common::http::status_code& http_status() { return http_status_;    }
       common::request_status status() const    { return request_status_; }
@@ -153,12 +153,12 @@ BOOST_CGI_NAMESPACE_BEGIN
       }
 
       protocol_service_type* service_;
-      
+
       var_map_type vars_;
       buffer_type post_buffer_;
       /// Whether the post data has been parsed yet.
       bool stdin_parsed_;
-      
+
       bool all_done_;
 
       // The number of bytes left to read (ie. content_length - bytes_read)
@@ -168,15 +168,15 @@ BOOST_CGI_NAMESPACE_BEGIN
       common::request_status request_status_;
 
       client_type client_;
-      
+
       boost::scoped_ptr<form_parser_type> fp_;
 
       std::vector<common::form_part> form_parts_;
     };
-    
-   
+
+
   public:
-  
+
     /// Get the request ID of a FastCGI request, or 1.
     template<typename ImplType>
     boost::uint16_t const& request_id(ImplType& impl) const
@@ -224,10 +224,10 @@ BOOST_CGI_NAMESPACE_BEGIN
     }
 
     template<typename ImplType>
-    void destroy(ImplType& impl)
+    void destroy(ImplType& impl __attribute__((__unused__)))
     {
     }
-    
+
     /// Return the connection associated with the request
     template<typename ImplType>
     client_type& client(ImplType& impl)
@@ -272,8 +272,8 @@ BOOST_CGI_NAMESPACE_BEGIN
     template<typename ImplType>
     bool is_open(ImplType& impl)
     {
-      return !impl.all_done_ 
-          && impl.status() >= common::accepted 
+      return !impl.all_done_
+          && impl.status() >= common::accepted
           && impl.status() <= common::aborted
           && impl.client_.is_open();
     }
@@ -291,7 +291,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       }
 
       std::string const& cl = env_vars(impl.vars_)["CONTENT_LENGTH"];
-      // This will throw if the content-length isn't a valid number 
+      // This will throw if the content-length isn't a valid number
       // (which shouldn't ever happen).
       impl.bytes_left_
          = cl.empty() ? 0 : boost::lexical_cast<std::size_t>(cl);
@@ -305,7 +305,7 @@ BOOST_CGI_NAMESPACE_BEGIN
         if (!parse_get_vars(impl, ec))
           return ec;
       }
-      
+
       if (env_vars(impl.vars_)["REQUEST_METHOD"] == "POST"
           && parse_opts & common::parse_post_only)
       {
@@ -338,7 +338,7 @@ BOOST_CGI_NAMESPACE_BEGIN
                                    ("", "=&", boost::keep_empty_tokens)
                                 , ec);
         status(impl, (common::request_status)(status(impl) | common::get_read));
-      }  
+      }
       return ec;
     }
 
@@ -366,7 +366,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       }
       return ec;
     }
-    
+
     /// Read and parse the cgi POST meta variables.
     template<typename ImplType, typename Callback>
     boost::system::error_code&
@@ -378,7 +378,7 @@ BOOST_CGI_NAMESPACE_BEGIN
           // Construct a form_parser instance.
           impl.fp_.reset(new typename ImplType::form_parser_type());
 
-        // Create a context for this request.      
+        // Create a context for this request.
         typename ImplType::form_parser_type::context
             context
                 = { env_vars(impl.vars_)["CONTENT_TYPE"]
@@ -394,7 +394,7 @@ BOOST_CGI_NAMESPACE_BEGIN
         // Parse the current request.
         impl.fp_->parse(context, ec);
         status(impl, (common::request_status)(status(impl) | common::post_read));
-      }  
+      }
       return ec;
     }
 
@@ -419,7 +419,7 @@ BOOST_CGI_NAMESPACE_BEGIN
 
     /// Generate a new UUID.
     boost::uuids::uuid make_uuid() { return generator_(); }
-    
+
   private:
     session_manager_type session_mgr_;
     uuid_generator_type generator_;

@@ -29,11 +29,11 @@ BOOST_CGI_NAMESPACE_BEGIN
       boost::algorithm::split(
         parts, value, boost::algorithm::is_any_of("/"));
     }
-     
+
     string_type substr(
-        string_type const& str,
+        string_type const& str __attribute__((__unused__)),
         char ch,
-        bool include_char = true
+        bool include_char __attribute__((__unused__)) = true
       )
     const
     {
@@ -45,7 +45,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     }
 
   public:
-     
+
     template<typename P>
     path_info(basic_request<P> & request)
       : value(request.env["path_info"])
@@ -58,17 +58,17 @@ BOOST_CGI_NAMESPACE_BEGIN
     {
       parse();
     }
-     
+
     value_type& operator[](int i) { return parts[i]; }
-     
+
     value_type& string() { return value; }
-     
+
     operator value_type& () { return value; }
-     
+
     string_type stem() const { return substr(value, '/', false); }
-    
+
     string_type extension() const { return substr(stem(), '.'); }
-     
+
     iterator begin() { return parts.begin(); }
     iterator end() { return parts.end(); }
     const_iterator begin() const { return parts.begin(); }

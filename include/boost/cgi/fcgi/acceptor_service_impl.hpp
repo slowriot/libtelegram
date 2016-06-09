@@ -70,7 +70,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        >
    {
    public:
-   
+
      typedef acceptor_service_impl<Protocol>        self_type;
      typedef Protocol                               protocol_type;
      typedef common::protocol_traits<Protocol>      traits;
@@ -102,7 +102,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        std::set<request_ptr>                         running_requests_;
        protocol_service_type*                        service_;
        endpoint_type                                 endpoint_;
-       
+
      };
 
      explicit acceptor_service_impl(::BOOST_CGI_NAMESPACE::common::io_service& ios)
@@ -202,12 +202,12 @@ BOOST_CGI_NAMESPACE_BEGIN
      {
        return acceptor_service_.listen(impl.acceptor_, backlog, ec);
      }
-     
+
      void do_accept(implementation_type& impl
              , accept_handler_type handler)
      {
        request_ptr new_request;
-       
+
        if (impl.waiting_requests_.empty())
        {
          // Accepting on new request.
@@ -219,9 +219,9 @@ BOOST_CGI_NAMESPACE_BEGIN
          new_request = impl.waiting_requests_.front();
          impl.waiting_requests_.pop();
        }
-       
+
        impl.running_requests_.insert(new_request);
-       
+
        // The waiting request may be open if it is a multiplexed request.
        // If we can reuse this request's connection, return.
        if (!new_request->is_open() && !new_request->client().keep_connection())
@@ -250,7 +250,7 @@ BOOST_CGI_NAMESPACE_BEGIN
 
      void handle_accept(
          implementation_type& impl, request_ptr new_request,
-         accept_handler_type handler, const boost::system::error_code& ec
+         accept_handler_type handler, const boost::system::error_code& ec __attribute__((__unused__))
       )
      {
        new_request->status(common::accepted);
@@ -274,16 +274,16 @@ BOOST_CGI_NAMESPACE_BEGIN
              );
          //);
      }
-     
+
      int accept(implementation_type& impl, accept_handler_type handler
              , endpoint_type* endpoint, boost::system::error_code& ec)
      {
        typedef typename std::set<request_ptr>::iterator iter_t;
        typedef std::pair<iter_t, bool> pair_t;
-       
+
        request_ptr new_request;
        pair_t insert_result;
-       
+
        if (impl.waiting_requests_.empty())
        {
          // Accepting on new request.
@@ -295,9 +295,9 @@ BOOST_CGI_NAMESPACE_BEGIN
          new_request = impl.waiting_requests_.front();
          impl.waiting_requests_.pop();
        }
-       
+
        insert_result = impl.running_requests_.insert(new_request);
-       
+
        // The waiting request may be open if it is a multiplexed request.
        if (!new_request->is_open())
        {
@@ -311,14 +311,14 @@ BOOST_CGI_NAMESPACE_BEGIN
        }
        new_request->status(common::accepted);
        int status = handler(*new_request);
-       
+
        impl.running_requests_.erase(insert_result.first);
        if (new_request->is_open()) {
          new_request->close(http::ok, status);
        }
        new_request->clear();
        impl.waiting_requests_.push(new_request);
-       
+
        return status;
      }
 
@@ -394,13 +394,13 @@ BOOST_CGI_NAMESPACE_BEGIN
          static_cast<socklen_t>(local_endpoint(impl,ec).capacity()) );
        int check (
          getpeername(native(impl), local_endpoint(impl,ec).data(), &len) );
-         
+
        /// The FastCGI check works differently on Windows and UNIX.
 #if defined(BOOST_WINDOWS)
        return ( check == SOCKET_ERROR &&
                 WSAGetLastError() == WSAENOTCONN ) ? false : true;
 #else
-       return ( check == -1 && 
+       return ( check == -1 &&
                 errno == ENOTCONN ) ? false : true;
 #endif
      }

@@ -37,7 +37,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        return ec;// = boost::system::error_code(34, boost::system::errno_ecat);
 
      typedef typename boost::tokenizer<Separator>    tokenizer;
-     typedef typename Map::value_type                value_type;
+     typedef typename Map::value_type                value_type  __attribute__((__unused__));
      typedef typename Map::mapped_type               mapped_type;
 
      tokenizer toker(input, separator);
@@ -69,7 +69,7 @@ BOOST_CGI_NAMESPACE_BEGIN
 // guaranteed by the CGI spec to be kept, but you might want to use them.
 // You just have to define `BOOST_CGI_KEEP_EMPTY_VARS` (**TODO** currently
 // on by default).
-// Note that you'll want to check that your server keeps empty query string 
+// Note that you'll want to check that your server keeps empty query string
 // parameters.
          mapped_type val(name.empty() ? "" : current_token);
 #if defined(BOOST_CGI_KEEP_EMPTY_VARS)
@@ -87,7 +87,7 @@ BOOST_CGI_NAMESPACE_BEGIN
          current_token = url_decode_values ? url_decode(*iter) : *iter;
        }
      }
-     
+
      mapped_type val(name.empty() ? "" : current_token);
      // Save the name if the last n/v pair has no value.
      if ( !name.empty() )

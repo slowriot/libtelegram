@@ -27,7 +27,7 @@
 
 BOOST_CGI_NAMESPACE_BEGIN
  namespace common {
- 
+
   enum client_status
   {
     none_, // **FIXME** !
@@ -82,12 +82,12 @@ BOOST_CGI_NAMESPACE_BEGIN
      */
     template<typename RequestImpl>
     boost::system::error_code
-      construct(RequestImpl& req, boost::system::error_code& ec)
+      construct(RequestImpl& req __attribute__((__unused__)), boost::system::error_code& ec)
     {
       status_ = constructed;
       return ec;
     }
-    
+
     boost::system::error_code
       close(boost::uint64_t app_status, boost::system::error_code& ec)
     {
@@ -182,7 +182,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     /// Get a shared_ptr of the connection associated with the client.
     connection_ptr& connection() { return connection_; }
     std::size_t& bytes_left()    { return bytes_left_; }
-    
+
     bool is_open()
     {
       return connection_->is_open();
@@ -204,32 +204,32 @@ BOOST_CGI_NAMESPACE_BEGIN
     {
       return keep_connection_;
     }
-    
+
     boost::uint16_t const& request_id() const
     {
       return request_id_;
     }
 
   private:
-  
+
     template<typename ConstBufferSequence>
     void prepare_buffer(const ConstBufferSequence& buf)
     { /* NOOP */ }
-        
+
     void handle_write(
       std::size_t bytes_transferred, boost::system::error_code& ec)
     { /* NOOP */ }
-  
+
     //io_service&                           io_service_;
     connection_ptr                        connection_;
 
   public: // **FIXME**
     // we should never read more than content-length bytes.
     std::size_t bytes_left_;
-    
+
     boost::uint16_t request_id_;
     client_status status_;
-    
+
     boost::uint64_t total_sent_bytes_;
     boost::uint64_t total_sent_packets_;
 
