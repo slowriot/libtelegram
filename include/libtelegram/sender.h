@@ -39,6 +39,7 @@ public:
     DEFAULT = ENABLE
   };
   static int_fast32_t constexpr const reply_to_message_id_none = -1;
+  static int_fast32_t constexpr const message_length_limit = 4096;              // see https://core.telegram.org/method/messages.sendMessage
 
   sender(std::string const &token, std::string const &user_agent = "LibTelegram");
 
@@ -115,6 +116,24 @@ void sender::send_message(int_fast64_t chat_id,
                           web_preview_mode web_preview,
                           notification_mode notification) {
   /// Send a message to a chat id
+  if(text.empty()) {
+    return;                                                                     // don't attempt to send empty messages
+  }
+  if(text.size() > message_length_limit) {                                      // recursively split this message if it's too long
+    send_message(chat_id,
+                 text.substr(0, message_length_limit),                          // send just the first allowed number of characters in the first half
+                 reply_to_message_id,
+                 parse,
+                 web_preview,
+                 notification);
+    send_message(chat_id,
+                 text.substr(message_length_limit, std::string::npos),          // send the remaining characters - this will subdivide again recursively if need be
+                 reply_to_message_id,
+                 parse,
+                 web_preview,
+                 notification);
+    return;
+  }
   std::cerr << "DEBUG: sending message \"" << text << "\" to chat id " << chat_id << std::endl;
   boost::property_tree::ptree tree;                                             // a property tree to put our data into
   tree.put("chat_id", chat_id);
