@@ -1,7 +1,7 @@
 #include "libtelegram/libtelegram.h"
 
 auto main()->int {
-  std::string const token("229029247:AAHfNUvcGS_ttvvulZG3Qi4NmMrjebH8F6w");     // in practice you would probably read this from config file or database
+  std::string const token("bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11");      // in practice you would probably read this from config file or database
   telegram::listener listener;                                                  // create a listener which will process incoming requests
   telegram::sender sender(token);                                               // create a sender with our token for outgoing messages
   listener.set_callback_message([&](boost::property_tree::ptree const &input){  // we set a callback for receiving messages, using a lambda for convenience
