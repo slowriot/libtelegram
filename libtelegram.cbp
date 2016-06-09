@@ -25,6 +25,7 @@
 		<Unit filename="include/libtelegram/listener.h" />
 		<Unit filename="include/libtelegram/sender.h" />
 		<Unit filename="include/libtelegram/types/chat.h" />
+		<Unit filename="include/libtelegram/types/types.h" />
 		<Unit filename="version.h" />
 		<Extensions>
 			<code_completion />
