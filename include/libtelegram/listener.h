@@ -98,8 +98,10 @@ void listener::set_num_threads(unsigned int new_num_threads) {
   /// Set the number of concurrent threads to run acceptors on.
   /// If new_num_threads is thread_number_chosen_automatically (which is 0), choose automatically based on number of logical cores available.
   if(new_num_threads == thread_number_chosen_automatically) {
-    // TODO: detect number of cores here:
-    new_num_threads = 1;
+    new_num_threads = std::thread::hardware_concurrency();                      // get the number of concurrent supported threads
+    if(new_num_threads == 0) {
+      new_num_threads = 1;
+    }
   }
   num_threads = new_num_threads;
 }
