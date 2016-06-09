@@ -5,6 +5,7 @@ namespace telegram {
 namespace types {
 
 struct chat {
+  /// See https://core.telegram.org/bots/api#chat
   enum class types {
     PRIVATE,
     GROUP,
@@ -13,12 +14,12 @@ struct chat {
     UNKNOWN
   };
 
-  int_fast64_t id = 0;
-  types type = types::UNKNOWN;
-  std::string title;
-  std::string username;
-  std::string first_name;
-  std::string last_name;
+  int_fast64_t id = 0;                                                          // Unique identifier for this chat. This number may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it. But it smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe for storing this identifier.
+  types type = types::UNKNOWN;                                                  // Type of chat, can be either “private”, “group”, “supergroup” or “channel”
+  std::string title;                                                            // Optional. Title, for channels and group chats
+  std::string username;                                                         // Optional. Username, for private chats, supergroups and channels if available
+  std::string first_name;                                                       // Optional. First name of the other party in a private chat
+  std::string last_name;                                                        // Optional. Last name of the other party in a private chat
 
   static chat const from_ptree(boost::property_tree::ptree const &tree);
   static chat const from_ptree(boost::property_tree::ptree const &tree, std::string const &path);
@@ -40,13 +41,12 @@ chat const chat::from_ptree(boost::property_tree::ptree const &tree) {
   } else {
     this_type = types::UNKNOWN;
   }
-  chat result{tree.get<int_fast64_t>("id", 0),
+  return chat{tree.get<int_fast64_t>("id", 0),
               this_type,
               tree.get("title", ""),
               tree.get("username", ""),
               tree.get("first_name", ""),
               tree.get("last_name", "")};
-  return result;
 }
 chat const chat::from_ptree(boost::property_tree::ptree const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
