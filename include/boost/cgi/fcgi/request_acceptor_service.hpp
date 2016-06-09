@@ -54,7 +54,7 @@ BOOST_CGI_NAMESPACE_BEGIN
 #endif // defined(BOOST_WINDOWS)
 
     typedef typename service_impl_type::implementation_type      implementation_type;
-    typedef typename service_impl_type::native_type              native_type;
+    typedef typename service_impl_type::native_handle_type       native_handle_type;
     typedef typename service_impl_type::accept_handler_type      accept_handler_type;
 
     /// The unique service identifier
@@ -179,12 +179,12 @@ BOOST_CGI_NAMESPACE_BEGIN
     template<typename InternetProtocol>
     boost::system::error_code
       assign(implementation_type& impl, InternetProtocol protocol
-            , const native_type& native_acceptor, boost::system::error_code& ec)
+            , const native_handle_type& native_acceptor, boost::system::error_code& ec)
     {
       return service_impl_.assign(impl, protocol, native_acceptor, ec);
     }
 
-    native_type native(implementation_type& impl)
+    native_handle_type native(implementation_type& impl)
     {
       return service_impl_.native(impl);
     }

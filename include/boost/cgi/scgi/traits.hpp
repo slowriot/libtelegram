@@ -95,7 +95,8 @@ BOOST_CGI_NAMESPACE_BEGIN
               >                                      acceptor_service_type;
       typedef 
           acceptor_service_type::implementation_type acceptor_impl_type;
-      typedef acceptor_service_type::native_type     native_type;
+      typedef acceptor_service_type::native_handle_type
+                                                     native_handle_type;
       typedef native_protocol_type::endpoint         endpoint_type;
       typedef form_parser                            form_parser_type;
       typedef boost::none_t                          header_type;

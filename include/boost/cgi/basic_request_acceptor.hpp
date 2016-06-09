@@ -37,7 +37,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef protocol_traits<protocol_type>         traits;
     typedef typename traits::acceptor_service      service_type;
     typedef typename traits::endpoint_type         endpoint_type;
-    typedef typename traits::native_type           native_type;
+    typedef typename traits::native_handle_type    native_handle_type;
     typedef typename traits::protocol_service_type protocol_service_type;
 
     typedef typename 
@@ -71,7 +71,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     explicit basic_request_acceptor(
           common::basic_protocol_service<protocol_type, IoServiceProvider>& ps,
           const InternetProtocol& ip,
-          const native_type& native_acceptor)
+          const native_handle_type& native_acceptor)
       : boost::asio::basic_io_object<service_type>(ps.get_io_service())
     {
       this->service.set_protocol_service(this->implementation, ps);
@@ -165,7 +165,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     }
 
     template<typename InternetProtocol>
-    void assign(InternetProtocol protocol, const native_type& native_acceptor)
+    void assign(InternetProtocol protocol, const native_handle_type& native_acceptor)
     {
       boost::system::error_code ec;
       this->service.assign(this->implementation, protocol, native_acceptor, ec);
@@ -174,7 +174,7 @@ BOOST_CGI_NAMESPACE_BEGIN
 
     template<typename InternetProtocol>
     boost::system::error_code
-      assign(InternetProtocol protocol, const native_type& native_acceptor
+      assign(InternetProtocol protocol, const native_handle_type& native_acceptor
             , boost::system::error_code& ec)
     {
       return this->service.assign(this->implementation, protocol
@@ -246,7 +246,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       return this->service.local_endpoint(this->implementation, ec);
     }
 
-    native_type
+    native_handle_type
     native()
     {
       return this->service.native(this->implementation);

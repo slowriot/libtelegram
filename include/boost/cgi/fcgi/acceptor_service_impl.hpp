@@ -70,13 +70,13 @@ BOOST_CGI_NAMESPACE_BEGIN
        >
    {
    public:
-
+   
      typedef acceptor_service_impl<Protocol>        self_type;
      typedef Protocol                               protocol_type;
      typedef common::protocol_traits<Protocol>      traits;
      typedef typename traits::protocol_service_type protocol_service_type;
      typedef typename traits::native_protocol_type  native_protocol_type;
-     typedef typename traits::native_type           native_type;
+     typedef typename traits::native_handle_type    native_handle_type;
      typedef typename traits::request_type          request_type;
      typedef typename traits::acceptor_service_type acceptor_service_type;
      typedef typename traits::acceptor_impl_type    acceptor_impl_type;
@@ -190,7 +190,7 @@ BOOST_CGI_NAMESPACE_BEGIN
      /// Assign an existing native acceptor to a *socket* acceptor.
      boost::system::error_code
        assign(implementation_type& impl, const native_protocol_type& protocol
-             , const native_type& native_acceptor
+             , const native_handle_type& native_acceptor
              , boost::system::error_code& ec)
      {
        return acceptor_service_.assign(impl.acceptor_, protocol
@@ -380,7 +380,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        return acceptor_service_.local_endpoint(impl.acceptor_, ec);
      }
 
-     native_type
+     native_handle_type
      native(implementation_type& impl)
      {
        return acceptor_service_.native(impl.acceptor_);
