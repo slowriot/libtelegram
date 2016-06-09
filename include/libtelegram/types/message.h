@@ -6,9 +6,6 @@ namespace types {
 
 struct message {
   /// See https://core.telegram.org/bots/api#message
-
-
-
   int_fast32_t message_id = 0;                                                  // Unique message identifier
   //user from;                                                                  // Optional. Sender, can be empty for messages sent to channels
   int_fast32_t date = 0;                                                        // Date the message was sent in Unix time
