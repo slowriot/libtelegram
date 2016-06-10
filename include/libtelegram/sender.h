@@ -39,6 +39,16 @@ public:
     ENABLE,
     DEFAULT = ENABLE
   };
+  enum class chat_action_type : char {                                          // chat actions, see https://core.telegram.org/bots/api#sendchataction
+    TYPING,                                                                     // typing for text messages
+    UPLOAD_PHOTO,                                                               // upload_photo for photos
+    RECORD_VIDEO,                                                               // record_video for videos
+    UPLOAD_VIDEO,                                                               // pload_video for videos
+    RECORD_AUDIO,                                                               // record_audio for audio files
+    UPLOAD_AUDIO,                                                               // upload_audio for audio files
+    UPLOAD_DOCUMENT,                                                            // upload_document for general files
+    FIND_LOCATION                                                               // find_location for location data.
+  };
   static int_fast32_t constexpr const reply_to_message_id_none = -1;
   static int_fast32_t constexpr const message_length_limit = 4096;              // see https://core.telegram.org/method/messages.sendMessage
 
@@ -69,6 +79,9 @@ public:
                                                               int_fast64_t from_chat_id,
                                                               int_fast32_t message_id,
                                                               notification_mode notification = notification_mode::DEFAULT);
+
+  bool send_chat_action(int_fast64_t chat_id,
+                        chat_action_type action = chat_action_type::TYPING);
 };
 
 sender::sender(std::string const &this_token,
@@ -299,6 +312,48 @@ std::experimental::optional<types::message> sender::forward_message(int_fast64_t
     }
   }
   return send_json_and_parse<types::message>("sendMessage", tree);
+}
+
+bool sender::send_chat_action(int_fast64_t chat_id,
+                              chat_action_type action) {
+  /// Send a chat action - see https://core.telegram.org/bots/api#sendchataction
+  /// Return is whether it succeeded
+  boost::property_tree::ptree tree;
+  tree.put("chat_id", chat_id);
+  switch(action) {
+  case chat_action_type::TYPING:
+    tree.put("action", "typing");
+    break;
+  case chat_action_type::UPLOAD_PHOTO:
+    tree.put("action", "upload_photo");
+    break;
+  case chat_action_type::RECORD_VIDEO:
+    tree.put("action", "record_video");
+    break;
+  case chat_action_type::UPLOAD_VIDEO:
+    tree.put("action", "pload_video");
+    break;
+  case chat_action_type::RECORD_AUDIO:
+    tree.put("action", "record_audio");
+    break;
+  case chat_action_type::UPLOAD_AUDIO:
+    tree.put("action", "upload_audio");
+    break;
+  case chat_action_type::UPLOAD_DOCUMENT:
+    tree.put("action", "upload_document");
+    break;
+  case chat_action_type::FIND_LOCATION:
+    tree.put("action", "find_location");
+    break;
+  }
+  auto reply_tree(send_json("sendChatAction", tree));
+  boost::property_tree::write_json(std::cerr, reply_tree);
+  if(reply_tree.get("ok", "") != "true") {
+    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to sendChatAction expecting a bool:" << std::endl;
+    boost::property_tree::write_json(std::cerr, reply_tree);
+    return false;
+  }
+  return reply_tree.get("result", "") == "true";
 }
 
 }
