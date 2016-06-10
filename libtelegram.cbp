@@ -28,6 +28,7 @@
 		<Unit filename="include/libtelegram/types/file.h" />
 		<Unit filename="include/libtelegram/types/message.h" />
 		<Unit filename="include/libtelegram/types/optional.h" />
+		<Unit filename="include/libtelegram/types/photosize.h" />
 		<Unit filename="include/libtelegram/types/types.h" />
 		<Unit filename="include/libtelegram/types/user.h" />
 		<Unit filename="version.h" />
