@@ -29,5 +29,7 @@ photosize const photosize::from_ptree(boost::property_tree::ptree const &tree, s
   return from_ptree(tree.get_child(path));
 }
 
+}
+}
 
 #endif // TELEGRAM_TYPES_PHOTOSIZE_H_INCLUDED
