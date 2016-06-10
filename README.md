@@ -68,6 +68,33 @@ Each example can be built with the included `Makefile`, by using
 of threads to use to build.  Alternatively, just use them as the starting point
 of your own project with your own build system.
 
+### Setting up FastCGI ###
+There are a number of fastcgi systems, and it will depend largely on your
+webserver.  Below are some example instructions for how to set up fastcgi on
+Apache2:
+
+* Install Apache2, obviously.
+* Get module `fastcgi`.  On debian and noobuntu you can
+`apt-get install libapache2-mod-fastcgi`.
+* Use the following sort of configuration to enable a directory to execute
+fastcgi scripts:
+```
+  ScriptAlias /fcgi-bin/ /var/www/mysite/fcgi-bin/
+  <Directory /var/www/mysite/fcgi-bin/>
+    Options +ExecCGI
+    SetHandler fastcgi-script
+  </Directory>
+```
+* Then simply place your executable binaries in this directory, or
+subdirectories, taking care to give them executable permissions.
+* One caveat is that module `fastcgi` does not currently seem to work with
+`mpm_itk_module` running as any user other than `www-data` on Debian.
+* Something else to watch out for when testing is that unlike normal cgi,
+the program persists and keeps running - even after you overwrite the binary.
+Make sure you either manually kill your bot when you want to update to a new
+version, or restart the Apache server, or build in functionality for it to exit
+by itself on command.  The webserver will then bring it back up on demand.
+
 # Crossplatform Compatibility #
 All components used in this library should be fully cross-platform compatible;
 that means at the very least Linux, OS X and Windows.  However, it has not been
