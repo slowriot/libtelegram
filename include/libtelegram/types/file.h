@@ -40,6 +40,7 @@ file const file::from_ptree(boost::property_tree::ptree const &tree, std::string
 
 urdl::url const file::get_url(std::string const &token) const {
   /// Return the URL of this file on Telegram's servers
+  /// NOTE: You don't want to share this URL - it contains your bot's token!
   return urdl::url("https://api.telegram.org/file/bot" + token + "/" + file_path);
 }
 
