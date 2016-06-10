@@ -147,7 +147,7 @@ std::experimental::optional<T> sender::send_json_and_parse(std::string const &me
     return std::experimental::nullopt;
   }
   try {
-    return make_optional<T>(reply_tree, "result");
+    return types::make_optional<T>(reply_tree, "result");
   } catch(std::exception &e) {
     std::cerr << "LibTelegram: Sender: Exception parsing the following tree to extract a " << typeid(T).name() << ": " << e.what() << std::endl;
     boost::property_tree::write_json(std::cerr, reply_tree);

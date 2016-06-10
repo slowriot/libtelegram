@@ -3,6 +3,9 @@
 
 #include <experimental/optional>
 
+namespace telegram {
+namespace types {
+
 template<typename T>
 std::experimental::optional<T> make_optional(boost::property_tree::ptree const &tree, std::string const &path);
 
@@ -38,6 +41,9 @@ std::experimental::optional<std::vector<T>> make_optional_vector(boost::property
   } else {
     return std::experimental::nullopt;                                          // we fail, so return an empty optional
   }
+}
+
+}
 }
 
 #endif // TELEGRAM_TYPES_OPTIONAL_H_INCLUDED
