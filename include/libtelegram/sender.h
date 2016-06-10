@@ -60,7 +60,7 @@ public:
   std::experimental::optional<T> send_json_and_parse(std::string const &method,
                                                      boost::property_tree::ptree const &tree = {});
 
-  std::experimental::optional<types::user> const send_get_me();
+  std::experimental::optional<types::user> const get_me();
 
   std::experimental::optional<types::message> send_message(int_fast64_t chat_id,
                                                            std::string const &text,
@@ -155,7 +155,7 @@ std::experimental::optional<T> sender::send_json_and_parse(std::string const &me
   }
 }
 
-std::experimental::optional<types::user> const sender::send_get_me() {
+std::experimental::optional<types::user> const sender::get_me() {
   /// Send a getme request - see https://core.telegram.org/bots/api#getme
   return send_json_and_parse<types::user>("getMe");
 }
