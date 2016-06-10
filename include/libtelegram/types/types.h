@@ -2,6 +2,7 @@
 #define TELEGRAM_TYPES_H_INCLUDED
 
 #include "chat.h"
+#include "file.h"
 #include "message.h"
 #include "user.h"
 
