@@ -7,7 +7,7 @@
 #include "libtelegram/libtelegram.h"
 
 auto main()->int {
-  std::string const token("184416124:AAGdMukLaXT_no2RWnjc2lc6cPAK_DSrYiQ");
+  std::string const token("bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11");
   telegram::listener listener;
   telegram::sender sender(token);
 
