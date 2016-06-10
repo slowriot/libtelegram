@@ -11,6 +11,7 @@
   #define LIBTELEGRAM_OUTGOING_PROTO "https"
 #endif // LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
 #include <urdl/istream.hpp>
+#include "types/user.h"
 
 namespace telegram {
 
@@ -44,6 +45,8 @@ public:
   sender(std::string const &token, std::string const &user_agent = "LibTelegram");
 
   boost::property_tree::ptree send_json(std::string const &method, boost::property_tree::ptree const &tree);
+
+  std::experimental::optional<types::user> const send_get_me();
 
   void send_message(int_fast64_t chat_id,
                     std::string const &text,
@@ -109,13 +112,27 @@ boost::property_tree::ptree sender::send_json(std::string const &method,
   return reply_tree;
 }
 
+std::experimental::optional<types::user> const sender::send_get_me() {
+  /// Send a getme request - see https://core.telegram.org/bots/api#getme
+  auto reply_tree(send_json("getMe", {}));
+  std::cerr << "DEBUG: get_me result: " << std::endl;
+  boost::property_tree::write_json(std::cerr, reply_tree);
+
+  if(reply_tree.get("ok", "") != "true") {
+    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to getMe:" << std::endl;
+    boost::property_tree::write_json(std::cerr, reply_tree);
+    return std::experimental::nullopt;
+  }
+  return make_optional<types::user>(reply_tree, "result");
+}
+
 void sender::send_message(int_fast64_t chat_id,
                           std::string const &text,
                           int_fast32_t reply_to_message_id,
                           parse_mode parse,
                           web_preview_mode web_preview,
                           notification_mode notification) {
-  /// Send a message to a chat id
+  /// Send a message to a chat id - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
     return;                                                                     // don't attempt to send empty messages
   }
@@ -176,7 +193,7 @@ void sender::send_message(int_fast64_t chat_id,
   // TODO: handle sendMessage.reply_markup
   boost::property_tree::ptree reply_tree(send_json("sendMessage", tree));
   if(reply_tree.get("ok", "") != "true") {
-    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to send_message:" << std::endl;
+    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to sendMessage:" << std::endl;
     boost::property_tree::write_json(std::cerr, reply_tree);
   }
 }
@@ -186,7 +203,7 @@ void sender::send_message(std::string channel_name,
                           parse_mode parse,
                           web_preview_mode web_preview,
                           notification_mode notification) {
-  /// Send a message to a channel name
+  /// Send a message to a channel name - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
     return;                                                                     // don't attempt to send empty messages
   }
@@ -247,7 +264,7 @@ void sender::send_message(std::string channel_name,
   // TODO: handle sendMessage.reply_markup
   boost::property_tree::ptree reply_tree(send_json("sendMessage", tree));
   if(reply_tree.get("ok", "") != "true") {
-    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to send_message:" << std::endl;
+    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to sendMessage:" << std::endl;
     boost::property_tree::write_json(std::cerr, reply_tree);
   }
 }
