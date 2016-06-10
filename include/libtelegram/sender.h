@@ -64,6 +64,11 @@ public:
                                                            parse_mode parse = parse_mode::DEFAULT,
                                                            web_preview_mode web_preview = web_preview_mode::DEFAULT,
                                                            notification_mode notification = notification_mode::DEFAULT);
+
+  std::experimental::optional<types::message> forward_message(int_fast64_t chat_id,
+                                                              int_fast64_t from_chat_id,
+                                                              int_fast32_t message_id,
+                                                              notification_mode notification = notification_mode::DEFAULT);
 };
 
 sender::sender(std::string const &this_token,
@@ -269,6 +274,29 @@ std::experimental::optional<types::message> sender::send_message(std::string cha
   }
   if(reply_to_message_id != reply_to_message_id_none) {
     tree.put("reply_to_message_id", reply_to_message_id);
+  }
+  return send_json_and_parse<types::message>("sendMessage", tree);
+}
+
+std::experimental::optional<types::message> sender::forward_message(int_fast64_t chat_id,
+                                                                    int_fast64_t from_chat_id,
+                                                                    int_fast32_t message_id,
+                                                                    notification_mode notification) {
+  /// Forward a message to a chat id - see https://core.telegram.org/bots/api#forwardmessage
+  std::cerr << "DEBUG: forwarding message " << message_id << " from chat " << from_chat_id << " to chat id " << chat_id << std::endl;
+  boost::property_tree::ptree tree;                                             // a property tree to put our data into
+  tree.put("chat_id",      chat_id);
+  tree.put("from_chat_id", from_chat_id);
+  tree.put("message_id",   message_id);
+  if(notification != notification_mode::DEFAULT) {                              // don't waste bandwidth sending the default option
+    switch(notification) {
+    case notification_mode::DISABLE:
+      tree.put("disable_notification", true);
+      break;
+    case notification_mode::ENABLE:
+      tree.put("disable_notification", false);
+      break;
+    }
   }
   return send_json_and_parse<types::message>("sendMessage", tree);
 }
