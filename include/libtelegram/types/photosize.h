@@ -20,7 +20,7 @@ photosize const photosize::from_ptree(boost::property_tree::ptree const &tree) {
   /// If any non-optional elements are missing from the tree, throws boost::property_tree::ptree_bad_path
   return photosize{tree.get("file_id", ""),
                    tree.get("width", 0),
-                   tree.get("heght", 0),
+                   tree.get("height", 0),
                    tree.get("file_size", 0)};
 }
 photosize const photosize::from_ptree(boost::property_tree::ptree const &tree, std::string const &path) {
