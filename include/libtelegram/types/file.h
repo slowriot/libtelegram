@@ -18,11 +18,11 @@ struct file {
   static file const from_ptree(boost::property_tree::ptree const &tree);
   static file const from_ptree(boost::property_tree::ptree const &tree, std::string const &path);
 
-  urdl::url const get_url(std::string const &token);
+  urdl::url const get_url(std::string const &token) const;
 
-  void download_to_stream(std::string const &token, urdl::istream &target_stream);
+  void download_to_stream(std::string const &token, urdl::istream &target_stream) const;
 
-  std::vector<char> download(std::string const &token);
+  std::vector<char> download(std::string const &token) const;
 };
 
 file const file::from_ptree(boost::property_tree::ptree const &tree) {
@@ -38,12 +38,12 @@ file const file::from_ptree(boost::property_tree::ptree const &tree, std::string
   return from_ptree(tree.get_child(path));
 }
 
-urdl::url const file::get_url(std::string const &token) {
+urdl::url const file::get_url(std::string const &token) const {
   /// Return the URL of this file on Telegram's servers
   return urdl::url("https://api.telegram.org/file/bot" + token + "/" + file_path);
 }
 
-void file::download_to_stream(std::string const &token, urdl::istream &stream) {
+void file::download_to_stream(std::string const &token, urdl::istream &stream) const {
   /// Download this file to the target output stream
   stream.set_option(urdl::http::user_agent("LibTelegram File Downloader"));
   stream.open_timeout(60000);
@@ -55,7 +55,7 @@ void file::download_to_stream(std::string const &token, urdl::istream &stream) {
   }
 }
 
-std::vector<char> file::download(std::string const &token) {
+std::vector<char> file::download(std::string const &token) const {
   /// Download this file to the target output stream
   urdl::istream stream;
   download_to_stream(token, stream);
