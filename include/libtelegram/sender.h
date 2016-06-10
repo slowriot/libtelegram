@@ -52,6 +52,8 @@ public:
   static int_fast32_t constexpr const reply_to_message_id_none = -1;
   static int_fast32_t constexpr const message_length_limit = 4096;              // see https://core.telegram.org/method/messages.sendMessage
 
+  // TODO: add message sending stream class
+
   sender(std::string const &token, std::string const &user_agent = "LibTelegram");
 
   boost::property_tree::ptree send_json(std::string const &method,
@@ -80,8 +82,9 @@ public:
                                                               int_fast32_t message_id,
                                                               notification_mode notification = notification_mode::DEFAULT);
 
-  bool send_chat_action(int_fast64_t chat_id,
-                        chat_action_type action = chat_action_type::TYPING);
+  bool send_chat_action(int_fast64_t chat_id, chat_action_type action = chat_action_type::TYPING);
+
+  std::experimental::optional<types::file> get_file(std::string const &file_id);
 };
 
 sender::sender(std::string const &this_token,
@@ -354,6 +357,13 @@ bool sender::send_chat_action(int_fast64_t chat_id,
     return false;
   }
   return reply_tree.get("result", "") == "true";
+}
+
+std::experimental::optional<types::file> sender::get_file(std::string const &file_id) {
+  /// Get download info about a file (as a file object) - see https://core.telegram.org/bots/api#getfile
+  boost::property_tree::ptree tree;
+  tree.put("file_id", file_id);
+  return send_json_and_parse<types::file>("getFile", tree);
 }
 
 }
