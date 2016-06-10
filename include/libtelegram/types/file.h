@@ -12,7 +12,7 @@ namespace types {
 struct file {
   /// See https://core.telegram.org/bots/api#file
   std::string file_id;                                                          // Unique identifier for this file
-  int_fast32_t file_size = 0;                                                   // Optional. File size, if known
+  int_fast32_t file_size = 0;                                                   // Optional. File size, if known (in bytes)
   std::string file_path;                                                        // Optional. File path. Use https://api.telegram.org/file/bot<token>/<file_path> to get the file.
 
   static file const from_ptree(boost::property_tree::ptree const &tree);

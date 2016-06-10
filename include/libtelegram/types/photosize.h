@@ -9,7 +9,7 @@ struct photosize {
   std::string file_id;                                                          // Unique identifier for this file
   int_fast32_t width     = 0;                                                   // Photo width
   int_fast32_t height    = 0;                                                   // Photo height
-  int_fast32_t file_size = 0;                                                   // Optional. File size
+  int_fast32_t file_size = 0;                                                   // Optional. File size (in bytes)
 
   static photosize const from_ptree(boost::property_tree::ptree const &tree);
   static photosize const from_ptree(boost::property_tree::ptree const &tree, std::string const &path);
