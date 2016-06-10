@@ -7,4 +7,6 @@
 #include "photosize.h"
 #include "user.h"
 
+#include "reply_markup/reply_markup.h"
+
 #endif // TELEGRAM_TYPES_H_INCLUDED
