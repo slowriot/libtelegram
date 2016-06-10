@@ -16,24 +16,24 @@ struct message {
   std::experimental::optional<user> forward_from;                               // Optional. For forwarded messages, sender of the original message
   std::experimental::optional<types::chat> forward_from_chat;                   // Optional. For messages forwarded from a channel, information about the original channel
   int_fast32_t forward_date = 0;                                                // Optional. For forwarded messages, date the original message was sent in Unix time
-  //message reply_to_message;                                                   // Optional. For replies, the original message. Note that the Message object in this field will not contain further reply_to_message fields even if it itself is a reply.
+  //message reply_to_message;                                                     // Optional. For replies, the original message. Note that the Message object in this field will not contain further reply_to_message fields even if it itself is a reply.
   int_fast32_t edit_date = 0;                                                   // Optional. Date the message was last edited in Unix time
   std::string text;                                                             // Optional. For text messages, the actual UTF-8 text of the message, 0-4096 characters.
-  //entities                      Array of MessageEntity                        // Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
-  //std::experimental::optional<types::audio> audio;                            // Optional. Message is an audio file, information about the file
-  //std::experimental::optional<types::document> document;                      // Optional. Message is a general file, information about the file
-  //photo                      Array of PhotoSize                               // Optional. Message is a photo, available sizes of the photo
-  //std::experimental::optional<types::sticker> sticker;                        // Optional. Message is a sticker, information about the sticker
-  //std::experimental::optional<types::video> video;                            // Optional. Message is a video, information about the video
-  //std::experimental::optional<types::voice> voice;                            // Optional. Message is a voice message, information about the file
+  //entities                      Array of MessageEntity                          // Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
+  //std::experimental::optional<types::audio> audio;                              // Optional. Message is an audio file, information about the file
+  //std::experimental::optional<types::document> document;                        // Optional. Message is a general file, information about the file
+  //photo                      Array of PhotoSize                                 // Optional. Message is a photo, available sizes of the photo
+  //std::experimental::optional<types::sticker> sticker;                          // Optional. Message is a sticker, information about the sticker
+  //std::experimental::optional<types::video> video;                              // Optional. Message is a video, information about the video
+  //std::experimental::optional<types::voice> voice;                              // Optional. Message is a voice message, information about the file
   std::string caption;                                                          // Optional. Caption for the document, photo or video, 0-200 characters
-  //std::experimental::optional<types::contact> contact;                        // Optional. Message is a shared contact, information about the contact
-  //std::experimental::optional<types::location> location;                      // Optional. Message is a shared location, information about the location
-  //std::experimental::optional<types::venue> venue;                            // Optional. Message is a venue, information about the venue
-  //user new_chat_member;                                                       // Optional. A new member was added to the group, information about them (this member may be the bot itself)
-  //user left_chat_member;                                                      // Optional. A member was removed from the group, information about them (this member may be the bot itself)
+  //std::experimental::optional<types::contact> contact;                          // Optional. Message is a shared contact, information about the contact
+  //std::experimental::optional<types::location> location;                        // Optional. Message is a shared location, information about the location
+  //std::experimental::optional<types::venue> venue;                              // Optional. Message is a venue, information about the venue
+  //user new_chat_member;                                                         // Optional. A new member was added to the group, information about them (this member may be the bot itself)
+  //user left_chat_member;                                                        // Optional. A member was removed from the group, information about them (this member may be the bot itself)
   std::string new_chat_title;                                                   // Optional. A chat title was changed to this value
-  //new_chat_photo                      Array of PhotoSize                      // Optional. A chat photo was change to this value
+  //new_chat_photo                      Array of PhotoSize                        // Optional. A chat photo was change to this value
   bool delete_chat_photo = false;                                               // Optional. Service message: the chat photo was deleted
   bool group_chat_created = false;                                              // Optional. Service message: the group has been created
   bool supergroup_chat_created = false;                                         // Optional. Service message: the supergroup has been created. This field can‘t be received in a message coming through updates, because bot can’t be a member of a supergroup when it is created. It can only be found in reply_to_message if someone replies to a very first message in a directly created supergroup.
@@ -59,10 +59,10 @@ message const message::from_ptree(boost::property_tree::ptree const &tree) {
                  //message::from_ptree(tree, "reply_to_message"),
                  tree.get("edit_date", 0),
                  tree.get("text", ""),
-                 //tree.get("entities                                           // Array of MessageEntity
+                 //tree.get("entities                                             // Array of MessageEntity
                  //audio::from_ptree(tree, "audio"),
                  //document::from_ptree(tree, "document"),
-                 //tree.get("photo                                              // Array of PhotoSize
+                 //tree.get("photo                                                // Array of PhotoSize
                  //sticker::from_ptree(tree, "sticker"),
                  //video::from_ptree(tree, "video"),
                  //voice::from_ptree(tree, "voice"),
@@ -73,7 +73,7 @@ message const message::from_ptree(boost::property_tree::ptree const &tree) {
                  //user::from_ptree(tree, "new_chat_member"),
                  //user::from_ptree(tree, "left_chat_member"),
                  tree.get("new_chat_title", ""),
-                 //tree.get("new_chat_photo                                     // Array of PhotoSize
+                 //tree.get("new_chat_photo                                       // Array of PhotoSize
                  tree.get("delete_chat_photo",       "") == "True" ? true : false,
                  tree.get("group_chat_created",      "") == "True" ? true : false,
                  tree.get("supergroup_chat_created", "") == "True" ? true : false,
