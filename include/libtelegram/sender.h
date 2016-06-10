@@ -52,18 +52,18 @@ public:
 
   std::experimental::optional<types::user> const send_get_me();
 
-  void send_message(int_fast64_t chat_id,
-                    std::string const &text,
-                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
-                    parse_mode parse = parse_mode::DEFAULT,
-                    web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                    notification_mode notification = notification_mode::DEFAULT);
-  void send_message(std::string channel_name,
-                    std::string const &text,
-                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
-                    parse_mode parse = parse_mode::DEFAULT,
-                    web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                    notification_mode notification = notification_mode::DEFAULT);
+  std::experimental::optional<types::message> send_message(int_fast64_t chat_id,
+                                                           std::string const &text,
+                                                           int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                           parse_mode parse = parse_mode::DEFAULT,
+                                                           web_preview_mode web_preview = web_preview_mode::DEFAULT,
+                                                           notification_mode notification = notification_mode::DEFAULT);
+  std::experimental::optional<types::message> send_message(std::string channel_name,
+                                                           std::string const &text,
+                                                           int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                           parse_mode parse = parse_mode::DEFAULT,
+                                                           web_preview_mode web_preview = web_preview_mode::DEFAULT,
+                                                           notification_mode notification = notification_mode::DEFAULT);
 };
 
 sender::sender(std::string const &this_token,
@@ -142,15 +142,15 @@ std::experimental::optional<types::user> const sender::send_get_me() {
   return send_json_and_parse<types::user>("getMe");
 }
 
-void sender::send_message(int_fast64_t chat_id,
-                          std::string const &text,
-                          int_fast32_t reply_to_message_id,
-                          parse_mode parse,
-                          web_preview_mode web_preview,
-                          notification_mode notification) {
+std::experimental::optional<types::message>  sender::send_message(int_fast64_t chat_id,
+                                                                  std::string const &text,
+                                                                  int_fast32_t reply_to_message_id,
+                                                                  parse_mode parse,
+                                                                  web_preview_mode web_preview,
+                                                                  notification_mode notification) {
   /// Send a message to a chat id - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
-    return;                                                                     // don't attempt to send empty messages
+    return std::experimental::nullopt;                                          // don't attempt to send empty messages - this would be an error
   }
   if(text.size() > message_length_limit) {                                      // recursively split this message if it's too long
     send_message(chat_id,
@@ -159,13 +159,12 @@ void sender::send_message(int_fast64_t chat_id,
                  parse,
                  web_preview,
                  notification);
-    send_message(chat_id,
-                 text.substr(message_length_limit, std::string::npos),          // send the remaining characters - this will subdivide again recursively if need be
-                 reply_to_message_id,
-                 parse,
-                 web_preview,
-                 notification);
-    return;
+    return send_message(chat_id,
+                        text.substr(message_length_limit, std::string::npos),   // send the remaining characters - this will subdivide again recursively if need be
+                        reply_to_message_id,
+                        parse,
+                        web_preview,
+                        notification);                                          // note - we disregard return messages from any except the last
   }
   std::cerr << "DEBUG: sending message \"" << text << "\" to chat id " << chat_id << std::endl;
   boost::property_tree::ptree tree;                                             // a property tree to put our data into
@@ -206,22 +205,17 @@ void sender::send_message(int_fast64_t chat_id,
   if(reply_to_message_id != reply_to_message_id_none) {
     tree.put("reply_to_message_id", reply_to_message_id);
   }
-  // TODO: handle sendMessage.reply_markup
-  boost::property_tree::ptree reply_tree(send_json("sendMessage", tree));
-  if(reply_tree.get("ok", "") != "true") {
-    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to sendMessage:" << std::endl;
-    boost::property_tree::write_json(std::cerr, reply_tree);
-  }
+  return send_json_and_parse<types::message>("sendMessage", tree);
 }
-void sender::send_message(std::string channel_name,
-                          std::string const &text,
-                          int_fast32_t reply_to_message_id,
-                          parse_mode parse,
-                          web_preview_mode web_preview,
-                          notification_mode notification) {
+std::experimental::optional<types::message> sender::send_message(std::string channel_name,
+                                                                 std::string const &text,
+                                                                 int_fast32_t reply_to_message_id,
+                                                                 parse_mode parse,
+                                                                 web_preview_mode web_preview,
+                                                                 notification_mode notification) {
   /// Send a message to a channel name - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
-    return;                                                                     // don't attempt to send empty messages
+    return std::experimental::nullopt;                                          // don't attempt to send empty messages - this would be an error
   }
   if(text.size() > message_length_limit) {                                      // recursively split this message if it's too long
     send_message(channel_name,
@@ -230,13 +224,12 @@ void sender::send_message(std::string channel_name,
                  parse,
                  web_preview,
                  notification);
-    send_message(channel_name,
-                 text.substr(message_length_limit, std::string::npos),          // send the remaining characters - this will subdivide again recursively if need be
-                 reply_to_message_id,
-                 parse,
-                 web_preview,
-                 notification);
-    return;
+    return send_message(channel_name,
+                        text.substr(message_length_limit, std::string::npos),   // send the remaining characters - this will subdivide again recursively if need be
+                        reply_to_message_id,
+                        parse,
+                        web_preview,
+                        notification);                                          // note - we disregard return messages from any except the last
   }
   std::cerr << "DEBUG: sending message \"" << text << "\" to channel name " << channel_name << std::endl;
   boost::property_tree::ptree tree;                                             // a property tree to put our data into
@@ -277,12 +270,7 @@ void sender::send_message(std::string channel_name,
   if(reply_to_message_id != reply_to_message_id_none) {
     tree.put("reply_to_message_id", reply_to_message_id);
   }
-  // TODO: handle sendMessage.reply_markup
-  boost::property_tree::ptree reply_tree(send_json("sendMessage", tree));
-  if(reply_tree.get("ok", "") != "true") {
-    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to sendMessage:" << std::endl;
-    boost::property_tree::write_json(std::cerr, reply_tree);
-  }
+  return send_json_and_parse<types::message>("sendMessage", tree);
 }
 
 }
