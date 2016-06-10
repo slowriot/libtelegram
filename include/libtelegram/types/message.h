@@ -2,6 +2,7 @@
 #define TELEGRAM_TYPES_MESSAGE_H_INCLUDED
 
 #include "optional.h"
+#include "photosize.h"
 #include "user.h"
 
 namespace telegram {
@@ -22,7 +23,7 @@ struct message {
   //entities                      Array of MessageEntity                          // Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
   //std::experimental::optional<types::audio> audio;                              // Optional. Message is an audio file, information about the file
   //std::experimental::optional<types::document> document;                        // Optional. Message is a general file, information about the file
-  //photo                      Array of PhotoSize                                 // Optional. Message is a photo, available sizes of the photo
+  std::experimental::optional<std::vector<photosize>> photo;                    // Optional. Message is a photo, available sizes of the photo
   //std::experimental::optional<types::sticker> sticker;                          // Optional. Message is a sticker, information about the sticker
   //std::experimental::optional<types::video> video;                              // Optional. Message is a video, information about the video
   //std::experimental::optional<types::voice> voice;                              // Optional. Message is a voice message, information about the file
@@ -33,7 +34,7 @@ struct message {
   //user new_chat_member;                                                         // Optional. A new member was added to the group, information about them (this member may be the bot itself)
   //user left_chat_member;                                                        // Optional. A member was removed from the group, information about them (this member may be the bot itself)
   std::string new_chat_title;                                                   // Optional. A chat title was changed to this value
-  //new_chat_photo                      Array of PhotoSize                        // Optional. A chat photo was change to this value
+  std::experimental::optional<std::vector<photosize>> new_chat_photo;           // Optional. A chat photo was change to this value
   bool delete_chat_photo = false;                                               // Optional. Service message: the chat photo was deleted
   bool group_chat_created = false;                                              // Optional. Service message: the group has been created
   bool supergroup_chat_created = false;                                         // Optional. Service message: the supergroup has been created. This field can‘t be received in a message coming through updates, because bot can’t be a member of a supergroup when it is created. It can only be found in reply_to_message if someone replies to a very first message in a directly created supergroup.
@@ -62,7 +63,7 @@ message const message::from_ptree(boost::property_tree::ptree const &tree) {
                  //tree.get("entities                                             // Array of MessageEntity
                  //audio::from_ptree(tree, "audio"),
                  //document::from_ptree(tree, "document"),
-                 //tree.get("photo                                                // Array of PhotoSize
+                 make_optional_vector<photosize>(tree, "photo"),
                  //sticker::from_ptree(tree, "sticker"),
                  //video::from_ptree(tree, "video"),
                  //voice::from_ptree(tree, "voice"),
@@ -73,7 +74,7 @@ message const message::from_ptree(boost::property_tree::ptree const &tree) {
                  //user::from_ptree(tree, "new_chat_member"),
                  //user::from_ptree(tree, "left_chat_member"),
                  tree.get("new_chat_title", ""),
-                 //tree.get("new_chat_photo                                       // Array of PhotoSize
+                 make_optional_vector<photosize>(tree, "new_chat_photo"),
                  tree.get("delete_chat_photo",       "") == "True" ? true : false,
                  tree.get("group_chat_created",      "") == "True" ? true : false,
                  tree.get("supergroup_chat_created", "") == "True" ? true : false,
