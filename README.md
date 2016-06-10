@@ -123,6 +123,9 @@ the program persists and keeps running - even after you overwrite the binary.
 Make sure you either manually kill your bot when you want to update to a new
 version, or restart the Apache server, or build in functionality for it to exit
 by itself on command.  The webserver will then bring it back up on demand.
+* Anything you send to `std::cerr` will appear in `/var/log/apache2/error.log` -
+even if you have vhosts set up with custom logging, the fastcgi module won't
+send to those.  Don't try to output anything to `std::cout`.
 
 # Crossplatform Compatibility #
 All components used in this library should be fully cross-platform compatible;
