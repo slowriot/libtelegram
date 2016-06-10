@@ -44,7 +44,11 @@ public:
 
   sender(std::string const &token, std::string const &user_agent = "LibTelegram");
 
-  boost::property_tree::ptree send_json(std::string const &method, boost::property_tree::ptree const &tree);
+  boost::property_tree::ptree send_json(std::string const &method,
+                                        boost::property_tree::ptree const &tree = {});
+  template<typename T>
+  std::experimental::optional<T> send_json_and_parse(std::string const &method,
+                                                     boost::property_tree::ptree const &tree = {});
 
   std::experimental::optional<types::user> const send_get_me();
 
@@ -112,18 +116,30 @@ boost::property_tree::ptree sender::send_json(std::string const &method,
   return reply_tree;
 }
 
-std::experimental::optional<types::user> const sender::send_get_me() {
-  /// Send a getme request - see https://core.telegram.org/bots/api#getme
-  auto reply_tree(send_json("getMe", {}));
-  std::cerr << "DEBUG: get_me result: " << std::endl;
+template<typename T>
+std::experimental::optional<T> sender::send_json_and_parse(std::string const &method,
+                                                           boost::property_tree::ptree const &tree) {
+  /// Wrapper function to send a property tree and get back a complete object of the specified template type
+  auto reply_tree(send_json(method, tree));
+  std::cerr << "LibTelegram: Sender: DEBUG: json reply:" << std::endl;
   boost::property_tree::write_json(std::cerr, reply_tree);
-
   if(reply_tree.get("ok", "") != "true") {
-    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to getMe:" << std::endl;
+    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to " << method << " trying to get " << typeid(T).name() << ":" << std::endl;
     boost::property_tree::write_json(std::cerr, reply_tree);
     return std::experimental::nullopt;
   }
-  return make_optional<types::user>(reply_tree, "result");
+  try {
+    return make_optional<T>(reply_tree, "result");
+  } catch(std::exception &e) {
+    std::cerr << "LibTelegram: Sender: Exception parsing the following tree to extract a " << typeid(T).name() << ": " << e.what() << std::endl;
+    boost::property_tree::write_json(std::cerr, reply_tree);
+    return std::experimental::nullopt;
+  }
+}
+
+std::experimental::optional<types::user> const sender::send_get_me() {
+  /// Send a getme request - see https://core.telegram.org/bots/api#getme
+  return send_json_and_parse<types::user>("getMe");
 }
 
 void sender::send_message(int_fast64_t chat_id,
