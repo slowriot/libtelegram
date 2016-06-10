@@ -7,6 +7,35 @@ bot to do heavy lifting, servicing thousands of users concurrently through a
 single webserver, or you just want to write your bot using clean, safe modern
 C++11/14/17, this is your framework.
 
+# What does it do? #
+LibTelegram handles the business of communicating with Telegram for you.  It
+consists of two major components - a listener system, and a sender system.  The
+two are completely decoupled, so you can use both together in a single program,
+or just one or the other.
+
+The listener speaks fastcgi and is designed to be launched by your webserver.
+It runs multithreaded.  You set callbacks, and it asynchronously listens for
+events from Telegram and calls them when needed.  The listener takes care of
+talking to your webserver and decoding the fastcgi requests, handling replies
+to Telegram, dealing with errors and decoding the incoming json for you.
+Fastcgi means a single listener can be persistent across many connections, and
+can handle many connections simultaneously, unlike traditional cgi.  Using a
+webserver based system means you can have hundreds of separate bots running on a
+single machine, rather than being limited to one per port as with bots that run
+their own webserver.
+
+The sender provides a set of convenience functions for sending correctly
+formatted messages to Telegram - it handles forming the correct data structures,
+encoding as json, making the web request with SSL, dealing with timeouts,
+handling and reporting errors, and finally returning to you the results of your
+query.
+
+All Telegram types are encapsulated in type-safe objects, and elegant error
+tolerance is provided in a monadic way using std::optional.  As well as using
+the native types, you have the option to access any values decoded from incoming
+json, and to write the outgoing json yourself, either raw or in convenient Boost
+Property Tree format.
+
 # Features #
 * Modern, paradigmatic, clean and professional C++14 / C++17 programming style.
 * Header-only - nothing to compile.
