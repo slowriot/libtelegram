@@ -33,8 +33,8 @@ query.
 All Telegram types are encapsulated in type-safe objects, and elegant error
 tolerance is provided in a monadic way using std::optional.  As well as using
 the native types, you have the option to access any values decoded from incoming
-json, and to write the outgoing json yourself, either raw or in convenient Boost
-Property Tree format.
+json, and to write the outgoing json yourself, either raw or in convenient json
+object format.
 
 # Features #
 * Modern, paradigmatic, clean and professional C++14 / C++17 programming style.
@@ -58,8 +58,9 @@ Property Tree format.
 
 # Dependencies #
 * Boost 1.60 upwards
-* Boost CGI (included)
-* URDL (included)
+* Boost CGI - https://github.com/slowriot/cgi (included)
+* URDL - https://github.com/chriskohlhoff/urdl (included)
+* JSON for Modern C++ - https://nlohmann.github.io/json/ (included)
 
 # How to use #
 The library itself is header-only so there is nothing to build.  Simply
@@ -87,7 +88,7 @@ the more advanced examples save the comments for the more advanced features.
 For that reason, there's a suggested reading order for the examples:
 
 1. Minimal echo: [examples/echo.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo.cpp)
-1. Echo using property trees: [examples/echo_ptree.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo_ptree.cpp)
+1. Echo using raw json access: [examples/echo_ptree.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo_ptree.cpp)
 1. Fetch a file from the web and read it back: [examples/webfetch.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/webfetch.cpp)
 1. Get and process photos sent by the user: [examples/webfetch.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/getphoto.cpp)
 

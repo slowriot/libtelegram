@@ -1,6 +1,7 @@
 #ifndef TELEGRAM_TYPES_FILE_H_INCLUDED
 #define TELEGRAM_TYPES_FILE_H_INCLUDED
 
+#include <experimental/optional>
 #define URDL_HEADER_ONLY 1
 #include "urdl/url.hpp"
 #include "urdl/istream.hpp"
@@ -12,11 +13,11 @@ namespace types {
 struct file {
   /// See https://core.telegram.org/bots/api#file
   std::string file_id;                                                          // Unique identifier for this file
-  int_fast32_t file_size = 0;                                                   // Optional. File size, if known (in bytes)
-  std::string file_path;                                                        // Optional. File path. Use https://api.telegram.org/file/bot<token>/<file_path> to get the file.
+  std::experimental::optional<int_fast32_t> file_size;                          // Optional. File size, if known (in bytes)
+  std::experimental::optional<std::string> file_path;                           // Optional. File path. Use https://api.telegram.org/file/bot<token>/<file_path> to get the file.
 
-  static file const from_ptree(boost::property_tree::ptree const &tree);
-  static file const from_ptree(boost::property_tree::ptree const &tree, std::string const &path);
+  static file const from_json(nlohmann::json const &tree);
+  static file const from_json(nlohmann::json const &tree, std::string const &path);
 
   urdl::url const get_url(std::string const &token) const;
 
@@ -25,23 +26,27 @@ struct file {
   std::vector<char> download(std::string const &token) const;
 };
 
-file const file::from_ptree(boost::property_tree::ptree const &tree) {
+file const file::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
-  /// If any non-optional elements are missing from the tree, throws boost::property_tree::ptree_bad_path
-  return file{tree.get("file_id", ""),
-              tree.get("file_size", 0),
-              tree.get("file_path", "")};
+  /// If any non-optional elements are missing from the tree, throws std::domain_error
+  return file{tree.at("file_id"),
+              make_optional<int_fast32_t>(tree, "file_size"),
+              make_optional<std::string>(tree, "file_path")};
 }
-file const file::from_ptree(boost::property_tree::ptree const &tree, std::string const &path) {
+file const file::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
-  /// If there is no such child, throws boost::property_tree::ptree_bad_path
-  return from_ptree(tree.get_child(path));
+  /// If there is no such child, throws std::domain_error
+  return from_json(tree.at(path));
 }
 
 urdl::url const file::get_url(std::string const &token) const {
   /// Return the URL of this file on Telegram's servers
   /// NOTE: You don't want to share this URL - it contains your bot's token!
-  return urdl::url("https://api.telegram.org/file/bot" + token + "/" + file_path);
+  if(file_path) {
+    return urdl::url("https://api.telegram.org/file/bot" + token + "/" + *file_path);
+  } else {
+    return urdl::url();
+  }
 }
 
 void file::download_to_stream(std::string const &token, urdl::istream &stream) const {
@@ -61,11 +66,14 @@ std::vector<char> file::download(std::string const &token) const {
   urdl::istream stream;
   download_to_stream(token, stream);
   std::vector<char> out;
-  out.reserve(file_size);
+  if(file_size) {
+    out.reserve(*file_size);                                                    // attempt to reserve the right space but only if it's known
+  }
   //stream.read(&out[0], file_size);
   //stream.read(out.data(), file_size);
   out.assign(std::istreambuf_iterator<char>(stream),
              std::istreambuf_iterator<char>());
+  out.shrink_to_fit();
   return out;
 }
 

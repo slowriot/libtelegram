@@ -3,8 +3,9 @@
 	<Workspace title="LibTelegram">
 		<Project filename="libtelegram.cbp" />
 		<Project filename="example_echo.cbp" />
-		<Project filename="example_echo_ptree.cbp" />
+		<Project filename="example_echo_json.cbp" />
 		<Project filename="example_webfetch.cbp" />
 		<Project filename="example_getphoto.cbp" />
+		<Project filename="example_calculator.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

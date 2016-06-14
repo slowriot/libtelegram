@@ -20,7 +20,7 @@ auto main()->int {
   listener.set_callback_message([&](telegram::types::message const &message){
     auto message_chat_id = message.chat.id;
     if(!message.photo) {                                                        // check if this message contains a list of photo sizes
-      if(message.text == "/start") {                                            // if it doesn't, and they've asked to /start, give them help
+      if(message.text && *message.text == "/start") {                           // if it doesn't, and they've asked to /start, give them help
         sender.send_message(message_chat_id, "Send me a photo.");
       }
       return;
@@ -32,9 +32,13 @@ auto main()->int {
       ++counter;
       std::stringstream ss;
       ss << "Photo " << counter << " of " << photo_sizes.size()
-         << ": size: " << photo.width << "x" << photo.height                    // tell the user what we know about the photos
-         << ", " << to_kb(photo.file_size) << '\n'                              // use the kilobyte conversion lambda we made earlier
-         << "file_id: " << photo.file_id;
+         << ": size: " << photo.width << "x" << photo.height;                   // tell the user what we know about the photos
+      if(photo.file_size) {
+        ss << ", " << to_kb(*photo.file_size) << '\n';                          // use the kilobyte conversion lambda we made earlier
+      } else {
+        ss << ", size unknown" << '\n';
+      }
+      ss << "file_id: " << photo.file_id;
       sender.send_message(message_chat_id, ss.str());
 
       sender.send_chat_action(message_chat_id, telegram::sender::chat_action_type::TYPING); // show the user they should wait, we're typing
@@ -45,8 +49,16 @@ auto main()->int {
       }
       auto const &file(*file_optional);
       ss.str({});                                                               // clear and reuse the stringstream
-      ss << "file_path: " << file.file_path << '\n'                             // this is the file path on the Telegram servers
-         << "file_size: " << to_kb(file.file_size) << '\n';
+      if(file.file_path) {
+        ss << "file_path: " << *file.file_path << '\n';                         // this is the file path on the Telegram servers
+      } else {
+        ss << "file_path unknown" << '\n';                                      // file path is optional, so we need to handle the case where it's missing
+      }
+      if(file.file_size) {
+        ss << "file_size: " << to_kb(*file.file_size) << '\n';                  // use the kilobyte conversion lambda we made earlier
+      } else {
+        ss << "file_size unknown" << '\n';                                      // file size is optional, so we need to handle the case where it's missing
+      }
       //ss << "URL: " << file.get_url(token).to_string() << '\n';                 // NOTE: this contains your bot's token, so be careful!  Uncomment it for testing only.
       ss << "Downloading now...";
       sender.send_message(message_chat_id, ss.str());

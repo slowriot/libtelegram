@@ -11,6 +11,7 @@
   #define LIBTELEGRAM_OUTGOING_PROTO "https"
 #endif // LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
 #include <urdl/istream.hpp>
+#include <json.hpp>
 #include "types/user.h"
 
 namespace telegram {
@@ -56,20 +57,22 @@ public:
 
   sender(std::string const &token, std::string const &user_agent = "LibTelegram");
 
-  boost::property_tree::ptree send_json(std::string const &method,
-                                        boost::property_tree::ptree const &tree = {});
+  nlohmann::json send_json(std::string const &method,
+                           nlohmann::json const &tree = {});
   template<typename T>
   std::experimental::optional<T> send_json_and_parse(std::string const &method,
-                                                     boost::property_tree::ptree const &tree = {});
+                                                     nlohmann::json const &tree = {});
 
   std::experimental::optional<types::user> const get_me();
 
+  template<typename Treply_markup = types::reply_markup::force_reply>
   std::experimental::optional<types::message> send_message(int_fast64_t chat_id,
                                                            std::string const &text,
                                                            int_fast32_t reply_to_message_id = reply_to_message_id_none,
                                                            parse_mode parse = parse_mode::DEFAULT,
                                                            web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                                                           notification_mode notification = notification_mode::DEFAULT);
+                                                           notification_mode notification = notification_mode::DEFAULT,
+                                                           types::reply_markup::base<Treply_markup> *reply_markup = nullptr);
   std::experimental::optional<types::message> send_message(std::string channel_name,
                                                            std::string const &text,
                                                            int_fast32_t reply_to_message_id = reply_to_message_id_none,
@@ -100,13 +103,12 @@ sender::sender(std::string const &this_token,
   std::cerr << "LibTelegram: Sender: Exception during construction: " << e.what() << std::endl;
 }
 
-boost::property_tree::ptree sender::send_json(std::string const &method,
-                                              boost::property_tree::ptree const &tree) {
-  /// Function to json-encode and send a property tree to the given method, useful if you want to send custom requests
+nlohmann::json sender::send_json(std::string const &method,
+                                 nlohmann::json const &tree) {
+  /// Function to send a json tree to the given method and get back a response, useful if you want to send custom requests
   std::ostringstream ss;                                                        // a stream buffer for the encoded json
   std::cerr << "LibTelegram: Sender: DEBUG: json request:" << std::endl;
-  boost::property_tree::write_json(std::cerr, tree);
-  boost::property_tree::write_json(ss, tree);                                   // encode our data as json
+  std::cerr << tree.dump(2) << std::endl;
 
   urdl::istream stream;
   stream.set_options(urdl_global_options);                                      // apply the global options to this stream
@@ -117,20 +119,21 @@ boost::property_tree::ptree sender::send_json(std::string const &method,
   urdl::url const url(endpoint + method);
   stream.open(url);
   if(!stream) {
-    std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << stream.error().message() << std::endl;
-    return boost::property_tree::ptree();                                       // return an empty tree
+    std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << stream.error().message() << ", headers: " << stream.headers() << std::endl;
+    return nlohmann::json();                                                    // return an empty tree
   }
 
   std::string reply;
   std::getline(stream, reply);                                                  // this returns false as it finishes without a newline
   if(reply.empty()) {
     std::cerr << "LibTelegram: Sender: Received empty reply to send_json" << std::endl;
-    return boost::property_tree::ptree();                                       // return an empty tree
+    return nlohmann::json();                                                    // return an empty tree
   }
   boost::iostreams::stream<boost::iostreams::array_source> reply_stream(reply.data(), reply.size());
-  boost::property_tree::ptree reply_tree;                                       // property tree to contain the reply
+  nlohmann::json reply_tree;                                                    // property tree to contain the reply
   try {
-    boost::property_tree::read_json(reply_stream, reply_tree);                  // parse the reply json into the property tree
+    //boost::property_tree::read_json(reply_stream, reply_tree);                  // parse the reply json into the property tree
+    reply_stream >> reply_tree;
   } catch(std::exception &e) {
     std::cerr << "LibTelegram: Sender: Received unparseable JSON in reply to send_json: " << e.what() << std::endl;
   }
@@ -139,21 +142,21 @@ boost::property_tree::ptree sender::send_json(std::string const &method,
 
 template<typename T>
 std::experimental::optional<T> sender::send_json_and_parse(std::string const &method,
-                                                           boost::property_tree::ptree const &tree) {
-  /// Wrapper function to send a property tree and get back a complete object of the specified template type
+                                                           nlohmann::json const &tree) {
+  /// Wrapper function to send a property tree and get back a complete object of the specified template typen
   auto reply_tree(send_json(method, tree));
   std::cerr << "LibTelegram: Sender: DEBUG: json reply:" << std::endl;
-  boost::property_tree::write_json(std::cerr, reply_tree);
-  if(reply_tree.get("ok", "") != "true") {
+  std::cerr << tree.dump(2) << std::endl;
+  if(reply_tree["ok"] != true) {
     std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to " << method << " trying to get " << typeid(T).name() << ":" << std::endl;
-    boost::property_tree::write_json(std::cerr, reply_tree);
+    std::cerr << tree.dump(2) << std::endl;
     return std::experimental::nullopt;
   }
   try {
     return types::make_optional<T>(reply_tree, "result");
   } catch(std::exception &e) {
     std::cerr << "LibTelegram: Sender: Exception parsing the following tree to extract a " << typeid(T).name() << ": " << e.what() << std::endl;
-    boost::property_tree::write_json(std::cerr, reply_tree);
+    std::cerr << tree.dump(2) << std::endl;
     return std::experimental::nullopt;
   }
 }
@@ -163,12 +166,14 @@ std::experimental::optional<types::user> const sender::get_me() {
   return send_json_and_parse<types::user>("getMe");
 }
 
+template<typename Treply_markup>
 std::experimental::optional<types::message>  sender::send_message(int_fast64_t chat_id,
                                                                   std::string const &text,
                                                                   int_fast32_t reply_to_message_id,
                                                                   parse_mode parse,
                                                                   web_preview_mode web_preview,
-                                                                  notification_mode notification) {
+                                                                  notification_mode notification,
+                                                                  types::reply_markup::base<Treply_markup> *reply_markup) {
   /// Send a message to a chat id - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
     return std::experimental::nullopt;                                          // don't attempt to send empty messages - this would be an error
@@ -179,52 +184,57 @@ std::experimental::optional<types::message>  sender::send_message(int_fast64_t c
                  reply_to_message_id,
                  parse,
                  web_preview,
-                 notification);
+                 notification,
+                 reply_markup);
     return send_message(chat_id,
                         text.substr(message_length_limit, std::string::npos),   // send the remaining characters - this will subdivide again recursively if need be
                         reply_to_message_id,
                         parse,
                         web_preview,
-                        notification);                                          // note - we disregard return messages from any except the last
+                        notification,
+                        reply_markup);                                          // note - we disregard return messages from any except the last
   }
   std::cerr << "DEBUG: sending message \"" << text << "\" to chat id " << chat_id << std::endl;
-  boost::property_tree::ptree tree;                                             // a property tree to put our data into
-  tree.put("chat_id", chat_id);
-  tree.put("text",    text);
+  nlohmann::json tree;                                                          // a json container object for our data
+  tree["chat_id"] = chat_id;
+  tree["text"] = text;
   if(parse != parse_mode::DEFAULT) {                                            // don't waste bandwidth sending the default option
     switch(parse) {
     case parse_mode::NONE:
       break;
     case parse_mode::MARKDOWN:
-      tree.put("parse_mode", "Markdown");
+      tree["parse_mode"] = "Markdown";
       break;
     case parse_mode::HTML:
-      tree.put("parse_mode", "HTML");
+      tree["parse_mode"] = "HTML";
       break;
     }
   }
   if(web_preview != web_preview_mode::DEFAULT) {                                // don't waste bandwidth sending the default option
     switch(web_preview) {
     case web_preview_mode::DISABLE:
-      tree.put("disable_web_page_preview", true);
+      tree["disable_web_page_preview"] = true;
       break;
     case web_preview_mode::ENABLE:
-      tree.put("disable_web_page_preview", false);
+      tree["disable_web_page_preview"] = false;
       break;
     }
   }
   if(notification != notification_mode::DEFAULT) {                              // don't waste bandwidth sending the default option
     switch(notification) {
     case notification_mode::DISABLE:
-      tree.put("disable_notification", true);
+      tree["disable_notification"] = true;
       break;
     case notification_mode::ENABLE:
-      tree.put("disable_notification", false);
+      tree["disable_notification"] = false;
       break;
     }
   }
   if(reply_to_message_id != reply_to_message_id_none) {
-    tree.put("reply_to_message_id", reply_to_message_id);
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    reply_markup->get(tree);
   }
   return send_json_and_parse<types::message>("sendMessage", tree);
 }
@@ -253,43 +263,43 @@ std::experimental::optional<types::message> sender::send_message(std::string cha
                         notification);                                          // note - we disregard return messages from any except the last
   }
   std::cerr << "DEBUG: sending message \"" << text << "\" to channel name " << channel_name << std::endl;
-  boost::property_tree::ptree tree;                                             // a property tree to put our data into
-  tree.put("chat_id", channel_name);
-  tree.put("text",    text);
+  nlohmann::json tree;                                                          // a json container object for our data
+  tree["chat_id"] = channel_name;
+  tree["text"] = text;
   if(parse != parse_mode::DEFAULT) {                                            // don't waste bandwidth sending the default option
     switch(parse) {
     case parse_mode::NONE:
       break;
     case parse_mode::MARKDOWN:
-      tree.put("parse_mode", "Markdown");
+      tree["parse_mode"] = "Markdown";
       break;
     case parse_mode::HTML:
-      tree.put("parse_mode", "HTML");
+      tree["parse_mode"] = "HTML";
       break;
     }
   }
   if(web_preview != web_preview_mode::DEFAULT) {                                // don't waste bandwidth sending the default option
     switch(web_preview) {
     case web_preview_mode::DISABLE:
-      tree.put("disable_web_page_preview", true);
+      tree["disable_web_page_preview"] = true;
       break;
     case web_preview_mode::ENABLE:
-      tree.put("disable_web_page_preview", false);
+      tree["disable_web_page_preview"] = false;
       break;
     }
   }
   if(notification != notification_mode::DEFAULT) {                              // don't waste bandwidth sending the default option
     switch(notification) {
     case notification_mode::DISABLE:
-      tree.put("disable_notification", true);
+      tree["disable_notification"] = true;
       break;
     case notification_mode::ENABLE:
-      tree.put("disable_notification", false);
+      tree["disable_notification"] = false;
       break;
     }
   }
   if(reply_to_message_id != reply_to_message_id_none) {
-    tree.put("reply_to_message_id", reply_to_message_id);
+    tree["reply_to_message_id"] = reply_to_message_id;
   }
   return send_json_and_parse<types::message>("sendMessage", tree);
 }
@@ -300,69 +310,69 @@ std::experimental::optional<types::message> sender::forward_message(int_fast64_t
                                                                     notification_mode notification) {
   /// Forward a message to a chat id - see https://core.telegram.org/bots/api#forwardmessage
   std::cerr << "DEBUG: forwarding message " << message_id << " from chat " << from_chat_id << " to chat id " << chat_id << std::endl;
-  boost::property_tree::ptree tree;                                             // a property tree to put our data into
-  tree.put("chat_id",      chat_id);
-  tree.put("from_chat_id", from_chat_id);
-  tree.put("message_id",   message_id);
+  nlohmann::json tree;                                             // a property tree to put our data into
+  tree["chat_id"]      = chat_id;
+  tree["from_chat_id"] = from_chat_id;
+  tree["message_id"]   = message_id;
   if(notification != notification_mode::DEFAULT) {                              // don't waste bandwidth sending the default option
     switch(notification) {
     case notification_mode::DISABLE:
-      tree.put("disable_notification", true);
+      tree["disable_notification"] = true;
       break;
     case notification_mode::ENABLE:
-      tree.put("disable_notification", false);
+      tree["disable_notification"] = false;
       break;
     }
   }
-  return send_json_and_parse<types::message>("sendMessage", tree);
+  return send_json_and_parse<types::message>("forwardMessage", tree);
 }
 
 bool sender::send_chat_action(int_fast64_t chat_id,
                               chat_action_type action) {
   /// Send a chat action - see https://core.telegram.org/bots/api#sendchataction
   /// Return is whether it succeeded
-  boost::property_tree::ptree tree;
-  tree.put("chat_id", chat_id);
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
   switch(action) {
   case chat_action_type::TYPING:
-    tree.put("action", "typing");
+    tree["action"] = "typing";
     break;
   case chat_action_type::UPLOAD_PHOTO:
-    tree.put("action", "upload_photo");
+    tree["action"] = "upload_photo";
     break;
   case chat_action_type::RECORD_VIDEO:
-    tree.put("action", "record_video");
+    tree["action"] = "record_video";
     break;
   case chat_action_type::UPLOAD_VIDEO:
-    tree.put("action", "pload_video");
+    tree["action"] = "pload_video";
     break;
   case chat_action_type::RECORD_AUDIO:
-    tree.put("action", "record_audio");
+    tree["action"] = "record_audio";
     break;
   case chat_action_type::UPLOAD_AUDIO:
-    tree.put("action", "upload_audio");
+    tree["action"] = "upload_audio";
     break;
   case chat_action_type::UPLOAD_DOCUMENT:
-    tree.put("action", "upload_document");
+    tree["action"] = "upload_document";
     break;
   case chat_action_type::FIND_LOCATION:
-    tree.put("action", "find_location");
+    tree["action"] = "find_location";
     break;
   }
   auto reply_tree(send_json("sendChatAction", tree));
-  boost::property_tree::write_json(std::cerr, reply_tree);
-  if(reply_tree.get("ok", "") != "true") {
+  std::cerr << tree.dump(2) << std::endl;
+  if(reply_tree["ok"] != true) {
     std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to sendChatAction expecting a bool:" << std::endl;
-    boost::property_tree::write_json(std::cerr, reply_tree);
+    std::cerr << tree.dump(2) << std::endl;
     return false;
   }
-  return reply_tree.get("result", "") == "true";
+  return reply_tree.at("result");
 }
 
 std::experimental::optional<types::file> sender::get_file(std::string const &file_id) {
   /// Get download info about a file (as a file object) - see https://core.telegram.org/bots/api#getfile
-  boost::property_tree::ptree tree;
-  tree.put("file_id", file_id);
+  nlohmann::json tree;
+  tree["file_id"] = file_id;
   return send_json_and_parse<types::file>("getFile", tree);
 }
 

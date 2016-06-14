@@ -4,8 +4,8 @@
 #include <functional>
 #include <iostream>
 #include <thread>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+//#include <boost/property_tree/ptree.hpp>
+//#include <boost/property_tree/json_parser.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/array.hpp>
 #define BOOST_CGI_NO_BOOST_FILESYSTEM
@@ -19,18 +19,18 @@ public:
   static unsigned int constexpr const thread_number_chosen_automatically = 0;
 
 private:
-  std::function<void(std::string const&)>                 callback_raw                 = [](std::string                 const &input __attribute__((__unused__))){};
-  std::function<void(boost::property_tree::ptree const&)> callback_json                = [](boost::property_tree::ptree const &input __attribute__((__unused__))){};
-  std::function<void(types::message              const&)> callback_message             = [](types::message              const &input __attribute__((__unused__))){};
-  std::function<void(boost::property_tree::ptree const&)> callback_message_ptree       = [](boost::property_tree::ptree const &input __attribute__((__unused__))){};
-  std::function<void(types::message              const&)> callback_edited              = [](types::message              const &input __attribute__((__unused__))){};
-  std::function<void(boost::property_tree::ptree const&)> callback_edited_ptree        = [](boost::property_tree::ptree const &input __attribute__((__unused__))){};
-  //std::function<void(types::inline_query         const&)> callback_inline              = [](types::inline_query         const &input __attribute__((__unused__))){};
-  std::function<void(boost::property_tree::ptree const&)> callback_inline_ptree        = [](boost::property_tree::ptree const &input __attribute__((__unused__))){};
-  //std::function<void(types::chosen_inline_result const&)> callback_chosen_inline       = [](types::chosen_inline_result const &input __attribute__((__unused__))){};
-  std::function<void(boost::property_tree::ptree const&)> callback_chosen_inline_ptree = [](boost::property_tree::ptree const &input __attribute__((__unused__))){};
-  //std::function<void(types::callback_query       const&)> callback_callback            = [](types::callback_query       const &input __attribute__((__unused__))){};
-  std::function<void(boost::property_tree::ptree const&)> callback_callback_ptree      = [](boost::property_tree::ptree const &input __attribute__((__unused__))){};
+  std::function<void(std::string                 const&)> callback_raw                = [](std::string                 const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_json               = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  std::function<void(types::message              const&)> callback_message            = [](types::message              const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_message_json       = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  std::function<void(types::message              const&)> callback_edited             = [](types::message              const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_edited_json        = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  //std::function<void(types::inline_query         const&)> callback_inline             = [](types::inline_query         const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_inline_json        = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  //std::function<void(types::chosen_inline_result const&)> callback_chosen_inline      = [](types::chosen_inline_result const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_chosen_inline_json = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  //std::function<void(types::callback_query       const&)> callback_callback           = [](types::callback_query     const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_callback_json      = [](nlohmann::json              const &input __attribute__((__unused__))){};
 
   // TODO:
   // instance start timestamp
@@ -50,39 +50,39 @@ private:
 public:
   listener();
 
-  void set_callback_raw(          std::function<void(std::string                 const &input)> func);
-  void set_callback_json(         std::function<void(boost::property_tree::ptree const &input)> func);
-  void set_callback_message(      std::function<void(types::message              const &input)> func);
-  void set_callback_message(      std::function<void(boost::property_tree::ptree const &input)> func);
-  void set_callback_edited(       std::function<void(types::message              const &input)> func);
-  void set_callback_edited(       std::function<void(boost::property_tree::ptree const &input)> func);
-  //void set_callback_inline(     std::function<void(types::inline_query         const &input)> func);
-  void set_callback_inline(       std::function<void(boost::property_tree::ptree const &input)> func);
-  //void set_callback_chosen_inline(std::function<void(types::chosen_inline_result const &input)> func);
-  void set_callback_chosen_inline(std::function<void(boost::property_tree::ptree const &input)> func);
-  //void set_callback_callback(   std::function<void(types::callback_query       const &input)> func);
-  void set_callback_callback(     std::function<void(boost::property_tree::ptree const &input)> func);
+  void set_callback_raw(               std::function<void(std::string const &input)> func);
+  void set_callback_json(              std::function<void(nlohmann::json const &input)> func);
+  void set_callback_message(           std::function<void(types::message const &input)> func);
+  void set_callback_message_json(      std::function<void(nlohmann::json const &input)> func);
+  void set_callback_edited(            std::function<void(types::message const &input)> func);
+  void set_callback_edited_json(       std::function<void(nlohmann::json const &input)> func);
+  //void set_callback_inline(            std::function<void(types::inline_query const &input)> func);
+  void set_callback_inline_json(       std::function<void(nlohmann::json const &input)> func);
+  //void set_callback_chosen_inline(     std::function<void(types::chosen_inline_result const &input)> func);
+  void set_callback_chosen_inline_json(std::function<void(nlohmann::json const &input)> func);
+  //void set_callback_callback(          std::function<void(types::callback_query const &input)> func);
+  void set_callback_callback_json(     std::function<void(nlohmann::json const &input)> func);
 
   void unset_callback_raw();
-  void unset_callback_raw_ptree();
+  void unset_callback_raw_json();
   void unset_callback_raw_native();
   void unset_callback_json();
-  void unset_callback_json_ptree();
+  void unset_callback_json_json();
   void unset_callback_json_native();
   void unset_callback_message();
-  void unset_callback_message_ptree();
+  void unset_callback_message_json();
   void unset_callback_message_native();
   void unset_callback_edited();
-  void unset_callback_edited_ptree();
+  void unset_callback_edited_json();
   void unset_callback_edited_native();
   void unset_callback_inline();
-  void unset_callback_inline_ptree();
+  void unset_callback_inline_json();
   void unset_callback_inline_native();
   void unset_callback_chosen_inline();
-  void unset_callback_chosen_inline_ptree();
+  void unset_callback_chosen_inline_json();
   void unset_callback_chosen_inline_native();
   void unset_callback_callback();
-  void unset_callback_callback_ptree();
+  void unset_callback_callback_json();
   void unset_callback_callback_native();
   void unset_callbacks();
 
@@ -106,7 +106,7 @@ void listener::set_callback_raw(std::function<void(std::string const &input)> fu
   /// Set a callback to receive the complete raw data, if you want to process the json yourself
   callback_raw = func;
 }
-void listener::set_callback_json(std::function<void(boost::property_tree::ptree const &input)> func) {
+void listener::set_callback_json(std::function<void(nlohmann::json const &input)> func) {
   /// Set a callback to receive the complete processed json in a boost property tree, if you want to pull out custom data manually
   /// Returns the entire update - see https://core.telegram.org/bots/api#update
   callback_json = func;
@@ -116,20 +116,20 @@ void listener::set_callback_message(std::function<void(types::message const &inp
   /// See https://core.telegram.org/bots/api#message
   callback_message = func;
 }
-void listener::set_callback_message(std::function<void(boost::property_tree::ptree const &input)> func) {
+void listener::set_callback_message_json(std::function<void(nlohmann::json const &input)> func) {
   /// Set a callback to receive any messages in property tree format
   /// See https://core.telegram.org/bots/api#message
-  callback_message_ptree = func;
+  callback_message_json = func;
 }
 void listener::set_callback_edited(std::function<void(types::message const &input)> func) {
   /// Set a callback to receive the new versions of edited messages in native format
   /// See https://core.telegram.org/bots/api#message (as with normal messages)
   callback_edited = func;
 }
-void listener::set_callback_edited(std::function<void(boost::property_tree::ptree const &input)> func) {
+void listener::set_callback_edited_json(std::function<void(nlohmann::json const &input)> func) {
   /// Set a callback to receive the new versions of edited messages in property tree format
   /// See https://core.telegram.org/bots/api#message (as with normal messages)
-  callback_edited_ptree = func;
+  callback_edited_json = func;
 }
 /*
 void listener::set_callback_inline(std::function<void(types::inline_query const &input)> func) {
@@ -138,10 +138,10 @@ void listener::set_callback_inline(std::function<void(types::inline_query const 
   callback_inline = func;
 }
 */
-void listener::set_callback_inline(std::function<void(boost::property_tree::ptree const &input)> func) {
+void listener::set_callback_inline_json(std::function<void(nlohmann::json const &input)> func) {
   /// Set a callback to receive inline queries in property tree format
   /// See https://core.telegram.org/bots/api#inlinequery
-  callback_inline_ptree = func;
+  callback_inline_json = func;
 }
 /*
 void listener::set_callback_chosen_inline(std::function<void(types::chosen_inline_result const &input)> func) {
@@ -150,10 +150,10 @@ void listener::set_callback_chosen_inline(std::function<void(types::chosen_inlin
   callback_chosen_inline = func;
 }
 */
-void listener::set_callback_chosen_inline(std::function<void(boost::property_tree::ptree const &input)> func) {
+void listener::set_callback_chosen_inline_json(std::function<void(nlohmann::json const &input)> func) {
   /// Set a callback to receive the result of an inline query that was chosen by a user and sent to their chat partner in property tree format
   /// See https://core.telegram.org/bots/api#choseninlineresult
-  callback_chosen_inline_ptree = func;
+  callback_chosen_inline_json = func;
 }
 /*
 void listener::set_callback_callback(std::function<void(types::callback_query const &input)> func) {
@@ -162,10 +162,10 @@ void listener::set_callback_callback(std::function<void(types::callback_query co
   callback_callback = func;
 }
 */
-void listener::set_callback_callback(std::function<void(boost::property_tree::ptree const &input)> func) {
+void listener::set_callback_callback_json(std::function<void(nlohmann::json const &input)> func) {
   /// Set a callback to receive new incoming callback queries in property tree format
   /// See https://core.telegram.org/bots/api#callbackquery
-  callback_callback_ptree = func;
+  callback_callback_json = func;
 }
 
 void listener::unset_callback_raw() {
@@ -178,12 +178,12 @@ void listener::unset_callback_json() {
 }
 void listener::unset_callback_message() {
   /// Helper to unset this callback
-  callback_message       = nullptr;
-  callback_message_ptree = nullptr;
+  callback_message      = nullptr;
+  callback_message_json = nullptr;
 }
-void listener::unset_callback_message_ptree() {
+void listener::unset_callback_message_json() {
   /// Helper to unset this callback
-  callback_message_ptree = nullptr;
+  callback_message_json = nullptr;
 }
 void listener::unset_callback_message_native() {
   /// Helper to unset this callback
@@ -191,12 +191,12 @@ void listener::unset_callback_message_native() {
 }
 void listener::unset_callback_edited() {
   /// Helper to unset this callback
-  callback_edited       = nullptr;
-  callback_edited_ptree = nullptr;
+  callback_edited      = nullptr;
+  callback_edited_json = nullptr;
 }
-void listener::unset_callback_edited_ptree() {
+void listener::unset_callback_edited_json() {
   /// Helper to unset this callback
-  callback_edited_ptree = nullptr;
+  callback_edited_json = nullptr;
 }
 void listener::unset_callback_edited_native() {
   /// Helper to unset this callback
@@ -204,12 +204,12 @@ void listener::unset_callback_edited_native() {
 }
 void listener::unset_callback_inline() {
   /// Helper to unset this callback
-  //callback_inline       = nullptr;
-  callback_inline_ptree = nullptr;
+  //callback_inline      = nullptr;
+  callback_inline_json = nullptr;
 }
-void listener::unset_callback_inline_ptree() {
+void listener::unset_callback_inline_json() {
   /// Helper to unset this callback
-  callback_inline_ptree = nullptr;
+  callback_inline_json = nullptr;
 }
 void listener::unset_callback_inline_native() {
   /// Helper to unset this callback
@@ -217,12 +217,12 @@ void listener::unset_callback_inline_native() {
 }
 void listener::unset_callback_chosen_inline() {
   /// Helper to unset this callback
-  //callback_chosen_inline       = nullptr;
-  callback_chosen_inline_ptree = nullptr;
+  //callback_chosen_inline      = nullptr;
+  callback_chosen_inline_json = nullptr;
 }
-void listener::unset_callback_chosen_inline_ptree() {
+void listener::unset_callback_chosen_inline_json() {
   /// Helper to unset this callback
-  callback_chosen_inline_ptree = nullptr;
+  callback_chosen_inline_json = nullptr;
 }
 void listener::unset_callback_chosen_inline_native() {
   /// Helper to unset this callback
@@ -230,12 +230,12 @@ void listener::unset_callback_chosen_inline_native() {
 }
 void listener::unset_callback_callback() {
   /// Helper to unset this callback
-  //callback_callback       = nullptr;
-  callback_callback_ptree = nullptr;
+  //callback_callback      = nullptr;
+  callback_callback_json = nullptr;
 }
-void listener::unset_callback_callback_ptree() {
+void listener::unset_callback_callback_json() {
   /// Helper to unset this callback
-  callback_callback_ptree = nullptr;
+  callback_callback_json = nullptr;
 }
 void listener::unset_callback_callback_native() {
   /// Helper to unset this callback
@@ -243,18 +243,18 @@ void listener::unset_callback_callback_native() {
 }
 void listener::unset_callbacks() {
   /// Helper function to unset all callbacks at once
-  callback_raw                 = nullptr;
-  callback_json                = nullptr;
-  callback_message             = nullptr;
-  callback_message_ptree       = nullptr;
-  callback_edited              = nullptr;
-  callback_edited_ptree        = nullptr;
-  //callback_inline              = nullptr;
-  callback_inline_ptree        = nullptr;
-  //callback_chosen_inline       = nullptr;
-  callback_chosen_inline_ptree = nullptr;
-  //callback_callback            = nullptr;
-  callback_callback_ptree      = nullptr;
+  callback_raw                = nullptr;
+  callback_json               = nullptr;
+  callback_message            = nullptr;
+  callback_message_json       = nullptr;
+  callback_edited             = nullptr;
+  callback_edited_json        = nullptr;
+  //callback_inline             = nullptr;
+  callback_inline_json        = nullptr;
+  //callback_chosen_inline      = nullptr;
+  callback_chosen_inline_json = nullptr;
+  //callback_callback           = nullptr;
+  callback_callback_json      = nullptr;
 }
 
 unsigned int listener::get_num_threads() {
@@ -327,10 +327,10 @@ int listener::handle_request(boost::fcgi::request &request) {
   if(callback_raw) {
     callback_raw(request.post_buffer());                                        // if the raw callback is set, send the whole buffer straight there
   }
-  boost::property_tree::ptree tree;                                             // create empty property tree
+  nlohmann::json tree;                                                          // create empty json object
   try {
     boost::iostreams::stream<boost::iostreams::array_source> stream(request.post_buffer().data(), request.post_buffer().size()); // wrap the request buffer in a stream, avoiding a copy unlike stringstream
-    boost::property_tree::read_json(stream, tree);                              // parse the json into the property tree
+    stream >> tree;
   } catch(std::exception &e) {
     response << boost::fcgi::content_type("text/html");                         // set a content type for the normal content output
     std::cerr << "LibTelegram: Received unparseable JSON: " << e.what() << std::endl;
@@ -345,59 +345,59 @@ int listener::handle_request(boost::fcgi::request &request) {
   if(callback_json) {
     callback_json(tree);                                                        // if the json callback is set, send the whole tree
   }
-  if(callback_message_ptree) {                                                  // only check for a message if we've got a callback set
+  if(callback_message_json) {                                                   // only check for a message if we've got a callback set
     try {
-      callback_message_ptree(tree.get_child("message"));
+      callback_message_json(tree.at("message"));
     } catch(std::exception &e) {}                                               // this update doesn't include a message - no problem, carry on
   }
   if(callback_message) {                                                        // only check for a message if we've got a callback set
     try {
-      callback_message(types::message::from_ptree(tree, "message"));
+      callback_message(types::message::from_json(tree, "message"));
     } catch(std::exception &e) {}                                               // this update doesn't include a message - no problem, carry on
   }
-  if(callback_edited_ptree) {                                                   // only check for an edited message if we've got a callback set
+  if(callback_edited_json) {                                                    // only check for an edited message if we've got a callback set
     try {
-      callback_edited_ptree(tree.get_child("edited_message"));
+      callback_edited_json(tree.at("edited_message"));
     } catch(std::exception &e) {}                                               // this update doesn't include an edited message - no problem, carry on
   }
   if(callback_edited) {                                                         // only check for an edited message if we've got a callback set
     try {
-      callback_edited(types::message::from_ptree(tree, "edited_message"));
+      callback_edited(types::message::from_json(tree, "edited_message"));
     } catch(std::exception &e) {}                                               // this update doesn't include an edited message - no problem, carry on
   }
-  if(callback_inline_ptree) {                                                   // only check for an inline query if we've got a callback set
+  if(callback_inline_json) {                                                    // only check for an inline query if we've got a callback set
     try {
-      callback_inline_ptree(tree.get_child("inline_query"));
+      callback_inline_json(tree.at("inline_query"));
     } catch(std::exception &e) {}                                               // this update doesn't include an inline query - no problem, carry on
   }
   /*
   if(callback_inline) {                                                         // only check for an inline query if we've got a callback set
     try {
-      callback_inline(types::inline_query::from_ptree(tree, "inline_query"));
+      callback_inline(types::inline_query::from_json(tree, "inline_query"));
     } catch(std::exception &e) {}                                               // this update doesn't include an inline query - no problem, carry on
   }
   */
-  if(callback_chosen_inline_ptree) {                                            // only check for a chosen inline result if we've got a callback set
+  if(callback_chosen_inline_json) {                                             // only check for a chosen inline result if we've got a callback set
     try {
-      callback_chosen_inline_ptree(tree.get_child("chosen_inline_result"));
+      callback_chosen_inline_json(tree.at("chosen_inline_result"));
     } catch(std::exception &e) {}                                               // this update doesn't include a chosen inline result - no problem, carry on
   }
   /*
   if(callback_chosen_inline) {                                                  // only check for a chosen inline result if we've got a callback set
     try {
-      callback_chosen_inline(types::chosen_inline_result::from_ptree(tree, "chosen_inline_result"));
+      callback_chosen_inline(types::chosen_inline_result::from_json(tree, "chosen_inline_result"));
     } catch(std::exception &e) {}                                               // this update doesn't include a chosen inline result - no problem, carry on
   }
   */
-  if(callback_callback_ptree) {                                                 // only check for a callback query if we've got a callback callback set
+  if(callback_callback_json) {                                                  // only check for a callback query if we've got a callback callback set
     try {
-      callback_callback_ptree(tree.get_child("callback_query"));
+      callback_callback_json(tree.at("callback_query"));
     } catch(std::exception &e) {}                                               // this update doesn't include a callback query - no problem, carry on
   }
   /*
   if(callback_callback) {                                                       // only check for a callback query if we've got a callback callback set
     try {
-      callback_callback(types::callback_query::from_ptree(tree, "callback_query"));
+      callback_callback(types::callback_query::from_json(tree, "callback_query"));
     } catch(std::exception &e) {}                                               // this update doesn't include a callback query - no problem, carry on
   }
   */
