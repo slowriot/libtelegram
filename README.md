@@ -88,7 +88,7 @@ the more advanced examples save the comments for the more advanced features.
 For that reason, there's a suggested reading order for the examples:
 
 1. Minimal echo: [examples/echo.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo.cpp)
-1. Echo using raw json access: [examples/echo_ptree.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo_ptree.cpp)
+1. Echo using raw json access: [examples/echo_ptree.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo_json.cpp)
 1. Fetch a file from the web and read it back: [examples/webfetch.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/webfetch.cpp)
 1. Get and process photos sent by the user: [examples/webfetch.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/getphoto.cpp)
 
