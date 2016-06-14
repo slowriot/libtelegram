@@ -70,8 +70,20 @@ std::experimental::optional<int64_t> make_optional(nlohmann::json const &tree, s
 template<typename T>
 std::experimental::optional<std::vector<T>> make_optional_vector(nlohmann::json const &tree, std::string const &path) {
   /// Attempt to read an array of objects of the specified type from the json at the given path, and return them as a vector
-  // TODO: array version
-  return std::experimental::nullopt;
+  try {
+    auto const &entries(tree.at(path));                                         // try to get the path first
+    if(entries.empty() || !entries.is_array()) {
+      return std::experimental::nullopt;                                        // fail if it's an empty array, or not an array at all
+    }
+    std::vector<T> out;
+    out.reserve(entries.size());
+    for(auto const &it : entries) {                                             // iterate through the child nodes
+      out.emplace_back(T::from_json(it));                                       // and populate the vector with the right constructed types
+    }
+    return out;
+  } catch(std::exception &e) {
+    return std::experimental::nullopt;                                          // if we fail, return an empty optional
+  }
 }
 
 }
