@@ -145,7 +145,7 @@ std::experimental::optional<T> sender::send_json_and_parse(std::string const &me
                                                            nlohmann::json const &tree) {
   /// Wrapper function to send a property tree and get back a complete object of the specified template typen
   auto reply_tree(send_json(method, tree));
-  std::cerr << "LibTelegram: Sender: DEBUG: json reply:" << std::endl;
+  std::cerr << "LibTelegram: Sender: DEBUG: json to send:" << std::endl;
   std::cerr << tree.dump(2) << std::endl;
   if(reply_tree["ok"] != true) {
     std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to " << method << " trying to get " << typeid(T).name() << ":" << std::endl;
@@ -156,7 +156,7 @@ std::experimental::optional<T> sender::send_json_and_parse(std::string const &me
     return types::make_optional<T>(reply_tree, "result");
   } catch(std::exception &e) {
     std::cerr << "LibTelegram: Sender: Exception parsing the following tree to extract a " << typeid(T).name() << ": " << e.what() << std::endl;
-    std::cerr << tree.dump(2) << std::endl;
+    std::cerr << reply_tree.dump(2) << std::endl;
     return std::experimental::nullopt;
   }
 }
