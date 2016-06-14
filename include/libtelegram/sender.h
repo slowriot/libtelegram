@@ -106,14 +106,13 @@ sender::sender(std::string const &this_token,
 nlohmann::json sender::send_json(std::string const &method,
                                  nlohmann::json const &tree) {
   /// Function to send a json tree to the given method and get back a response, useful if you want to send custom requests
-  std::ostringstream ss;                                                        // a stream buffer for the encoded json
   std::cerr << "LibTelegram: Sender: DEBUG: json request:" << std::endl;
   std::cerr << tree.dump(2) << std::endl;
 
   urdl::istream stream;
   stream.set_options(urdl_global_options);                                      // apply the global options to this stream
   stream.set_option(urdl::http::request_content_type("application/json"));
-  stream.set_option(urdl::http::request_content(ss.str()));                     // write the stringstream as the request body
+  stream.set_option(urdl::http::request_content(tree.dump()));                  // write the json dump as the request body
   stream.open_timeout(60000);
   stream.read_timeout(30000);
   urdl::url const url(endpoint + method);
