@@ -8,15 +8,15 @@ namespace types {
 namespace reply_markup {
 
 struct reply_keyboard_markup final : base<reply_keyboard_markup> {
+  /// See https://core.telegram.org/bots/api/#replykeyboardmarkup
   // TODO
-  boost::property_tree::ptree const get_ptree() const;
+
+  void get(boost::property_tree::ptree &target_tree) const;
 };
 
-boost::property_tree::ptree const reply_keyboard_markup::get_ptree() const {
-  /// Return this reply markup as a property tree
-  boost::property_tree::ptree tree;
+void reply_keyboard_markup::get(boost::property_tree::ptree &tree) const {
+  /// Get this reply markup into a property tree
   // TODO
-  return tree;
 }
 
 }

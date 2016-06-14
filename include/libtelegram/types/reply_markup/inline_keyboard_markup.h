@@ -8,8 +8,16 @@ namespace types {
 namespace reply_markup {
 
 struct inline_keyboard_markup final : base<inline_keyboard_markup> {
+  /// See https://core.telegram.org/bots/api/#inlinekeyboardmarkup
   // TODO
+
+  void get(boost::property_tree::ptree &target_tree) const;
 };
+
+void inline_keyboard_markup::get(boost::property_tree::ptree &tree) const {
+  /// Get this reply markup into a property tree
+  // TODO
+}
 
 }
 }

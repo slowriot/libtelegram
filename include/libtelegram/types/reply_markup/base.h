@@ -8,13 +8,13 @@ namespace reply_markup {
 template<typename T>
 struct base {
   /// CRTP style static polymorphic base class for reply markups
-  boost::property_tree::ptree const get_ptree() const;
+  void get(boost::property_tree::ptree &target_tree) const;
 };
 
 template<typename T>
-boost::property_tree::ptree const base<T>::get_ptree() const {
-  /// CRTP polymorphic forwarding function to return this reply markup as a property tree
-  return static_cast<T>(this)->get_json();
+void base<T>::get(boost::property_tree::ptree &tree) const {
+  /// CRTP polymorphic forwarding function to get this reply markup into a property tree
+  static_cast<T const *>(this)->get(tree);
 }
 
 }
