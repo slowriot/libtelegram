@@ -131,7 +131,6 @@ nlohmann::json sender::send_json(std::string const &method,
   boost::iostreams::stream<boost::iostreams::array_source> reply_stream(reply.data(), reply.size());
   nlohmann::json reply_tree;                                                    // property tree to contain the reply
   try {
-    //boost::property_tree::read_json(reply_stream, reply_tree);                  // parse the reply json into the property tree
     reply_stream >> reply_tree;
   } catch(std::exception &e) {
     std::cerr << "LibTelegram: Sender: Received unparseable JSON in reply to send_json: " << e.what() << std::endl;
@@ -142,7 +141,7 @@ nlohmann::json sender::send_json(std::string const &method,
 template<typename T>
 std::experimental::optional<T> sender::send_json_and_parse(std::string const &method,
                                                            nlohmann::json const &tree) {
-  /// Wrapper function to send a property tree and get back a complete object of the specified template typen
+  /// Wrapper function to send a json object and get back a complete object of the specified template typen
   auto reply_tree(send_json(method, tree));
   std::cerr << "LibTelegram: Sender: DEBUG: json to send:" << std::endl;
   std::cerr << tree.dump(2) << std::endl;
@@ -309,7 +308,7 @@ std::experimental::optional<types::message> sender::forward_message(int_fast64_t
                                                                     notification_mode notification) {
   /// Forward a message to a chat id - see https://core.telegram.org/bots/api#forwardmessage
   std::cerr << "DEBUG: forwarding message " << message_id << " from chat " << from_chat_id << " to chat id " << chat_id << std::endl;
-  nlohmann::json tree;                                             // a property tree to put our data into
+  nlohmann::json tree;                                                          // json object to put our data into
   tree["chat_id"]      = chat_id;
   tree["from_chat_id"] = from_chat_id;
   tree["message_id"]   = message_id;

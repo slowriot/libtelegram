@@ -43,7 +43,7 @@ template<>
 std::experimental::optional<int32_t> make_optional(nlohmann::json const &tree, std::string const &path) {
   /// Attempt to read an object of the specified type from the tree at the given path, and return it
   try {
-    return tree.at(path).get<int32_t>();                                       // try to get the path and the target as the right type
+    return tree.at(path).get<int32_t>();                                        // try to get the path and the target as the right type
   } catch(std::exception &e) {
     return std::experimental::nullopt;                                          // we fail, so return an empty optional
   }
@@ -61,7 +61,7 @@ template<>
 std::experimental::optional<int64_t> make_optional(nlohmann::json const &tree, std::string const &path) {
   /// Attempt to read an object of the specified type from the tree at the given path, and return it
   try {
-    return tree.at(path).get<int64_t>();                                       // try to get the path and the target as the right type
+    return tree.at(path).get<int64_t>();                                        // try to get the path and the target as the right type
   } catch(std::exception &e) {
     return std::experimental::nullopt;                                          // we fail, so return an empty optional
   }
