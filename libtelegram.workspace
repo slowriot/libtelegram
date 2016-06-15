@@ -7,5 +7,6 @@
 		<Project filename="example_webfetch.cbp" />
 		<Project filename="example_getphoto.cbp" />
 		<Project filename="example_calculator.cbp" />
+		<Project filename="example_upload.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
