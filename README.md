@@ -91,6 +91,7 @@ For that reason, there's a suggested reading order for the examples:
 1. Echo using raw json access: [examples/echo_ptree.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/echo_json.cpp)
 1. Fetch a file from the web and read it back: [examples/webfetch.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/webfetch.cpp)
 1. Get and process photos sent by the user: [examples/webfetch.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/getphoto.cpp)
+1. Stateful calculator, using a custom keyboard: [examples/webfetch.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/calculator.cpp)
 
 ### How to build the examples ###
 Each example can be built with the included `Makefile`, by using
