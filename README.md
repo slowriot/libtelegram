@@ -62,6 +62,31 @@ object format.
 * URDL - https://github.com/chriskohlhoff/urdl (included)
 * JSON for Modern C++ - https://nlohmann.github.io/json/ (included)
 
+# Project status #
+The project is currently in an early stage (less than a week old at the time of
+writing), so some native convenience functions are missing or incomplete -
+however, almost all functionality is available by reading or specifying the json
+you require manually through the functions that expose the json types to you.
+
+## Not yet supported ##
+
+* Native objects and functions for sending and dealing with inline queries (you
+can handle them manually by accessing and generating the json you need, for now)
+* Audio
+* Stickers
+* Documents
+* Video
+* Voice
+* Uploading files
+* Native types for contacts, user profile photos & locations (but can be
+accessed manually through the json)
+* Native functions to send files of any kind
+* Native functions to edit messages, kick, ban or unban chat members or leave a
+chat (but these actions can be performed manually by sending the json yourself).
+
+## Supported ##
+All Telegram API types and methods not mentioned above.
+
 # How to use #
 The library itself is header-only so there is nothing to build.  Simply
 `#include "libtelegram/libtelegram.h"` and off you go.
