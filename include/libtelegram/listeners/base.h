@@ -185,8 +185,8 @@ void base<T>::unset_callback_json() {
 template<typename T>
 void base<T>::unset_callback_message() {
   /// Helper to unset this callback
-  callback_message      = nullptr;
-  callback_message_json = nullptr;
+  unset_callback_message_json();
+  unset_callback_message_native();
 }
 template<typename T>
 void base<T>::unset_callback_message_json() {
@@ -201,8 +201,8 @@ void base<T>::unset_callback_message_native() {
 template<typename T>
 void base<T>::unset_callback_edited() {
   /// Helper to unset this callback
-  callback_edited      = nullptr;
-  callback_edited_json = nullptr;
+  unset_callback_edited_json();
+  unset_callback_edited_native();
 }
 template<typename T>
 void base<T>::unset_callback_edited_json() {
@@ -217,8 +217,8 @@ void base<T>::unset_callback_edited_native() {
 template<typename T>
 void base<T>::unset_callback_inline() {
   /// Helper to unset this callback
-  //callback_inline      = nullptr;
-  callback_inline_json = nullptr;
+  unset_callback_inline_json();
+  unset_callback_inline_native();
 }
 template<typename T>
 void base<T>::unset_callback_inline_json() {
@@ -233,8 +233,8 @@ void base<T>::unset_callback_inline_native() {
 template<typename T>
 void base<T>::unset_callback_chosen_inline() {
   /// Helper to unset this callback
-  //callback_chosen_inline      = nullptr;
-  callback_chosen_inline_json = nullptr;
+  unset_callback_chosen_inline_json();
+  unset_callback_chosen_inline_native();
 }
 template<typename T>
 void base<T>::unset_callback_chosen_inline_json() {
@@ -249,8 +249,8 @@ void base<T>::unset_callback_chosen_inline_native() {
 template<typename T>
 void base<T>::unset_callback_callback() {
   /// Helper to unset this callback
-  //callback_callback      = nullptr;
-  callback_callback_json = nullptr;
+  unset_callback_callback_json();
+  unset_callback_callback_native();
 }
 template<typename T>
 void base<T>::unset_callback_callback_json() {
@@ -265,18 +265,13 @@ void base<T>::unset_callback_callback_native() {
 template<typename T>
 void base<T>::unset_callbacks() {
   /// Helper function to unset all callbacks at once
-  callback_raw                = nullptr;
-  callback_json               = nullptr;
-  callback_message            = nullptr;
-  callback_message_json       = nullptr;
-  callback_edited             = nullptr;
-  callback_edited_json        = nullptr;
-  //callback_inline             = nullptr;
-  callback_inline_json        = nullptr;
-  //callback_chosen_inline      = nullptr;
-  callback_chosen_inline_json = nullptr;
-  //callback_callback           = nullptr;
-  callback_callback_json      = nullptr;
+  unset_callback_raw();
+  unset_callback_json();
+  unset_callback_message();
+  unset_callback_edited();
+  unset_callback_inline();
+  unset_callback_chosen_inline();
+  unset_callback_callback();
 }
 
 template<typename T>
