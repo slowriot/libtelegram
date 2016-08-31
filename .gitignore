@@ -1,3 +1,4 @@
 *.layout
+*.depend
 obj/
 bin/
