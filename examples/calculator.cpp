@@ -4,7 +4,7 @@
 #include "libtelegram/libtelegram.h"
 
 auto main()->int {
-  std::string const token("189360622:AAETXj0Yfvi0X17nmbRm_vqfsZmrlMy7OjA");
+  std::string const token("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11");
   telegram::listener listener;
   telegram::sender sender(token);
   listener.set_callback_message_json([&](nlohmann::json const &input){
