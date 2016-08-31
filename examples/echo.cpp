@@ -4,7 +4,7 @@
 
 auto main()->int {
   std::string const token("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11");         // in practice you would probably read this from config file or database
-  telegram::listener listener;                                                  // create a listener which will process incoming requests
+  telegram::listener::fcgi listener;                                            // create an fcgi listener which will process incoming requests
   telegram::sender sender(token);                                               // create a sender with our token for outgoing messages
   listener.set_callback_message([&](telegram::types::message const &message){   // we set a callback for receiving messages in native format, using a lambda for convenience
     std::string const message_from(message.from ? message.from->first_name : "Unknown sender"); // some fields, such as message.from, are optional
