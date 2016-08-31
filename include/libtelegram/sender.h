@@ -54,6 +54,7 @@ public:
   static int_fast32_t constexpr const message_length_limit = 4096;              // see https://core.telegram.org/method/messages.sendMessage
 
   // TODO: add message sending stream class
+  // TODO: add statistics on bytes sent and received
 
   sender(std::string const &token, std::string const &user_agent = "LibTelegram");
 
