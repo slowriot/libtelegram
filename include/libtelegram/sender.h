@@ -147,7 +147,7 @@ std::experimental::optional<T> sender::send_json_and_parse(std::string const &me
   std::cerr << tree.dump(2) << std::endl;
   if(reply_tree["ok"] != true) {
     std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to " << method << " trying to get " << typeid(T).name() << ":" << std::endl;
-    std::cerr << tree.dump(2) << std::endl;
+    std::cerr << reply_tree.dump(2) << std::endl;
     return std::experimental::nullopt;
   }
   try {
@@ -361,7 +361,7 @@ bool sender::send_chat_action(int_fast64_t chat_id,
   std::cerr << tree.dump(2) << std::endl;
   if(reply_tree["ok"] != true) {
     std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to sendChatAction expecting a bool:" << std::endl;
-    std::cerr << tree.dump(2) << std::endl;
+    std::cerr << reply_tree.dump(2) << std::endl;
     return false;
   }
   return reply_tree.at("result");
