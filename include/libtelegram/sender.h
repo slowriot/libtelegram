@@ -125,7 +125,7 @@ nlohmann::json sender::send_json(std::string const &method,
 
   std::string reply;
   for(std::string reply_line; std::getline(stream, reply_line);) {
-    reply_line += reply;                                                        // concatenate all lines of input
+    reply += reply_line;                                                        // concatenate all lines of input
   }
   if(reply.empty()) {
     std::cerr << "LibTelegram: Sender: Received empty reply to send_json" << std::endl;
