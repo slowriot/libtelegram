@@ -121,8 +121,13 @@ For that reason, there's a suggested reading order for the examples:
 ### How to build the examples ###
 Each example can be built with the included `Makefile`, by using
 `make TARGET=example_echo -j4` where `echo` is the example and `4` is the number
-of threads to use to build.  Alternatively, just use them as the starting point
-of your own project with your own build system.
+of threads to use to build.
+
+Also included are project files for the Code::Blocks IDE - just open the
+libtelegram.workspace file in Code::Blocks and you can build all of the examples.
+
+Alternatively, just use the examples as the starting point of your own project,
+building it with your own build system.
 
 ### Setting up FastCGI ###
 There are a number of fastcgi systems, and it will depend largely on your
