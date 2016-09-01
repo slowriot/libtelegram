@@ -5,8 +5,8 @@
 
 auto main()->int {
   std::string const token("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11");
-  telegram::listener::fcgi listener;
   telegram::sender sender(token);
+  telegram::listener::poll listener(sender);
   listener.set_callback_message_json([&](nlohmann::json const &input){
     auto const &message(telegram::types::message::from_json(input));
 

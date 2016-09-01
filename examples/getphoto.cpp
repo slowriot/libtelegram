@@ -8,8 +8,8 @@
 
 auto main()->int {
   std::string const token("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11");
-  telegram::listener::fcgi listener;
   telegram::sender sender(token);
+  telegram::listener::poll listener(sender);
 
   auto to_kb = [](auto value){                                                  // helper lambda to convert values in bytes to kylobytes
     std::stringstream ss;
