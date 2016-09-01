@@ -85,6 +85,9 @@ public:
   void set_num_threads(unsigned int new_num_threads = thread_number_chosen_automatically);
 
   void run();
+
+protected:
+  void execute_callbacks(nlohmann::json const &tree);
 };
 
 template<typename T>
@@ -296,6 +299,70 @@ template<typename T>
 void base<T>::run() {
   /// Execute the telegram listener service - CRTP polymorphic call
   static_cast<T*>(this)->run();
+}
+
+template<typename T>
+void base<T>::execute_callbacks(nlohmann::json const &tree) {
+  /// Process the data received from the server through the callbacks
+  if(callback_json) {
+    callback_json(tree);                                                        // if the json callback is set, send the whole tree
+  }
+  if(callback_message_json) {                                                   // only check for a message if we've got a callback set
+    try {
+      callback_message_json(tree.at("message"));
+    } catch(std::exception &e) {}                                               // this update doesn't include a message - no problem, carry on
+  }
+  if(callback_message) {                                                        // only check for a message if we've got a callback set
+    try {
+      callback_message(types::message::from_json(tree, "message"));
+    } catch(std::exception &e) {}                                               // this update doesn't include a message - no problem, carry on
+  }
+  if(callback_edited_json) {                                                    // only check for an edited message if we've got a callback set
+    try {
+      callback_edited_json(tree.at("edited_message"));
+    } catch(std::exception &e) {}                                               // this update doesn't include an edited message - no problem, carry on
+  }
+  if(callback_edited) {                                                         // only check for an edited message if we've got a callback set
+    try {
+      callback_edited(types::message::from_json(tree, "edited_message"));
+    } catch(std::exception &e) {}                                               // this update doesn't include an edited message - no problem, carry on
+  }
+  if(callback_inline_json) {                                                    // only check for an inline query if we've got a callback set
+    try {
+      callback_inline_json(tree.at("inline_query"));
+    } catch(std::exception &e) {}                                               // this update doesn't include an inline query - no problem, carry on
+  }
+  /*
+  if(callback_inline) {                                                         // only check for an inline query if we've got a callback set
+    try {
+      callback_inline(types::inline_query::from_json(tree, "inline_query"));
+    } catch(std::exception &e) {}                                               // this update doesn't include an inline query - no problem, carry on
+  }
+  */
+  if(callback_chosen_inline_json) {                                             // only check for a chosen inline result if we've got a callback set
+    try {
+      callback_chosen_inline_json(tree.at("chosen_inline_result"));
+    } catch(std::exception &e) {}                                               // this update doesn't include a chosen inline result - no problem, carry on
+  }
+  /*
+  if(callback_chosen_inline) {                                                  // only check for a chosen inline result if we've got a callback set
+    try {
+      callback_chosen_inline(types::chosen_inline_result::from_json(tree, "chosen_inline_result"));
+    } catch(std::exception &e) {}                                               // this update doesn't include a chosen inline result - no problem, carry on
+  }
+  */
+  if(callback_callback_json) {                                                  // only check for a callback query if we've got a callback callback set
+    try {
+      callback_callback_json(tree.at("callback_query"));
+    } catch(std::exception &e) {}                                               // this update doesn't include a callback query - no problem, carry on
+  }
+  /*
+  if(callback_callback) {                                                       // only check for a callback query if we've got a callback callback set
+    try {
+      callback_callback(types::callback_query::from_json(tree, "callback_query"));
+    } catch(std::exception &e) {}                                               // this update doesn't include a callback query - no problem, carry on
+  }
+  */
 }
 
 }
