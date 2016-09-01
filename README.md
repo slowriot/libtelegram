@@ -19,7 +19,7 @@ interested in being notified about, and they fire when needed.  All listeners
 automatically handle acknowledgement replies to Telegram, dealing with errors
 and decoding the incoming json for you.
 
-#### Polling Listener ####
+### Polling Listener ###
 This listener connects to the Telegram API and requests updates.  It uses long
 polling, leaving a single connection open for as long as possible, so it
 receives events immediately without delay, and without hammering the Telegram
@@ -29,7 +29,7 @@ Telegram.  This is a good fit for a standalone bot where persistent operation
 is required, and a moderately high level of traffic is expected (one or more
 interactions per minute at all times of day).
 
-#### FastCGI Listener ####
+### FastCGI Listener ###
 This listener speaks fastcgi and is designed to be launched by your webserver.
 It runs multithreaded.  You set callbacks, and it asynchronously listens for
 events from Telegram and calls them when needed.  The listener takes care of
@@ -45,7 +45,7 @@ connections.  This is also a good fit for some very traffic-heavy bots that
 process large amounts of data, such as photographs and file uploads, as it can
 service many connections from Telegram simultaneously without blocking.
 
-#### Sender ####
+### Sender ###
 The sender provides a set of convenience functions for sending correctly
 formatted messages to Telegram - it handles forming the correct data structures,
 encoding as json, making the web request with SSL, dealing with timeouts,
@@ -203,14 +203,14 @@ features such as SSL support are often missing.
 You decide in which style you would prefer to write your next bot!
 
 # Advanced usage #
-#### Switching between polling and CGI ####
+### Switching between polling and CGI ###
 In order to use CGI, you must set a webhook; a helper script, `set_webhook.sh`
 is provided for your convenience.  It takes two arguments - the API key, and the
 full https URL of your endpoint.  However, if switching back to polling, don't
 forget to unset the webhook or you won't receive polling updates!  To unset the
 webhook, just call the script with no second argument.
 
-#### One-way bots and partial usage ####
+### One-way bots and partial usage ###
 There's no requirement to use both the sender and receiver components.  If you'd
 like to make a bot that only sends, then you don't need to use the listener in
 your program, and it can run standalone rather than through your webserver.
@@ -221,7 +221,7 @@ Likewise, if you want to have a bot that only receives but never sends - perhaps
 for a logging or statistics system - you can make do with the listener, and no
 senders.  In that case, you can just `#include "libtelegram/listener.h"`.
 
-#### Managing multiple bots ####
+### Managing multiple bots ###
 To send from multiple bots simultaneously, simply create multiple senders, each
 initiated with the API key of the bot you wish to send as - it's that simple.
 
@@ -229,7 +229,7 @@ To receive from multiple bots, just use a single listener and symlink your bot
 to multiple webhook locations on your web server, then distinguish between the
 bots by examining the URI each callback is called for.
 
-#### Maintaining state without a database or writing to disk ####
+### Maintaining state without a database or writing to disk with FastCGI ###
 If your bot has short-term state you'd like to maintain between requests, you
 can rely on your fastcgi implementation to keep a single instance alive between
 requests in order to do so.
@@ -246,7 +246,12 @@ two different instances on subsequent requests; the second instance would of
 course have no memory of servicing that user before, even if the instance was
 already alive at the time.
 
-#### Turning off SSL ####
+If you're running the polling listener, your program will run as long as there
+are no fatal errors with the listener, and you can get away with saving state 
+after `listener.run()` has completed.  However, it would be wise to also save
+your state periodically in case your bot crashes or is killed by something.
+
+### Turning off SSL ###
 Please don't do this, for the sake of your users.  The costs of ssl are minimal,
 and passing your users' communications in the open is simply barbaric.  But this
 is your bot, so if you really feel you must turn off SSL, then define `LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING`
