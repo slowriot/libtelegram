@@ -26,6 +26,7 @@
 		<Unit filename="include/libtelegram/listeners" />
 		<Unit filename="include/libtelegram/listeners/base.h" />
 		<Unit filename="include/libtelegram/listeners/fcgi.h" />
+		<Unit filename="include/libtelegram/listeners/poll.h" />
 		<Unit filename="include/libtelegram/sender.h" />
 		<Unit filename="include/libtelegram/types/chat.h" />
 		<Unit filename="include/libtelegram/types/file.h" />
