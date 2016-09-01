@@ -5,6 +5,8 @@
 #include "base.h"
 #include "libtelegram/sender.h"
 
+bool keep_running = true;                                                       // used by the signal handler to terminate the poll loop
+
 namespace telegram {
 
 class sender;
@@ -34,24 +36,41 @@ poll::poll(telegram::sender &this_sender,
 void poll::run() {
   /// Execute the telegram long-polling loop listener service
   try {
-    // this always runs sequentially, single-threaded
-    int offset = 0;
-    for(;;) {
+    boost::asio::io_service service;                                            // use asio's io_service to provide a thread pool work queue
+    boost::asio::io_service::work work(service);                                // prevent the threads from running out of work
+    std::vector<std::thread> threads;
+    threads.reserve(num_threads);
+    for(unsigned int i = 0; i != num_threads; ++i) {                            // initialise the thread pool
+      threads.emplace_back([&]{
+        service.run();
+      });
+    }
+    std::cout << "LibTelegram: Poll listener: Started " << threads.size() << " worker threads." << std::endl;
+
+    int offset = 0;                                                             // keep track of the last received update offset
+    while(keep_running) {                                                       // the poller always runs sequentially, single-threaded
       nlohmann::json tree;
       tree["offset"] = offset;
       //tree["limit"] = 100;
       tree["timeout"] = poll_timeout;
       auto reply_tree(sender.send_json("getUpdates", tree, poll_timeout));
-
-      for(auto const &it : reply_tree["result"]) {
+      for(auto const &it : reply_tree["result"]) {                              // process each reply entry individually
         std::cerr << it.dump(2) << std::endl;
         int const update_id = it["update_id"];
         if(update_id != 0) {
           offset = std::max(update_id + 1, offset);
         }
-        execute_callbacks(it);                                                  // process the callbacks for each reply
+        service.post([this, subtree = it]{                                      // pass a copy of the subtree
+          execute_callbacks(subtree);
+        });
       }
     }
+    service.stop();
+    std::cout << "LibTelegram: Poll listener: Harvesting " << threads.size() << " worker threads...";
+    for(auto &it : threads) {                                                   // close down the thread pool
+      it.join();
+    }
+    std::cout << " Finished." << std::endl;
   } catch(boost::system::system_error const &se) {                              // this is the type of error thrown by the fcgi library.
     std::cerr << "LibTelegram: System error: " << se.what() << std::endl;
   } catch(std::exception const &e) {                                            // catch any other exceptions
