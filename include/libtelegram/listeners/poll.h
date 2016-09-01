@@ -1,11 +1,13 @@
 #ifndef TELEGRAM_LISTENERS_POLL_H_INCLUDED
 #define TELEGRAM_LISTENERS_POLL_H_INCLUDED
 
+#include <signal.h>
 #include <urdl/istream.hpp>
 #include "base.h"
 #include "libtelegram/sender.h"
 
 bool keep_running = true;                                                       // used by the signal handler to terminate the poll loop
+void signal_handler(int s);
 
 namespace telegram {
 
@@ -36,6 +38,14 @@ poll::poll(telegram::sender &this_sender,
 void poll::run() {
   /// Execute the telegram long-polling loop listener service
   try {
+    {
+      // set a signal handler to catch ctrl-c in the console and close gracefully
+      struct sigaction signal;
+      signal.sa_handler = signal_handler;
+      sigemptyset(&signal.sa_mask);
+      signal.sa_flags = 0;
+      sigaction(SIGINT, &signal, NULL);
+    }
     boost::asio::io_service service;                                            // use asio's io_service to provide a thread pool work queue
     boost::asio::io_service::work work(service);                                // prevent the threads from running out of work
     std::vector<std::thread> threads;
@@ -81,6 +91,21 @@ void poll::run() {
 }
 
 }
+}
+
+void signal_handler(int s) {
+  /// Signal handler for ctrl-c events
+  std::cout << std::endl;
+  std::cout << "LibTelegram: Poll listener: Caught signal " << s << ", terminating after this poll..." << std::endl;
+  keep_running = false;
+  {
+    // unset the signal handler, so a second ctrl-c will exit immediately
+    struct sigaction signal;
+    signal.sa_handler = SIG_DFL;
+    sigemptyset(&signal.sa_mask);
+    signal.sa_flags = 0;
+    sigaction(SIGINT, &signal, NULL);
+  }
 }
 
 #endif // TELEGRAM_LISTENERS_POLL_H_INCLUDED
