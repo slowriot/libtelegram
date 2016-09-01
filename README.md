@@ -247,15 +247,37 @@ course have no memory of servicing that user before, even if the instance was
 already alive at the time.
 
 If you're running the polling listener, your program will run as long as there
-are no fatal errors with the listener, and you can get away with saving state 
+are no fatal errors with the listener, and you can get away with saving state
 after `listener.run()` has completed.  However, it would be wise to also save
 your state periodically in case your bot crashes or is killed by something.
 
 ### Turning off SSL ###
 Please don't do this, for the sake of your users.  The costs of ssl are minimal,
 and passing your users' communications in the open is simply barbaric.  But this
-is your bot, so if you really feel you must turn off SSL, then define `LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING`
+is your bot, so if you really feel you must turn off SSL, then define
+`LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING`
 before you include LibTelegram's headers.  But don't say we didn't warn you.
+
+### Signal handlers ###
+The polling listener (and possibly other future components) sets a signal
+handler to catch ctrl-c and shut down neatly, after the next poll.  This is
+currently the only elegant way of shutting down listener::run() for the polling
+listener; it is assumed that in a CGI or FCGI program, the webserver will
+terminate its children immediately whenever it wants, so there is no attempt to
+handle signals in other listeners.  The listener only sets the signal handler
+at the beginning of run() and unsets it at the end.
+
+You can also manually set or release this signal handler at any time using the
+`telegram::listener::poll::set_signal_handler()` and `unset_signal_handler()`
+functions, and check its current state with `is_signal_handler_set()`.
+
+However, if you want to set your own signal handlers, and don't want this to
+interrupt your global state, then define `LIBTELEGRAM_NO_SIGNAL_HANDLER` in your
+program.  In this case, be aware that run() will continue indefinitely until you
+tell it to stop (from another thread); to do this you can call the
+`telegram::listener::poll::stop()` function.  You can also call `stop_all()` to
+queue a global halt for all poll listeners that exist in your program (which is
+what the signal handler does).
 
 # Contributions #
 This project is an early work in progress, and contributions are always welcome.

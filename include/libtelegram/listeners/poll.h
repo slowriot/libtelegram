@@ -6,7 +6,6 @@
 #include "base.h"
 #include "libtelegram/sender.h"
 
-bool keep_running = true;                                                       // used by the signal handler to terminate the poll loop
 void signal_handler(int s);
 
 namespace telegram {
@@ -17,16 +16,30 @@ namespace listener {
 
 class poll : public base<poll> {
   telegram::sender &sender;
+  static bool signal_handler_is_set;                                            // track the state of the signal handler
+  std::atomic_flag keep_running;                                                // used to stop the poll externally from other threads
+  static std::atomic_flag keep_running_global;                                  // used by the signal handler to terminate the poll loop, and can be modified externally
+
 public:
   static unsigned int constexpr const poll_timeout_default = 60 * 60;           // default poll timeout in seconds
   unsigned int poll_timeout = poll_timeout_default;
 
   // TODO: statistics on number of times polled etc
+  // TODO: statistics on requests serviced per thread etc
 
   poll(telegram::sender &sender, unsigned int poll_timeout = poll_timeout_default);
 
   void run();
+  void stop();
+  static void stop_all();
+
+  static void set_signal_handler();
+  static void unset_signal_handler();
+  static bool is_signal_handler_set();
 };
+
+bool poll::signal_handler_is_set = false;
+std::atomic_flag poll::keep_running_global;
 
 poll::poll(telegram::sender &this_sender,
            unsigned int this_poll_timeout)
@@ -38,14 +51,9 @@ poll::poll(telegram::sender &this_sender,
 void poll::run() {
   /// Execute the telegram long-polling loop listener service
   try {
-    {
-      // set a signal handler to catch ctrl-c in the console and close gracefully
-      struct sigaction signal;
-      signal.sa_handler = signal_handler;
-      sigemptyset(&signal.sa_mask);
-      signal.sa_flags = 0;
-      sigaction(SIGINT, &signal, NULL);
-    }
+    keep_running.test_and_set();
+    keep_running_global.test_and_set();
+    set_signal_handler();
     boost::asio::io_service service;                                            // use asio's io_service to provide a thread pool work queue
     boost::asio::io_service::work work(service);                                // prevent the threads from running out of work
     std::vector<std::thread> threads;
@@ -58,7 +66,7 @@ void poll::run() {
     std::cout << "LibTelegram: Poll listener: Started " << threads.size() << " worker threads." << std::endl;
 
     int offset = 0;                                                             // keep track of the last received update offset
-    while(keep_running) {                                                       // the poller always runs sequentially, single-threaded
+    while(keep_running.test_and_set() && keep_running_global.test_and_set()) {  // the poller always runs sequentially, single-threaded
       nlohmann::json tree;
       tree["offset"] = offset;
       //tree["limit"] = 100;
@@ -75,6 +83,7 @@ void poll::run() {
         });
       }
     }
+    unset_signal_handler();
     service.stop();
     std::cout << "LibTelegram: Poll listener: Harvesting " << threads.size() << " worker threads...";
     for(auto &it : threads) {                                                   // close down the thread pool
@@ -90,6 +99,45 @@ void poll::run() {
   }
 }
 
+void poll::stop() {
+  /// Request that the listener currently running stops gracefully, at the end of its current long poll.
+  /// It is only meaningful to call this from another thread while poll::run() is running.
+  keep_running.clear();
+}
+void poll::stop_all() {
+  /// Request that the listener currently running stops gracefully, at the end of its current long poll.
+  /// It is only meaningful to call this from another thread or signal handler while poll::run() is running.
+  /// Note that this will stop ALL polling listeners globally.
+  keep_running_global.clear();
+}
+
+void poll::set_signal_handler() {
+  /// Set a signal handler to catch ctrl-c in the console and close gracefully
+  #ifndef LIBTELEGRAM_NO_SIGNAL_HANDLER
+    struct sigaction signal;
+    signal.sa_handler = signal_handler;
+    sigemptyset(&signal.sa_mask);
+    signal.sa_flags = 0;
+    sigaction(SIGINT, &signal, NULL);
+    signal_handler_is_set = true;
+  #endif // LIBTELEGRAM_NO_SIGNAL_HANDLER
+}
+void poll::unset_signal_handler() {
+  /// Unset any signal handler we set earlier
+  #ifndef LIBTELEGRAM_NO_SIGNAL_HANDLER
+    struct sigaction signal;
+    signal.sa_handler = SIG_DFL;
+    sigemptyset(&signal.sa_mask);
+    signal.sa_flags = 0;
+    sigaction(SIGINT, &signal, NULL);
+    signal_handler_is_set = false;
+  #endif // LIBTELEGRAM_NO_SIGNAL_HANDLER
+}
+bool poll::is_signal_handler_set() {
+  /// Report whether our signal handler is currently set
+  return signal_handler_is_set;
+}
+
 }
 }
 
@@ -97,15 +145,8 @@ void signal_handler(int s) {
   /// Signal handler for ctrl-c events
   std::cout << std::endl;
   std::cout << "LibTelegram: Poll listener: Caught signal " << s << ", terminating after this poll..." << std::endl;
-  keep_running = false;
-  {
-    // unset the signal handler, so a second ctrl-c will exit immediately
-    struct sigaction signal;
-    signal.sa_handler = SIG_DFL;
-    sigemptyset(&signal.sa_mask);
-    signal.sa_flags = 0;
-    sigaction(SIGINT, &signal, NULL);
-  }
+  telegram::listener::poll::stop_all();
+  telegram::listener::poll::unset_signal_handler();                             // unset the signal handler, so a second ctrl-c will exit immediately
 }
 
 #endif // TELEGRAM_LISTENERS_POLL_H_INCLUDED
