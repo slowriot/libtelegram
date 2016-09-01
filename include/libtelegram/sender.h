@@ -116,8 +116,9 @@ nlohmann::json sender::send_json(std::string const &method,
   stream.set_options(urdl_global_options);                                      // apply the global options to this stream
   stream.set_option(urdl::http::request_content_type("application/json"));
   stream.set_option(urdl::http::request_content(tree.dump()));                  // write the json dump as the request body
-  stream.open_timeout(60000);
-  stream.read_timeout(poll_timeout * 1000);
+  unsigned int const timeout_ms = poll_timeout * 1000;                          // the stream expects timeouts in milliseconds
+  stream.open_timeout(timeout_ms);
+  stream.read_timeout(timeout_ms);
   urdl::url const url(endpoint + method);
   stream.open(url);
   if(!stream) {
