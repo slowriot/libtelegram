@@ -13,17 +13,39 @@ consists of two major components - a listener system, and a sender system.  The
 two are completely decoupled, so you can use both together in a single program,
 or just one or the other.
 
-The listener speaks fastcgi and is designed to be launched by your webserver.
+The listeners are fully modular - you can choose which listener to use for any
+program.  With all listeners, you set callbacks for those events you're
+interested in being notified about, and they fire when needed.  All listeners
+automatically handle acknowledgement replies to Telegram, dealing with errors
+and decoding the incoming json for you.
+
+#### Polling Listener ####
+This listener connects to the Telegram API and requests updates.  It uses long
+polling, leaving a single connection open for as long as possible, so it
+receives events immediately without delay, and without hammering the Telegram
+API server with repeated connections.  This listener runs single-threaded and
+calls your callbacks sequentially, in the order of the events received from
+Telegram.  This is a good fit for a standalone bot where persistent operation
+is required, and a moderately high level of traffic is expected (one or more
+interactions per minute at all times of day).
+
+#### FastCGI Listener ####
+This listener speaks fastcgi and is designed to be launched by your webserver.
 It runs multithreaded.  You set callbacks, and it asynchronously listens for
 events from Telegram and calls them when needed.  The listener takes care of
-talking to your webserver and decoding the fastcgi requests, handling replies
-to Telegram, dealing with errors and decoding the incoming json for you.
+talking to your webserver and decoding the fastcgi requests.
 Fastcgi means a single listener can be persistent across many connections, and
 can handle many connections simultaneously, unlike traditional cgi.  Using a
 webserver based system means you can have hundreds of separate bots running on a
 single machine, rather than being limited to one per port as with bots that run
-their own webserver.
+their own webserver.  This listener is a good fit for when you are hosting a
+large number of bots which spend most of their time idle - the bots will only
+run when required, and no bandwidth is wasted in establishing polling
+connections.  This is also a good fit for some very traffic-heavy bots that
+process large amounts of data, such as photographs and file uploads, as it can
+service many connections from Telegram simultaneously without blocking.
 
+#### Sender ####
 The sender provides a set of convenience functions for sending correctly
 formatted messages to Telegram - it handles forming the correct data structures,
 encoding as json, making the web request with SSL, dealing with timeouts,
@@ -45,7 +67,7 @@ object format.
 * Callback-based architecture means you retain full control of program flow and objects.
 * Highly efficient asynchronous, multithreaded architecture allows a single instance to service multiple simultaneous requests at different rates without slowdown or queuing.
 * Support for handling any number of bots concurrently from a single instance - instantiate any number of separate standalone listeners and senders.
-* Persistent operation - with fastcgi, the bot keeps running between multiple requests, unlike slow cgi where a new instance has to spawn for each request.
+* Persistent operation - with both the fastcgi and polling listener, the bot keeps running between multiple requests, unlike slow cgi where a new instance has to spawn for each request.
 * Persistence means it's also possible to preserve state between calls without resorting to writing to disk or a database!
 * Efficient fastcgi protocol - data is transferred from the webserver by a binary format for minimal cpu overhead in repeat encoding and decoding.
 * No wasteful polling - cgi architecture means the bot is active only when a message from telegram is received, and your callback functions are called instantly rather than after a poll interval.
@@ -129,6 +151,9 @@ libtelegram.workspace file in Code::Blocks and you can build all of the examples
 Alternatively, just use the examples as the starting point of your own project,
 building it with your own build system.
 
+#### Running the examples ####
+The default examples use polling, so simply execute them in the terminal.
+
 ### Setting up FastCGI ###
 There are a number of fastcgi systems, and it will depend largely on your
 webserver.  Below are some example instructions for how to set up fastcgi on
@@ -178,6 +203,13 @@ features such as SSL support are often missing.
 You decide in which style you would prefer to write your next bot!
 
 # Advanced usage #
+#### Switching between polling and CGI ####
+In order to use CGI, you must set a webhook; a helper script, `set_webhook.sh`
+is provided for your convenience.  It takes two arguments - the API key, and the
+full https URL of your endpoint.  However, if switching back to polling, don't
+forget to unset the webhook or you won't receive polling updates!  To unset the
+webhook, just call the script with no second argument.
+
 #### One-way bots and partial usage ####
 There's no requirement to use both the sender and receiver components.  If you'd
 like to make a bot that only sends, then you don't need to use the listener in
