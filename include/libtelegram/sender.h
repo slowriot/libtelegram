@@ -59,7 +59,8 @@ public:
   sender(std::string const &token, std::string const &user_agent = "LibTelegram");
 
   nlohmann::json send_json(std::string const &method,
-                           nlohmann::json const &tree = {});
+                           nlohmann::json const &tree = {},
+                           unsigned int poll_timeout = 30);
   template<typename T>
   std::experimental::optional<T> send_json_and_parse(std::string const &method,
                                                      nlohmann::json const &tree = {});
@@ -105,7 +106,8 @@ sender::sender(std::string const &this_token,
 }
 
 nlohmann::json sender::send_json(std::string const &method,
-                                 nlohmann::json const &tree) {
+                                 nlohmann::json const &tree,
+                                 unsigned int poll_timeout) {
   /// Function to send a json tree to the given method and get back a response, useful if you want to send custom requests
   std::cerr << "LibTelegram: Sender: DEBUG: json request:" << std::endl;
   std::cerr << tree.dump(2) << std::endl;
@@ -115,7 +117,7 @@ nlohmann::json sender::send_json(std::string const &method,
   stream.set_option(urdl::http::request_content_type("application/json"));
   stream.set_option(urdl::http::request_content(tree.dump()));                  // write the json dump as the request body
   stream.open_timeout(60000);
-  stream.read_timeout(30000);
+  stream.read_timeout(poll_timeout * 1000);
   urdl::url const url(endpoint + method);
   stream.open(url);
   if(!stream) {
