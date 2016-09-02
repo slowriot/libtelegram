@@ -2,10 +2,11 @@
 #define TELEGRAM_SENDER_H_INCLUDED
 
 #include <string>
+#include <boost/iostreams/stream.hpp>
 #define URDL_HEADER_ONLY 1
 #ifdef LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
   #warning "SSL is disabled for outgoing messages - that is such a bad idea."
-  #define URDL_DISABLE_SSL=1
+  #define URDL_DISABLE_SSL 1
   #define LIBTELEGRAM_OUTGOING_PROTO "http"
 #else
   #define LIBTELEGRAM_OUTGOING_PROTO "https"
