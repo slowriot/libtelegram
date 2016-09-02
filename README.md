@@ -272,12 +272,20 @@ You can also manually set or release this signal handler at any time using the
 functions, and check its current state with `is_signal_handler_set()`.
 
 However, if you want to set your own signal handlers, and don't want this to
-interrupt your global state, then define `LIBTELEGRAM_NO_SIGNAL_HANDLER` in your
+interrupt your global state, then define `TELEGRAM_NO_SIGNAL_HANDLER` in your
 program.  In this case, be aware that run() will continue indefinitely until you
 tell it to stop (from another thread); to do this you can call the
 `telegram::listener::poll::stop()` function.  You can also call `stop_all()` to
 queue a global halt for all poll listeners that exist in your program (which is
 what the signal handler does).
+
+### Disabling specific components ###
+You can exclude individual modular components you're not using, which may remove
+compile time dependencies on certain libraries.  Specific parts can be
+disabled at compile time with:
+
+* `#define TELEGRAM_NO_LISTENER_FCGI`
+* `#define TELEGRAM_NO_LISTENER_POLL`
 
 # Contributions #
 This project is an early work in progress, and contributions are always welcome.

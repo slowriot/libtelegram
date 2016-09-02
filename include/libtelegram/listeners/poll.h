@@ -120,25 +120,25 @@ void poll::stop_all() {
 
 void poll::set_signal_handler() {
   /// Set a signal handler to catch ctrl-c in the console and close gracefully
-  #ifndef LIBTELEGRAM_NO_SIGNAL_HANDLER
+  #ifndef TELEGRAM_NO_SIGNAL_HANDLER
     struct sigaction signal;
     signal.sa_handler = signal_handler;
     sigemptyset(&signal.sa_mask);
     signal.sa_flags = 0;
     sigaction(SIGINT, &signal, NULL);
     signal_handler_is_set = true;
-  #endif // LIBTELEGRAM_NO_SIGNAL_HANDLER
+  #endif // TELEGRAM_NO_SIGNAL_HANDLER
 }
 void poll::unset_signal_handler() {
   /// Unset any signal handler we set earlier
-  #ifndef LIBTELEGRAM_NO_SIGNAL_HANDLER
+  #ifndef TELEGRAM_NO_SIGNAL_HANDLER
     struct sigaction signal;
     signal.sa_handler = SIG_DFL;
     sigemptyset(&signal.sa_mask);
     signal.sa_flags = 0;
     sigaction(SIGINT, &signal, NULL);
     signal_handler_is_set = false;
-  #endif // LIBTELEGRAM_NO_SIGNAL_HANDLER
+  #endif // TELEGRAM_NO_SIGNAL_HANDLER
 }
 bool poll::is_signal_handler_set() {
   /// Report whether our signal handler is currently set
