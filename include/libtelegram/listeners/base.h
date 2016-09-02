@@ -305,62 +305,96 @@ template<typename T>
 void base<T>::execute_callbacks(nlohmann::json const &tree) {
   /// Process the data received from the server through the callbacks
   if(callback_json) {
-    callback_json(tree);                                                        // if the json callback is set, send the whole tree
+    try {
+      callback_json(tree);                                                      // if the json callback is set, send the whole tree
+    } catch(std::exception &e) {
+      std::cerr << "LibTelegram: Exception calling json callback: " << e.what() << std::endl;
+    }
   }
   if(callback_message_json) {                                                   // only check for a message if we've got a callback set
     try {
       callback_message_json(tree.at("message"));
-    } catch(std::exception &e) {}                                               // this update doesn't include a message - no problem, carry on
+    } catch(std::out_of_range &e) {                                             // this update doesn't include a message - no problem, carry on
+    } catch(std::exception &e) {
+      std::cerr << "LibTelegram: Exception calling json message callback: " << e.what() << std::endl;
+    }
   }
   if(callback_message) {                                                        // only check for a message if we've got a callback set
     try {
       callback_message(types::message::from_json(tree, "message"));
-    } catch(std::exception &e) {}                                               // this update doesn't include a message - no problem, carry on
+    } catch(std::out_of_range &e) {                                             // this update doesn't include a message - no problem, carry on
+    } catch(std::exception &e) {
+      std::cerr << "LibTelegram: Exception calling message callback: " << e.what() << std::endl;
+    }
   }
   if(callback_edited_json) {                                                    // only check for an edited message if we've got a callback set
     try {
       callback_edited_json(tree.at("edited_message"));
-    } catch(std::exception &e) {}                                               // this update doesn't include an edited message - no problem, carry on
+    } catch(std::out_of_range &e) {                                             // this update doesn't include an edited message - no problem, carry on
+    } catch(std::exception &e) {
+      std::cerr << "LibTelegram: Exception calling json edited message callback: " << e.what() << std::endl;
+    }
   }
   if(callback_edited) {                                                         // only check for an edited message if we've got a callback set
     try {
       callback_edited(types::message::from_json(tree, "edited_message"));
-    } catch(std::exception &e) {}                                               // this update doesn't include an edited message - no problem, carry on
+    } catch(std::out_of_range &e) {                                             // this update doesn't include an edited message - no problem, carry on
+    } catch(std::exception &e) {
+      std::cerr << "LibTelegram: Exception calling edited message callback: " << e.what() << std::endl;
+    }
   }
   if(callback_inline_json) {                                                    // only check for an inline query if we've got a callback set
     try {
       callback_inline_json(tree.at("inline_query"));
-    } catch(std::exception &e) {}                                               // this update doesn't include an inline query - no problem, carry on
+    } catch(std::out_of_range &e) {                                             // this update doesn't include an inline query - no problem, carry on
+    } catch(std::exception &e) {
+      std::cerr << "LibTelegram: Exception calling json inline query callback: " << e.what() << std::endl;
+    }
   }
   /*
   if(callback_inline) {                                                         // only check for an inline query if we've got a callback set
     try {
       callback_inline(types::inline_query::from_json(tree, "inline_query"));
-    } catch(std::exception &e) {}                                               // this update doesn't include an inline query - no problem, carry on
+    } catch(std::out_of_range &e) {                                             // this update doesn't include an inline query - no problem, carry on
+    } catch(std::exception &e) {
+      std::cerr << "LibTelegram: Exception calling inline query callback: " << e.what() << std::endl;
+    }
   }
   */
   if(callback_chosen_inline_json) {                                             // only check for a chosen inline result if we've got a callback set
     try {
       callback_chosen_inline_json(tree.at("chosen_inline_result"));
-    } catch(std::exception &e) {}                                               // this update doesn't include a chosen inline result - no problem, carry on
+    } catch(std::out_of_range &e) {                                             // this update doesn't include a chosen inline result - no problem, carry on
+    } catch(std::exception &e) {
+      std::cerr << "LibTelegram: Exception calling json chosen inline result callback: " << e.what() << std::endl;
+    }
   }
   /*
   if(callback_chosen_inline) {                                                  // only check for a chosen inline result if we've got a callback set
     try {
       callback_chosen_inline(types::chosen_inline_result::from_json(tree, "chosen_inline_result"));
-    } catch(std::exception &e) {}                                               // this update doesn't include a chosen inline result - no problem, carry on
+    } catch(std::out_of_range &e) {                                             // this update doesn't include a chosen inline result - no problem, carry on
+    } catch(std::exception &e) {
+      std::cerr << "LibTelegram: Exception calling chosen inline result callback: " << e.what() << std::endl;
+    }
   }
   */
   if(callback_callback_json) {                                                  // only check for a callback query if we've got a callback callback set
     try {
       callback_callback_json(tree.at("callback_query"));
-    } catch(std::exception &e) {}                                               // this update doesn't include a callback query - no problem, carry on
+    } catch(std::out_of_range &e) {                                             // this update doesn't include a callback query - no problem, carry on
+    } catch(std::exception &e) {
+      std::cerr << "LibTelegram: Exception calling json callback query callback: " << e.what() << std::endl;
+    }
   }
   /*
   if(callback_callback) {                                                       // only check for a callback query if we've got a callback callback set
     try {
       callback_callback(types::callback_query::from_json(tree, "callback_query"));
-    } catch(std::exception &e) {}                                               // this update doesn't include a callback query - no problem, carry on
+    } catch(std::out_of_range &e) {                                             // this update doesn't include a callback query - no problem, carry on
+    } catch(std::exception &e) {
+      std::cerr << "LibTelegram: Exception calling callback query callback: " << e.what() << std::endl;
+    }
   }
   */
 }
