@@ -31,8 +31,8 @@ struct message {
   //std::experimental::optional<types::contact> contact;                          // Optional. Message is a shared contact, information about the contact
   //std::experimental::optional<types::location> location;                        // Optional. Message is a shared location, information about the location
   //std::experimental::optional<types::venue> venue;                              // Optional. Message is a venue, information about the venue
-  //std::experimental::optional<user> new_chat_member;                            // Optional. A new member was added to the group, information about them (this member may be the bot itself)
-  //std::experimental::optional<user> left_chat_member;                           // Optional. A member was removed from the group, information about them (this member may be the bot itself)
+  std::experimental::optional<user> new_chat_member;                            // Optional. A new member was added to the group, information about them (this member may be the bot itself)
+  std::experimental::optional<user> left_chat_member;                           // Optional. A member was removed from the group, information about them (this member may be the bot itself)
   std::experimental::optional<std::string> new_chat_title;                      // Optional. A chat title was changed to this value
   std::experimental::optional<std::vector<photosize>> new_chat_photo;           // Optional. A chat photo was change to this value
   std::experimental::optional<bool> delete_chat_photo;                          // Optional. Service message: the chat photo was deleted
@@ -71,8 +71,8 @@ message const message::from_json(nlohmann::json const &tree) {
                  //contact::from_json(tree, "contact"),
                  //location::from_json(tree, "location"),
                  //venue::from_json(tree, "venue"),
-                 //user::from_json(tree, "new_chat_member"),
-                 //user::from_json(tree, "left_chat_member"),
+                 make_optional<user>(tree, "new_chat_member"),
+                 make_optional<user>(tree, "left_chat_member"),
                  make_optional<std::string>(tree, "new_chat_title"),
                  make_optional_vector<photosize>(tree, "new_chat_photo"),
                  make_optional<bool>(tree, "delete_chat_photo"),
