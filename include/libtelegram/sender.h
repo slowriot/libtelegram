@@ -130,8 +130,8 @@ nlohmann::json sender::send_json(std::string const &method,
   std::string reply;
   {
     std::string reply_line;
-    while(stream >> reply_line) {
-      reply += reply_line;                                                      // concatenate all lines of input
+    while(std::getline(stream, reply_line)) {
+      reply += reply_line + '\n';                                               // concatenate all lines of input
     }
     reply += reply_line;                                                        // input is not newline-terminated, so don't forget the last line
   }
