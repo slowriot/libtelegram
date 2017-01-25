@@ -57,37 +57,34 @@ int fcgi::handle_request(boost::fcgi::request &request) {
   boost::system::error_code error;
   request.load(boost::fcgi::parse_form, error);                                 // see boost/cgi/common/parse_options.hpp
   boost::fcgi::response response;
+  response << boost::fcgi::content_type("text/html");                           // set a content type for the normal content output
   if(error) {
     std::cerr << "LibTelegram: Request parsing error: " << error.message() << std::endl;
     response << "Request parsing error: " << error.message();
     return boost::fcgi::commit(request, response, boost::fcgi::http::internal_server_error);
   }
-  if(request.method() != "POST") {                                              // is this a post response?
-    response << boost::fcgi::content_type("text/html");                         // set a content type for the normal content output
+  if(request.method() != "POST") {                                              // is this a post request?
     response << "Bad request.";                                                 // this probably didn't come from Telegram, so don't give away any additional information
     return boost::fcgi::commit(request, response, boost::fcgi::http::bad_request);
   }
 
   // deal with the data
-  if(callback_raw) {
-    callback_raw(request.post_buffer());                                        // if the raw callback is set, send the whole buffer straight there
-  }
   nlohmann::json tree;                                                          // create empty json object
   try {
     boost::iostreams::stream<boost::iostreams::array_source> stream(request.post_buffer().data(), request.post_buffer().size()); // wrap the request buffer in a stream, avoiding a copy unlike stringstream
     stream >> tree;
   } catch(std::exception &e) {
-    response << boost::fcgi::content_type("text/html");                         // set a content type for the normal content output
     std::cerr << "LibTelegram: Received unparseable JSON: " << e.what() << std::endl;
     response << "Received unparseable JSON";                                    // if we got this far, complain what exactly fucked up
     return boost::fcgi::commit(request, response, boost::fcgi::http::bad_request);
   }
-  // the json must be fine, so generate a reply
-  response << boost::fcgi::content_type("text/html");                           // set a content type for the normal content output
-  response << "OK";
+  response << "OK";                                                             // the json must be fine, so generate a minimal reply
   auto result = boost::fcgi::commit(request, response, boost::fcgi::http::ok);  // commit the response and obtain the result, so we can let Telegram hang up and it won't resend even if callbacks crash
 
-  execute_callbacks(tree);                                                      // call the callbacks on this tree
+  if(callback_raw) {
+    callback_raw(request.post_buffer());                                        // if the raw callback is set, send the whole buffer straight there
+  }
+  execute_callbacks(tree);                                                      // call the remaining callbacks on this tree
 
   return result;                                                                // return the cached result
 }
