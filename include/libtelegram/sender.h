@@ -157,7 +157,7 @@ std::experimental::optional<T> sender::send_json_and_parse(std::string const &me
   /// Wrapper function to send a json object and get back a complete object of the specified template typen
   auto reply_tree(send_json(method, tree));
   #ifndef NDEBUG
-    std::cerr << "LibTelegram: Sender: DEBUG: json to send:" << std::endl;
+    std::cerr << "LibTelegram: Sender: DEBUG: json reply:" << std::endl;
     std::cerr << reply_tree.dump(2) << std::endl;
   #endif // NDEBUG
   if(reply_tree["ok"] != true) {
