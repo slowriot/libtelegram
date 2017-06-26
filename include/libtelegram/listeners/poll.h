@@ -80,7 +80,9 @@ void poll::run() {
       tree["timeout"] = poll_timeout;
       auto reply_tree(sender.send_json("getUpdates", tree, poll_timeout));
       for(auto const &it : reply_tree["result"]) {                              // process each reply entry individually
-        std::cerr << it.dump(2) << std::endl;
+        #ifndef NDEBUG
+          std::cerr << it.dump(2) << std::endl;
+        #endif // NDEBUG
         int const update_id = it["update_id"];
         if(update_id != 0) {
           offset = std::max(update_id + 1, offset);

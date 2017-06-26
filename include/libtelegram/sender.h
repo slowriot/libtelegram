@@ -379,7 +379,9 @@ bool sender::send_chat_action(int_fast64_t chat_id,
     break;
   }
   auto reply_tree(send_json("sendChatAction", tree));
-  std::cerr << tree.dump(2) << std::endl;
+  #ifndef NDEBUG
+    std::cerr << tree.dump(2) << std::endl;
+  #endif // NDEBUG
   if(reply_tree["ok"] != true) {
     std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to sendChatAction expecting a bool:" << std::endl;
     std::cerr << reply_tree.dump(2) << std::endl;
