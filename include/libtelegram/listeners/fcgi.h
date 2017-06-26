@@ -53,7 +53,9 @@ void fcgi::run() {
 
 int fcgi::handle_request(boost::fcgi::request &request) {
   /// Request handler - parse what we received and dispatch callbacks appropriately
-  std::cerr<< "LibTelegram: DEBUG: started handling a request" << std::endl;
+  #ifndef NDEBUG
+    std::cerr<< "LibTelegram: FastCGI: DEBUG: started handling a request" << std::endl;
+  #endif // NDEBUG
   boost::system::error_code error;
   request.load(boost::fcgi::parse_form, error);                                 // see boost/cgi/common/parse_options.hpp
   boost::fcgi::response response;

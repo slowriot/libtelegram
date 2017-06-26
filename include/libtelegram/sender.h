@@ -110,8 +110,10 @@ nlohmann::json sender::send_json(std::string const &method,
                                  nlohmann::json const &tree,
                                  unsigned int poll_timeout) {
   /// Function to send a json tree to the given method and get back a response, useful if you want to send custom requests
-  std::cerr << "LibTelegram: Sender: DEBUG: json request:" << std::endl;
-  std::cerr << tree.dump(2) << std::endl;
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: json request:" << std::endl;
+    std::cerr << tree.dump(2) << std::endl;
+  #endif // NDEBUG
 
   urdl::istream stream;
   stream.set_options(urdl_global_options);                                      // apply the global options to this stream
@@ -154,8 +156,10 @@ std::experimental::optional<T> sender::send_json_and_parse(std::string const &me
                                                            nlohmann::json const &tree) {
   /// Wrapper function to send a json object and get back a complete object of the specified template typen
   auto reply_tree(send_json(method, tree));
-  std::cerr << "LibTelegram: Sender: DEBUG: json to send:" << std::endl;
-  std::cerr << tree.dump(2) << std::endl;
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: json to send:" << std::endl;
+    std::cerr << tree.dump(2) << std::endl;
+  #endif // NDEBUG
   if(reply_tree["ok"] != true) {
     std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to " << method << " trying to get " << typeid(T).name() << ":" << std::endl;
     std::cerr << reply_tree.dump(2) << std::endl;
@@ -203,7 +207,9 @@ std::experimental::optional<types::message> sender::send_message(int_fast64_t ch
                         notification,
                         reply_markup);                                          // note - we disregard return messages from any except the last
   }
-  std::cerr << "DEBUG: sending message \"" << text << "\" to chat id " << chat_id << std::endl;
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: sending message \"" << text << "\" to chat id " << chat_id << std::endl;
+  #endif // NDEBUG
   nlohmann::json tree;                                                          // a json container object for our data
   tree["chat_id"] = chat_id;
   tree["text"] = text;
@@ -271,7 +277,9 @@ std::experimental::optional<types::message> sender::send_message(std::string cha
                         web_preview,
                         notification);                                          // note - we disregard return messages from any except the last
   }
-  std::cerr << "DEBUG: sending message \"" << text << "\" to channel name " << channel_name << std::endl;
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: sending message \"" << text << "\" to channel name " << channel_name << std::endl;
+  #endif // NDEBUG
   nlohmann::json tree;                                                          // a json container object for our data
   tree["chat_id"] = channel_name;
   tree["text"] = text;
@@ -318,7 +326,9 @@ std::experimental::optional<types::message> sender::forward_message(int_fast64_t
                                                                     int_fast32_t message_id,
                                                                     notification_mode notification) {
   /// Forward a message to a chat id - see https://core.telegram.org/bots/api#forwardmessage
-  std::cerr << "DEBUG: forwarding message " << message_id << " from chat " << from_chat_id << " to chat id " << chat_id << std::endl;
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: forwarding message " << message_id << " from chat " << from_chat_id << " to chat id " << chat_id << std::endl;
+  #endif // NDEBUG
   nlohmann::json tree;                                                          // json object to put our data into
   tree["chat_id"]      = chat_id;
   tree["from_chat_id"] = from_chat_id;
