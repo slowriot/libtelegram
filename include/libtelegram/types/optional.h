@@ -4,8 +4,7 @@
 #include <experimental/optional>
 #include <json.hpp>
 
-namespace telegram {
-namespace types {
+namespace telegram::types {
 
 template<typename T>
 std::experimental::optional<T> make_optional(nlohmann::json const &tree, std::string const &path);
@@ -86,7 +85,6 @@ std::experimental::optional<std::vector<T>> make_optional_vector(nlohmann::json 
   }
 }
 
-}
 }
 
 #endif // TELEGRAM_TYPES_OPTIONAL_H_INCLUDED

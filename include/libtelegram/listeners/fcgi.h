@@ -6,8 +6,7 @@
 #include <boost/iostreams/stream.hpp>
 #include "base.h"
 
-namespace telegram {
-namespace listener {
+namespace telegram::listener {
 
 class fcgi : public base<fcgi> {
 public:
@@ -98,7 +97,6 @@ int fcgi::handle_request_async(boost::fcgi::acceptor &acceptor, boost::fcgi::req
   return result;
 }
 
-}
 }
 
 #endif // TELEGRAM_LISTENERS_FCGI_H_INCLUDED

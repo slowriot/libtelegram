@@ -1,8 +1,7 @@
 #ifndef TELEGRAM_TYPES_PHOTOSIZE_H_INCLUDED
 #define TELEGRAM_TYPES_PHOTOSIZE_H_INCLUDED
 
-namespace telegram {
-namespace types {
+namespace telegram::types {
 
 struct photosize {
   /// See https://core.telegram.org/bots/api#photosize
@@ -29,7 +28,6 @@ photosize const photosize::from_json(nlohmann::json const &tree, std::string con
   return from_json(tree.at(path));
 }
 
-}
 }
 
 #endif // TELEGRAM_TYPES_PHOTOSIZE_H_INCLUDED

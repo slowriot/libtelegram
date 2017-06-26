@@ -4,9 +4,7 @@
 #include "base.h"
 #include "keyboard_button.h"
 
-namespace telegram {
-namespace types {
-namespace reply_markup {
+namespace telegram::types::reply_markup {
 
 struct keyboard_button;
 
@@ -75,8 +73,6 @@ void reply_keyboard_markup::get(nlohmann::json &tree) const {
   }
 }
 
-}
-}
 }
 
 #endif // TELEGRAM_TYPES_REPLY_MARKUP_REPLY_KEYBOARD_MARKUP_H_INCLUDED

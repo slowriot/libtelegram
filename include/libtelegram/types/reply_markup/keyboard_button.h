@@ -1,9 +1,7 @@
 #ifndef TELEGRAM_TYPES_REPLY_MARKUP_KEYBOARD_BUTTON_H_INCLUDED
 #define TELEGRAM_TYPES_REPLY_MARKUP_KEYBOARD_BUTTON_H_INCLUDED
 
-namespace telegram {
-namespace types {
-namespace reply_markup {
+namespace telegram::types::reply_markup {
 
 struct keyboard_button {
   std::string text;                                                             // Text of the button. If none of the optional fields are used, it will be sent to the bot as a message when the button is pressed
@@ -43,8 +41,6 @@ void keyboard_button::get(nlohmann::json &tree) const {
   }
 }
 
-}
-}
 }
 
 #endif // TELEGRAM_TYPES_REPLY_MARKUP_KEYBOARD_BUTTON_H_INCLUDED

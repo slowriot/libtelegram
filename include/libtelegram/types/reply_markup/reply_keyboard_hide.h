@@ -3,9 +3,7 @@
 
 #include "base.h"
 
-namespace telegram {
-namespace types {
-namespace reply_markup {
+namespace telegram::types::reply_markup {
 
 struct reply_keyboard_hide final : base<reply_keyboard_hide> {
   /// See https://core.telegram.org/bots/api/#replykeyboardhide
@@ -33,8 +31,6 @@ void reply_keyboard_hide::get(nlohmann::json &tree) const {
   }
 }
 
-}
-}
 }
 
 #endif // TELEGRAM_TYPES_REPLY_MARKUP_REPLY_KEYBOARD_HIDE_H_INCLUDED

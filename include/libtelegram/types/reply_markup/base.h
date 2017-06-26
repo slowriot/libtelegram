@@ -1,9 +1,7 @@
 #ifndef TELEGRAM_TYPES_REPLY_MARKUP_BASE_H_INCLUDED
 #define TELEGRAM_TYPES_REPLY_MARKUP_BASE_H_INCLUDED
 
-namespace telegram {
-namespace types {
-namespace reply_markup {
+namespace telegram::types::reply_markup {
 
 template<typename T>
 struct base {
@@ -17,8 +15,6 @@ void base<T>::get(nlohmann::json &tree) const {
   static_cast<T const *>(this)->get(tree);
 }
 
-}
-}
 }
 
 #endif // TELEGRAM_TYPES_REPLY_MARKUP_BASE_H_INCLUDED

@@ -3,9 +3,7 @@
 
 #include "base.h"
 
-namespace telegram {
-namespace types {
-namespace reply_markup {
+namespace telegram::types::reply_markup {
 
 struct force_reply final : base<force_reply> {
   /// See https://core.telegram.org/bots/api/#forcereply
@@ -33,8 +31,6 @@ void force_reply::get(nlohmann::json &tree) const {
   }
 }
 
-}
-}
 }
 
 #endif // TELEGRAM_TYPES_REPLY_MARKUP_FORCE_REPLY_H_INCLUDED
