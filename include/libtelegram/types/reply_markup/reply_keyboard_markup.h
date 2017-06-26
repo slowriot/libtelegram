@@ -6,8 +6,6 @@
 
 namespace telegram::types::reply_markup {
 
-struct keyboard_button;
-
 struct reply_keyboard_markup final : base<reply_keyboard_markup> {
   /// See https://core.telegram.org/bots/api/#replykeyboardmarkup
   std::vector<std::vector<keyboard_button>> keyboard_buttons;
