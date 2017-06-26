@@ -158,7 +158,7 @@ std::experimental::optional<T> sender::send_json_and_parse(std::string const &me
   auto reply_tree(send_json(method, tree));
   #ifndef NDEBUG
     std::cerr << "LibTelegram: Sender: DEBUG: json to send:" << std::endl;
-    std::cerr << tree.dump(2) << std::endl;
+    std::cerr << reply_tree.dump(2) << std::endl;
   #endif // NDEBUG
   if(reply_tree["ok"] != true) {
     std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to " << method << " trying to get " << typeid(T).name() << ":" << std::endl;
