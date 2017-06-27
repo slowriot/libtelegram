@@ -30,6 +30,7 @@
 		<Unit filename="include/libtelegram/sender.h" />
 		<Unit filename="include/libtelegram/types/callback_query.h" />
 		<Unit filename="include/libtelegram/types/chat.h" />
+		<Unit filename="include/libtelegram/types/chat_member.h" />
 		<Unit filename="include/libtelegram/types/file.h" />
 		<Unit filename="include/libtelegram/types/message.h" />
 		<Unit filename="include/libtelegram/types/optional.h" />

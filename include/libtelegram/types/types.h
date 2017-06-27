@@ -3,6 +3,7 @@
 
 #include "callback_query.h"
 #include "chat.h"
+#include "chat_member.h"
 #include "file.h"
 #include "message.h"
 #include "photosize.h"
