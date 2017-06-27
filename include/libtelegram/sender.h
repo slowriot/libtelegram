@@ -75,7 +75,7 @@ public:
                                                            parse_mode parse = parse_mode::DEFAULT,
                                                            web_preview_mode web_preview = web_preview_mode::DEFAULT,
                                                            notification_mode notification = notification_mode::DEFAULT,
-                                                           types::reply_markup::base<Treply_markup> *reply_markup = nullptr);
+                                                           types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
   std::experimental::optional<types::message> send_message(std::string channel_name,
                                                            std::string const &text,
                                                            int_fast32_t reply_to_message_id = reply_to_message_id_none,
@@ -186,7 +186,7 @@ std::experimental::optional<types::message> sender::send_message(int_fast64_t ch
                                                                  parse_mode parse,
                                                                  web_preview_mode web_preview,
                                                                  notification_mode notification,
-                                                                 types::reply_markup::base<Treply_markup> *reply_markup) {
+                                                                 types::reply_markup::base<Treply_markup> const *reply_markup) {
   /// Send a message to a chat id - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
     return std::experimental::nullopt;                                          // don't attempt to send empty messages - this would be an error
