@@ -4,6 +4,7 @@
 #include "optional.h"
 #include "photosize.h"
 #include "user.h"
+#include "chat.h"
 
 namespace telegram::types {
 

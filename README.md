@@ -92,8 +92,6 @@ you require manually through the functions that expose the json types to you.
 
 ## Not yet supported ##
 
-* Native objects and functions for sending and dealing with inline queries (you
-can handle them manually by accessing and generating the json you need, for now)
 * Audio
 * Stickers
 * Documents

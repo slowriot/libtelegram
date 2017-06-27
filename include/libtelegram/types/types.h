@@ -1,6 +1,7 @@
 #ifndef TELEGRAM_TYPES_H_INCLUDED
 #define TELEGRAM_TYPES_H_INCLUDED
 
+#include "callback_query.h"
 #include "chat.h"
 #include "file.h"
 #include "message.h"

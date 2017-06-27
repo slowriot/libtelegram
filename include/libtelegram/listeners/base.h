@@ -10,18 +10,18 @@ template<typename T>
 class base {
   /// CRTP style static polymorphic base class for listeners
 protected:
-  std::function<void(std::string                 const&)> callback_raw                = [](std::string                 const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_json               = [](nlohmann::json              const &input __attribute__((__unused__))){};
-  std::function<void(types::message              const&)> callback_message            = [](types::message              const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_message_json       = [](nlohmann::json              const &input __attribute__((__unused__))){};
-  std::function<void(types::message              const&)> callback_edited             = [](types::message              const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_edited_json        = [](nlohmann::json              const &input __attribute__((__unused__))){};
-  //std::function<void(types::inline_query         const&)> callback_inline             = [](types::inline_query         const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_inline_json        = [](nlohmann::json              const &input __attribute__((__unused__))){};
-  //std::function<void(types::chosen_inline_result const&)> callback_chosen_inline      = [](types::chosen_inline_result const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_chosen_inline_json = [](nlohmann::json              const &input __attribute__((__unused__))){};
-  //std::function<void(types::callback_query       const&)> callback_callback           = [](types::callback_query     const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_callback_json      = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  std::function<void(std::string                 const&)> callback_raw                 = [](std::string                 const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_json                = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  std::function<void(types::message              const&)> callback_message             = [](types::message              const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_message_json        = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  std::function<void(types::message              const&)> callback_edited              = [](types::message              const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_edited_json         = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  //std::function<void(types::inline_query         const&)> callback_inline              = [](types::inline_query         const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_inline_json         = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  //std::function<void(types::chosen_inline_result const&)> callback_chosen_inline       = [](types::chosen_inline_result const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_chosen_inline_json  = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  std::function<void(types::callback_query       const&)> callback_query_callback      = [](types::callback_query       const &input __attribute__((__unused__))){};
+  std::function<void(nlohmann::json              const&)> callback_query_callback_json = [](nlohmann::json              const &input __attribute__((__unused__))){};
 
   // TODO:
   // instance start timestamp
@@ -44,18 +44,18 @@ protected:
 public:
   base();
 
-  void set_callback_raw(               std::function<void(std::string const &input)> func);
-  void set_callback_json(              std::function<void(nlohmann::json const &input)> func);
-  void set_callback_message(           std::function<void(types::message const &input)> func);
-  void set_callback_message_json(      std::function<void(nlohmann::json const &input)> func);
-  void set_callback_edited(            std::function<void(types::message const &input)> func);
-  void set_callback_edited_json(       std::function<void(nlohmann::json const &input)> func);
-  //void set_callback_inline(            std::function<void(types::inline_query const &input)> func);
-  void set_callback_inline_json(       std::function<void(nlohmann::json const &input)> func);
-  //void set_callback_chosen_inline(     std::function<void(types::chosen_inline_result const &input)> func);
-  void set_callback_chosen_inline_json(std::function<void(nlohmann::json const &input)> func);
-  //void set_callback_callback(          std::function<void(types::callback_query const &input)> func);
-  void set_callback_callback_json(     std::function<void(nlohmann::json const &input)> func);
+  void set_callback_raw(                std::function<void(std::string const &input)> func);
+  void set_callback_json(               std::function<void(nlohmann::json const &input)> func);
+  void set_callback_message(            std::function<void(types::message const &input)> func);
+  void set_callback_message_json(       std::function<void(nlohmann::json const &input)> func);
+  void set_callback_edited(             std::function<void(types::message const &input)> func);
+  void set_callback_edited_json(        std::function<void(nlohmann::json const &input)> func);
+  //void set_callback_inline(             std::function<void(types::inline_query const &input)> func);
+  void set_callback_inline_json(        std::function<void(nlohmann::json const &input)> func);
+  //void set_callback_chosen_inline(      std::function<void(types::chosen_inline_result const &input)> func);
+  void set_callback_chosen_inline_json( std::function<void(nlohmann::json const &input)> func);
+  void set_callback_query_callback(     std::function<void(types::callback_query const &input)> func);
+  void set_callback_query_callback_json(std::function<void(nlohmann::json const &input)> func);
 
   void unset_callback_raw();
   void unset_callback_raw_json();
@@ -75,9 +75,9 @@ public:
   void unset_callback_chosen_inline();
   void unset_callback_chosen_inline_json();
   void unset_callback_chosen_inline_native();
-  void unset_callback_callback();
-  void unset_callback_callback_json();
-  void unset_callback_callback_native();
+  void unset_callback_query_callback();
+  void unset_callback_query_callback_json();
+  void unset_callback_query_callback_native();
   void unset_callbacks();
 
   unsigned int get_num_threads();
@@ -159,19 +159,17 @@ void base<T>::set_callback_chosen_inline_json(std::function<void(nlohmann::json 
   /// See https://core.telegram.org/bots/api#choseninlineresult
   callback_chosen_inline_json = func;
 }
-/*
 template<typename T>
-void base<T>::set_callback_callback(std::function<void(types::callback_query const &input)> func) {
+void base<T>::set_callback_query_callback(std::function<void(types::callback_query const &input)> func) {
   /// Set a callback to receive new incoming callback queries in native format
   /// See https://core.telegram.org/bots/api#callbackquery
-  callback_callback = func;
+  callback_query_callback = func;
 }
-*/
 template<typename T>
-void base<T>::set_callback_callback_json(std::function<void(nlohmann::json const &input)> func) {
+void base<T>::set_callback_query_callback_json(std::function<void(nlohmann::json const &input)> func) {
   /// Set a callback to receive new incoming callback queries in property tree format
   /// See https://core.telegram.org/bots/api#callbackquery
-  callback_callback_json = func;
+  callback_query_callback_json = func;
 }
 
 template<typename T>
@@ -249,20 +247,20 @@ void base<T>::unset_callback_chosen_inline_native() {
   //callback_chosen_inline = nullptr;
 }
 template<typename T>
-void base<T>::unset_callback_callback() {
+void base<T>::unset_callback_query_callback() {
   /// Helper to unset this callback
-  unset_callback_callback_json();
-  unset_callback_callback_native();
+  unset_callback_query_callback_json();
+  unset_callback_query_callback_native();
 }
 template<typename T>
-void base<T>::unset_callback_callback_json() {
+void base<T>::unset_callback_query_callback_json() {
   /// Helper to unset this callback
-  callback_callback_json = nullptr;
+  callback_query_callback_json = nullptr;
 }
 template<typename T>
-void base<T>::unset_callback_callback_native() {
+void base<T>::unset_callback_query_callback_native() {
   /// Helper to unset this callback
-  //callback_callback = nullptr;
+  callback_query_callback = nullptr;
 }
 template<typename T>
 void base<T>::unset_callbacks() {
@@ -273,7 +271,7 @@ void base<T>::unset_callbacks() {
   unset_callback_edited();
   unset_callback_inline();
   unset_callback_chosen_inline();
-  unset_callback_callback();
+  unset_callback_query_callback();
 }
 
 template<typename T>
@@ -378,24 +376,22 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
     }
   }
   */
-  if(callback_callback_json) {                                                  // only check for a callback query if we've got a callback callback set
+  if(callback_query_callback_json) {                                            // only check for a callback query if we've got a callback callback set
     try {
-      callback_callback_json(tree.at("callback_query"));
+      callback_query_callback_json(tree.at("callback_query"));
     } catch(std::out_of_range &e) {                                             // this update doesn't include a callback query - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling json callback query callback: " << e.what() << std::endl;
     }
   }
-  /*
-  if(callback_callback) {                                                       // only check for a callback query if we've got a callback callback set
+  if(callback_query_callback) {                                                 // only check for a callback query if we've got a callback query callback set
     try {
-      callback_callback(types::callback_query::from_json(tree, "callback_query"));
+      callback_query_callback(types::callback_query::from_json(tree, "callback_query"));
     } catch(std::out_of_range &e) {                                             // this update doesn't include a callback query - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling callback query callback: " << e.what() << std::endl;
     }
   }
-  */
 }
 
 }
