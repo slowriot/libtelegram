@@ -125,7 +125,10 @@ public:
   std::experimental::optional<std::vector<types::chat_member>> get_chat_administrators(int_fast64_t chat_id);
   std::experimental::optional<std::vector<types::chat_member>> get_chat_administrators(std::string const &chat_id);
   // TODO: getChatMembersCount
-  // TODO: getChatMember
+  inline std::experimental::optional<types::chat_member> get_chat_member(int_fast64_t chat_id,
+                                                                         int_fast32_t user_id);
+  inline std::experimental::optional<types::chat_member> get_chat_member(std::string const &chat_id,
+                                                                         int_fast32_t user_id);
 
   inline bool answer_callback_query(std::string const &callback_query_id,
                                     std::string const &text = {},
@@ -547,6 +550,23 @@ std::experimental::optional<std::vector<types::chat_member>> sender::get_chat_ad
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   return send_json_and_parse_vector<types::chat_member>("getChatAdministrators", tree);
+}
+
+inline std::experimental::optional<types::chat_member> sender::get_chat_member(int_fast64_t chat_id,
+                                                                               int_fast32_t user_id) {
+  /// Get a chat member by id, numerical chat id variant- see https://core.telegram.org/bots/api#getchatmember
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["user_id"] = user_id;
+  return send_json_and_parse<types::chat_member>("getChatMember", tree);
+}
+inline std::experimental::optional<types::chat_member> sender::get_chat_member(std::string const &chat_id,
+                                                                               int_fast32_t user_id) {
+  /// Get a chat member by id, string supergroup name variant - see https://core.telegram.org/bots/api#getchatmember
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["user_id"] = user_id;
+  return send_json_and_parse<types::chat_member>("getChatMember", tree);
 }
 
 inline bool sender::answer_callback_query(std::string const &callback_query_id,
