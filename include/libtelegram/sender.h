@@ -65,6 +65,8 @@ public:
   template<typename T>
   inline std::experimental::optional<T> send_json_and_parse(std::string const &method,
                                                             nlohmann::json const &tree = {});
+  inline bool send_json_and_get_bool(std::string const &method,
+                                     nlohmann::json const &tree = {});
 
   inline std::experimental::optional<types::user> const get_me();
 
@@ -88,15 +90,53 @@ public:
                                                                      int_fast32_t message_id,
                                                                      notification_mode notification = notification_mode::DEFAULT);
 
+  // TODO: sendPhoto
+  // TODO: sendAudio
+  // TODO: sendDocument
+  // TODO: sendSticker
+  // TODO: sendVideo
+  // TODO: sendVoice
+  // TODO: sendVideoNote
+  // TODO: sendLocation
+  // TODO: sendVenue
+  // TODO: sendContact
+
   inline bool send_chat_action(int_fast64_t chat_id, chat_action_type action = chat_action_type::TYPING);
 
+  // TODO: getUserProfilePhotos
+
   inline std::experimental::optional<types::file> get_file(std::string const &file_id);
+
+  inline bool kick_chat_member(int_fast64_t chat_id,
+                               int_fast32_t user_id);
+  inline bool kick_chat_member(std::string const &chat_id,
+                               int_fast32_t user_id);
+  inline bool unban_chat_member(int_fast64_t chat_id,
+                                int_fast32_t user_id);
+  inline bool unban_chat_member(std::string const &chat_id,
+                                int_fast32_t user_id);
+  inline bool leave_chat(int_fast64_t chat_id);
+  inline bool leave_chat(std::string const &chat_id);
+  // TODO: leaveChat
+  // TODO: getChat
+  // TODO: getChatAdministrators
+  // TODO: getChatMembersCount
+  // TODO: getChatMember
 
   inline bool answer_callback_query(std::string const &callback_query_id,
                                     std::string const &text = {},
                                     bool show_alert = false,
                                     std::string const &url = {},
                                     int_fast32_t cache_time = 0);
+
+  // updating messages
+  // TODO: editMessageText
+  // TODO: editMessageCaption
+  // TODO: editMessageReplyMarkup
+  // TODO: deleteMessage
+
+  // inline mode
+  // TODO: answerInlineQuery
 };
 
 inline sender::sender(std::string const &this_token,
@@ -160,7 +200,7 @@ inline nlohmann::json sender::send_json(std::string const &method,
 template<typename T>
 inline std::experimental::optional<T> sender::send_json_and_parse(std::string const &method,
                                                                   nlohmann::json const &tree) {
-  /// Wrapper function to send a json object and get back a complete object of the specified template typen
+  /// Wrapper function to send a json object and get back a complete object of the specified template type
   auto reply_tree(send_json(method, tree));
   #ifndef NDEBUG
     std::cerr << "LibTelegram: Sender: DEBUG: json reply:" << std::endl;
@@ -178,6 +218,21 @@ inline std::experimental::optional<T> sender::send_json_and_parse(std::string co
     std::cerr << reply_tree.dump(2) << std::endl;
     return std::experimental::nullopt;
   }
+}
+
+inline bool sender::send_json_and_get_bool(std::string const &method,
+                                           nlohmann::json const &tree) {
+  /// Wrapper function to send a json object and get back a boolean result
+  auto reply_tree(send_json(method, tree));
+  #ifndef NDEBUG
+    std::cerr << reply_tree.dump(2) << std::endl;
+  #endif // NDEBUG
+  if(reply_tree["ok"] != true) {
+    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to " << method << " expecting a bool:" << std::endl;
+    std::cerr << reply_tree.dump(2) << std::endl;
+    return false;
+  }
+  return reply_tree.at("result");
 }
 
 inline std::experimental::optional<types::user> const sender::get_me() {
@@ -384,16 +439,7 @@ inline bool sender::send_chat_action(int_fast64_t chat_id,
     tree["action"] = "find_location";
     break;
   }
-  auto reply_tree(send_json("sendChatAction", tree));
-  #ifndef NDEBUG
-    std::cerr << reply_tree.dump(2) << std::endl;
-  #endif // NDEBUG
-  if(reply_tree["ok"] != true) {
-    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to sendChatAction expecting a bool:" << std::endl;
-    std::cerr << reply_tree.dump(2) << std::endl;
-    return false;
-  }
-  return reply_tree.at("result");
+  return send_json_and_get_bool("sendChatAction", tree);
 }
 
 inline std::experimental::optional<types::file> sender::get_file(std::string const &file_id) {
@@ -401,6 +447,53 @@ inline std::experimental::optional<types::file> sender::get_file(std::string con
   nlohmann::json tree;
   tree["file_id"] = file_id;
   return send_json_and_parse<types::file>("getFile", tree);
+}
+
+inline bool sender::kick_chat_member(int_fast64_t chat_id,
+                                     int_fast32_t user_id) {
+  /// Kick a user and ban them from the chat, numerical chat id variant - see https://core.telegram.org/bots/api#kickchatmember
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["user_id"] = user_id;
+  return send_json_and_get_bool("kickChatMember", tree);
+}
+inline bool sender::kick_chat_member(std::string const &chat_id,
+                                     int_fast32_t user_id) {
+  /// Kick a user and ban them from the chat, string supergroup name variant - see https://core.telegram.org/bots/api#kickchatmember
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["user_id"] = user_id;
+  return send_json_and_get_bool("kickChatMember", tree);
+}
+
+inline bool sender::unban_chat_member(int_fast64_t chat_id,
+                                      int_fast32_t user_id) {
+  /// Unban a user from the chat, numerical chat id variant - see https://core.telegram.org/bots/api#unbanchatmember
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["user_id"] = user_id;
+  return send_json_and_get_bool("unbanChatMember", tree);
+}
+inline bool sender::unban_chat_member(std::string const &chat_id,
+                                      int_fast32_t user_id) {
+  /// Unban a user from the chat, string supergroup name variant - see https://core.telegram.org/bots/api#unbanchatmember
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["user_id"] = user_id;
+  return send_json_and_get_bool("unbanChatMember", tree);
+}
+
+inline bool sender::leave_chat(int_fast64_t chat_id) {
+  /// Leave a group or a channel, numerical chat id variant - see https://core.telegram.org/bots/api#leavechat
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_get_bool("leaveChat", tree);
+}
+inline bool sender::leave_chat(std::string const &chat_id) {
+  /// Leave a group or a channel, string supergroup name variant - see https://core.telegram.org/bots/api#leavechat
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_get_bool("leaveChat", tree);
 }
 
 inline bool sender::answer_callback_query(std::string const &callback_query_id,
@@ -423,16 +516,7 @@ inline bool sender::answer_callback_query(std::string const &callback_query_id,
   if(cache_time != 0) {
     tree["cache_time"] = cache_time;
   }
-  auto reply_tree(send_json("answerCallbackQuery", tree));
-  #ifndef NDEBUG
-    std::cerr << reply_tree.dump(2) << std::endl;
-  #endif // NDEBUG
-  if(reply_tree["ok"] != true) {
-    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to answerCallbackQuery expecting a bool:" << std::endl;
-    std::cerr << reply_tree.dump(2) << std::endl;
-    return false;
-  }
-  return reply_tree.at("result");
+  return send_json_and_get_bool("answerCallbackQuery", tree);
 }
 
 }
