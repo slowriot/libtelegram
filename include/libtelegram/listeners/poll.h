@@ -34,10 +34,10 @@ public:
   // TODO: statistics on number of times polled etc
   // TODO: statistics on requests serviced per thread etc
 
-  poll(telegram::sender &sender, unsigned int poll_timeout = poll_timeout_default);
+  inline poll(telegram::sender &sender, unsigned int poll_timeout = poll_timeout_default);
 
-  void run();
-  void stop();
+  inline void run();
+  inline void stop();
   static void stop_all();
 
   static void set_signal_handler();
@@ -48,14 +48,14 @@ public:
 bool poll::signal_handler_is_set = false;
 std::atomic_flag poll::keep_running_global;
 
-poll::poll(telegram::sender &this_sender,
-           unsigned int this_poll_timeout)
+inline poll::poll(telegram::sender &this_sender,
+                  unsigned int this_poll_timeout)
   : sender(this_sender),
     poll_timeout(this_poll_timeout) {
   /// Default constructor
 }
 
-void poll::run() {
+inline void poll::run() {
   /// Execute the telegram long-polling loop listener service
   try {
     keep_running.test_and_set();
@@ -108,7 +108,7 @@ void poll::run() {
   }
 }
 
-void poll::stop() {
+inline void poll::stop() {
   /// Request that the listener currently running stops gracefully, at the end of its current long poll.
   /// It is only meaningful to call this from another thread while poll::run() is running.
   keep_running.clear();

@@ -13,8 +13,8 @@ public:
   void run();
 
 private:
-  int handle_request(boost::fcgi::request &request);
-  int handle_request_async(boost::fcgi::acceptor &acceptor, boost::fcgi::request &request);
+  inline int handle_request(boost::fcgi::request &request);
+  inline int handle_request_async(boost::fcgi::acceptor &acceptor, boost::fcgi::request &request);
 };
 
 void fcgi::run() {
@@ -50,7 +50,7 @@ void fcgi::run() {
   }
 }
 
-int fcgi::handle_request(boost::fcgi::request &request) {
+inline int fcgi::handle_request(boost::fcgi::request &request) {
   /// Request handler - parse what we received and dispatch callbacks appropriately
   #ifndef NDEBUG
     std::cerr<< "LibTelegram: FastCGI: DEBUG: started handling a request" << std::endl;
@@ -90,7 +90,7 @@ int fcgi::handle_request(boost::fcgi::request &request) {
   return result;                                                                // return the cached result
 }
 
-int fcgi::handle_request_async(boost::fcgi::acceptor &acceptor, boost::fcgi::request &request) {
+inline int fcgi::handle_request_async(boost::fcgi::acceptor &acceptor, boost::fcgi::request &request) {
   /// Asynchronous request handler wrapper - restarts itself after running
   int const result = handle_request(request);
   acceptor.async_accept(boost::bind(&telegram::listener::fcgi::handle_request_async, this, boost::ref(acceptor), _1)); // restart the acceptor

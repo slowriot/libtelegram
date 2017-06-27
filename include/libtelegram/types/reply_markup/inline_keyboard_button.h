@@ -1,6 +1,7 @@
 #ifndef TELEGRAM_TYPES_REPLY_MARKUP_INLINE_KEYBOARD_BUTTON_H_INCLUDED
 #define TELEGRAM_TYPES_REPLY_MARKUP_INLINE_KEYBOARD_BUTTON_H_INCLUDED
 
+#include <experimental/optional>
 //#include <experimental/variant>
 
 namespace telegram::types::reply_markup {
@@ -23,16 +24,16 @@ struct inline_keyboard_button {
   //std::experimental::optional<callback_game> callback_game;                     // Optional. Description of the game that will be launched when the user presses the button.  NOTE: This type of button must always be the first button in the first row.
   bool pay = false;                                                             // Optional. Specify true, to send a Pay button.  NOTE: This type of button must always be the first button in the first row.
 
-  inline_keyboard_button(std::string const &this_text, type type, std::string const &content = {});
-  //inline_keyboard_button(std::string const &this_text, type type, std::variant<std::string, callback_game, bool> const &content = std::string{});
+  inline inline_keyboard_button(std::string const &this_text, type type, std::string const &content = {});
+  //inline inline_keyboard_button(std::string const &this_text, type type, std::variant<std::string, callback_game, bool> const &content = std::string{});
 
-  void get(nlohmann::json &tree) const;
+  inline void get(nlohmann::json &tree) const;
 };
 
-inline_keyboard_button::inline_keyboard_button(std::string const &this_text,
-                                               type this_type,
-                                               std::string const &content)
-                                               //std::variant<std::string, bool> const &content)
+inline inline_keyboard_button::inline_keyboard_button(std::string const &this_text,
+                                                      type this_type,
+                                                      std::string const &content)
+                                                      //std::variant<std::string, bool> const &content)
   : text(this_text) {
   /// Constructor
   switch(this_type) {
@@ -58,7 +59,7 @@ inline_keyboard_button::inline_keyboard_button(std::string const &this_text,
   }
 }
 
-void inline_keyboard_button::get(nlohmann::json &tree) const {
+inline void inline_keyboard_button::get(nlohmann::json &tree) const {
   /// Get this keyboard button into a json object (presuming the target is a key in a keyboard)
   tree["text"] = text;
   if(url) {

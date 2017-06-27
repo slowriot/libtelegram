@@ -10,10 +10,10 @@ struct inline_keyboard_markup final : base<inline_keyboard_markup> {
   /// See https://core.telegram.org/bots/api/#inlinekeyboardmarkup
   std::vector<std::vector<inline_keyboard_button>> keyboard_buttons;            // Array of button rows, each represented by an Array of InlineKeyboardButton objects.
 
-  void get(nlohmann::json &target_tree) const;
+  inline void get(nlohmann::json &target_tree) const;
 };
 
-void inline_keyboard_markup::get(nlohmann::json &tree) const {
+inline void inline_keyboard_markup::get(nlohmann::json &tree) const {
   /// Get this reply markup into a json object
   auto &output_keyboard(tree["reply_markup"]["inline_keyboard"]);
   for(auto const &row : keyboard_buttons) {

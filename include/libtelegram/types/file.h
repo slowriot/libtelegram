@@ -23,11 +23,11 @@ struct file {
   static file const from_json(nlohmann::json const &tree);
   static file const from_json(nlohmann::json const &tree, std::string const &path);
 
-  urdl::url const get_url(std::string const &token) const;
+  inline urdl::url const get_url(std::string const &token) const;
 
-  void download_to_stream(std::string const &token, urdl::istream &target_stream) const;
+  inline void download_to_stream(std::string const &token, urdl::istream &target_stream) const;
 
-  std::vector<char> download(std::string const &token) const;
+  inline std::vector<char> download(std::string const &token) const;
 };
 
 file const file::from_json(nlohmann::json const &tree) {
@@ -43,7 +43,7 @@ file const file::from_json(nlohmann::json const &tree, std::string const &path) 
   return from_json(tree.at(path));
 }
 
-urdl::url const file::get_url(std::string const &token) const {
+inline urdl::url const file::get_url(std::string const &token) const {
   /// Return the URL of this file on Telegram's servers
   /// NOTE: You don't want to share this URL - it contains your bot's token!
   if(file_path) {
@@ -53,7 +53,7 @@ urdl::url const file::get_url(std::string const &token) const {
   }
 }
 
-void file::download_to_stream(std::string const &token, urdl::istream &stream) const {
+inline void file::download_to_stream(std::string const &token, urdl::istream &stream) const {
   /// Download this file to the target output stream
   stream.set_option(urdl::http::user_agent("LibTelegram File Downloader"));
   stream.open_timeout(60000);
@@ -65,7 +65,7 @@ void file::download_to_stream(std::string const &token, urdl::istream &stream) c
   }
 }
 
-std::vector<char> file::download(std::string const &token) const {
+inline std::vector<char> file::download(std::string const &token) const {
   /// Download this file to the target output stream
   urdl::istream stream;
   download_to_stream(token, stream);

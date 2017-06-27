@@ -12,19 +12,19 @@ struct keyboard_button {
     DEFAULT = NONE
   } option = option_type::DEFAULT;
 
-  keyboard_button(std::string const &this_text, option_type this_option = option_type::DEFAULT);
+  inline keyboard_button(std::string const &this_text, option_type this_option = option_type::DEFAULT);
 
-  void get(nlohmann::json &tree) const;
+  inline void get(nlohmann::json &tree) const;
 };
 
-keyboard_button::keyboard_button(std::string const &this_text,
-                                 option_type this_option)
+inline keyboard_button::keyboard_button(std::string const &this_text,
+                                        option_type this_option)
   : text(this_text),
     option(this_option) {
   /// Constructor
 }
 
-void keyboard_button::get(nlohmann::json &tree) const {
+inline void keyboard_button::get(nlohmann::json &tree) const {
   /// Get this keyboard button into a json object (presuming the target is a key in a keyboard)
   tree["text"] = text;
   if(option != option_type::DEFAULT) {

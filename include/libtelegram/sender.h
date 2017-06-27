@@ -57,44 +57,44 @@ public:
   // TODO: add message sending stream class
   // TODO: add statistics on bytes sent and received
 
-  sender(std::string const &token, std::string const &user_agent = "LibTelegram");
+  inline sender(std::string const &token, std::string const &user_agent = "LibTelegram");
 
-  nlohmann::json send_json(std::string const &method,
-                           nlohmann::json const &tree = {},
-                           unsigned int poll_timeout = 30);
+  inline nlohmann::json send_json(std::string const &method,
+                                  nlohmann::json const &tree = {},
+                                  unsigned int poll_timeout = 30);
   template<typename T>
-  std::experimental::optional<T> send_json_and_parse(std::string const &method,
-                                                     nlohmann::json const &tree = {});
+  inline std::experimental::optional<T> send_json_and_parse(std::string const &method,
+                                                            nlohmann::json const &tree = {});
 
-  std::experimental::optional<types::user> const get_me();
+  inline std::experimental::optional<types::user> const get_me();
 
   template<typename Treply_markup = types::reply_markup::force_reply>
-  std::experimental::optional<types::message> send_message(int_fast64_t chat_id,
-                                                           std::string const &text,
-                                                           int_fast32_t reply_to_message_id = reply_to_message_id_none,
-                                                           parse_mode parse = parse_mode::DEFAULT,
-                                                           web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                                                           notification_mode notification = notification_mode::DEFAULT,
-                                                           types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
-  std::experimental::optional<types::message> send_message(std::string channel_name,
-                                                           std::string const &text,
-                                                           int_fast32_t reply_to_message_id = reply_to_message_id_none,
-                                                           parse_mode parse = parse_mode::DEFAULT,
-                                                           web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                                                           notification_mode notification = notification_mode::DEFAULT);
+  inline std::experimental::optional<types::message> send_message(int_fast64_t chat_id,
+                                                                  std::string const &text,
+                                                                  int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                                  parse_mode parse = parse_mode::DEFAULT,
+                                                                  web_preview_mode web_preview = web_preview_mode::DEFAULT,
+                                                                  notification_mode notification = notification_mode::DEFAULT,
+                                                                  types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+  inline std::experimental::optional<types::message> send_message(std::string channel_name,
+                                                                  std::string const &text,
+                                                                  int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                                  parse_mode parse = parse_mode::DEFAULT,
+                                                                  web_preview_mode web_preview = web_preview_mode::DEFAULT,
+                                                                  notification_mode notification = notification_mode::DEFAULT);
 
-  std::experimental::optional<types::message> forward_message(int_fast64_t chat_id,
-                                                              int_fast64_t from_chat_id,
-                                                              int_fast32_t message_id,
-                                                              notification_mode notification = notification_mode::DEFAULT);
+  inline std::experimental::optional<types::message> forward_message(int_fast64_t chat_id,
+                                                                     int_fast64_t from_chat_id,
+                                                                     int_fast32_t message_id,
+                                                                     notification_mode notification = notification_mode::DEFAULT);
 
-  bool send_chat_action(int_fast64_t chat_id, chat_action_type action = chat_action_type::TYPING);
+  inline bool send_chat_action(int_fast64_t chat_id, chat_action_type action = chat_action_type::TYPING);
 
-  std::experimental::optional<types::file> get_file(std::string const &file_id);
+  inline std::experimental::optional<types::file> get_file(std::string const &file_id);
 };
 
-sender::sender(std::string const &this_token,
-               std::string const &this_user_agent) try
+inline sender::sender(std::string const &this_token,
+                      std::string const &this_user_agent) try
   : token(this_token),
     endpoint(LIBTELEGRAM_OUTGOING_PROTO "://api.telegram.org/bot" + this_token + "/"),
     user_agent(this_user_agent) {
@@ -106,9 +106,9 @@ sender::sender(std::string const &this_token,
   std::cerr << "LibTelegram: Sender: Exception during construction: " << e.what() << std::endl;
 }
 
-nlohmann::json sender::send_json(std::string const &method,
-                                 nlohmann::json const &tree,
-                                 unsigned int poll_timeout) {
+inline nlohmann::json sender::send_json(std::string const &method,
+                                        nlohmann::json const &tree,
+                                        unsigned int poll_timeout) {
   /// Function to send a json tree to the given method and get back a response, useful if you want to send custom requests
   #ifndef NDEBUG
     std::cerr << "LibTelegram: Sender: DEBUG: json request:" << std::endl;
@@ -152,8 +152,8 @@ nlohmann::json sender::send_json(std::string const &method,
 }
 
 template<typename T>
-std::experimental::optional<T> sender::send_json_and_parse(std::string const &method,
-                                                           nlohmann::json const &tree) {
+inline std::experimental::optional<T> sender::send_json_and_parse(std::string const &method,
+                                                                  nlohmann::json const &tree) {
   /// Wrapper function to send a json object and get back a complete object of the specified template typen
   auto reply_tree(send_json(method, tree));
   #ifndef NDEBUG
@@ -174,19 +174,19 @@ std::experimental::optional<T> sender::send_json_and_parse(std::string const &me
   }
 }
 
-std::experimental::optional<types::user> const sender::get_me() {
+inline std::experimental::optional<types::user> const sender::get_me() {
   /// Send a getme request - see https://core.telegram.org/bots/api#getme
   return send_json_and_parse<types::user>("getMe");
 }
 
 template<typename Treply_markup>
-std::experimental::optional<types::message> sender::send_message(int_fast64_t chat_id,
-                                                                 std::string const &text,
-                                                                 int_fast32_t reply_to_message_id,
-                                                                 parse_mode parse,
-                                                                 web_preview_mode web_preview,
-                                                                 notification_mode notification,
-                                                                 types::reply_markup::base<Treply_markup> const *reply_markup) {
+inline std::experimental::optional<types::message> sender::send_message(int_fast64_t chat_id,
+                                                                        std::string const &text,
+                                                                        int_fast32_t reply_to_message_id,
+                                                                        parse_mode parse,
+                                                                        web_preview_mode web_preview,
+                                                                        notification_mode notification,
+                                                                        types::reply_markup::base<Treply_markup> const *reply_markup) {
   /// Send a message to a chat id - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
     return std::experimental::nullopt;                                          // don't attempt to send empty messages - this would be an error
@@ -253,12 +253,12 @@ std::experimental::optional<types::message> sender::send_message(int_fast64_t ch
   }
   return send_json_and_parse<types::message>("sendMessage", tree);
 }
-std::experimental::optional<types::message> sender::send_message(std::string channel_name,
-                                                                 std::string const &text,
-                                                                 int_fast32_t reply_to_message_id,
-                                                                 parse_mode parse,
-                                                                 web_preview_mode web_preview,
-                                                                 notification_mode notification) {
+inline std::experimental::optional<types::message> sender::send_message(std::string channel_name,
+                                                                        std::string const &text,
+                                                                        int_fast32_t reply_to_message_id,
+                                                                        parse_mode parse,
+                                                                        web_preview_mode web_preview,
+                                                                        notification_mode notification) {
   /// Send a message to a channel name - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
     return std::experimental::nullopt;                                          // don't attempt to send empty messages - this would be an error
@@ -321,10 +321,10 @@ std::experimental::optional<types::message> sender::send_message(std::string cha
   return send_json_and_parse<types::message>("sendMessage", tree);
 }
 
-std::experimental::optional<types::message> sender::forward_message(int_fast64_t chat_id,
-                                                                    int_fast64_t from_chat_id,
-                                                                    int_fast32_t message_id,
-                                                                    notification_mode notification) {
+inline std::experimental::optional<types::message> sender::forward_message(int_fast64_t chat_id,
+                                                                           int_fast64_t from_chat_id,
+                                                                           int_fast32_t message_id,
+                                                                           notification_mode notification) {
   /// Forward a message to a chat id - see https://core.telegram.org/bots/api#forwardmessage
   #ifndef NDEBUG
     std::cerr << "LibTelegram: Sender: DEBUG: forwarding message " << message_id << " from chat " << from_chat_id << " to chat id " << chat_id << std::endl;
@@ -346,8 +346,8 @@ std::experimental::optional<types::message> sender::forward_message(int_fast64_t
   return send_json_and_parse<types::message>("forwardMessage", tree);
 }
 
-bool sender::send_chat_action(int_fast64_t chat_id,
-                              chat_action_type action) {
+inline bool sender::send_chat_action(int_fast64_t chat_id,
+                                     chat_action_type action) {
   /// Send a chat action - see https://core.telegram.org/bots/api#sendchataction
   /// Return is whether it succeeded
   nlohmann::json tree;
@@ -390,7 +390,7 @@ bool sender::send_chat_action(int_fast64_t chat_id,
   return reply_tree.at("result");
 }
 
-std::experimental::optional<types::file> sender::get_file(std::string const &file_id) {
+inline std::experimental::optional<types::file> sender::get_file(std::string const &file_id) {
   /// Get download info about a file (as a file object) - see https://core.telegram.org/bots/api#getfile
   nlohmann::json tree;
   tree["file_id"] = file_id;
