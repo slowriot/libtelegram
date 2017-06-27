@@ -9,7 +9,7 @@ namespace telegram::types::reply_markup {
 struct reply_keyboard_markup final : base<reply_keyboard_markup> {
   /// See https://core.telegram.org/bots/api/#replykeyboardmarkup
   std::vector<std::vector<keyboard_button>> keyboard_buttons;
-  enum class resize_keyboard_type : char {
+  enum class resize_keyboard_type : char {                                      // Array of button rows, each represented by an Array of KeyboardButton objects.
     RESIZE,
     NO_RESIZE,
     DEFAULT = NO_RESIZE
