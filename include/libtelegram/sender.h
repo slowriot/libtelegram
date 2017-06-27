@@ -114,17 +114,24 @@ public:
                                int_fast32_t user_id);
   inline bool kick_chat_member(std::string const &chat_id,
                                int_fast32_t user_id);
+
   inline bool unban_chat_member(int_fast64_t chat_id,
                                 int_fast32_t user_id);
   inline bool unban_chat_member(std::string const &chat_id,
                                 int_fast32_t user_id);
+
   inline bool leave_chat(int_fast64_t chat_id);
   inline bool leave_chat(std::string const &chat_id);
+
   inline std::experimental::optional<types::chat> get_chat(int_fast64_t chat_id);
   inline std::experimental::optional<types::chat> get_chat(std::string const &chat_id);
+
   std::experimental::optional<std::vector<types::chat_member>> get_chat_administrators(int_fast64_t chat_id);
   std::experimental::optional<std::vector<types::chat_member>> get_chat_administrators(std::string const &chat_id);
-  // TODO: getChatMembersCount
+
+  inline std::experimental::optional<int_fast32_t> get_chat_members_count(int_fast64_t chat_id);
+  inline std::experimental::optional<int_fast32_t> get_chat_members_count(std::string const &chat_id);
+
   inline std::experimental::optional<types::chat_member> get_chat_member(int_fast64_t chat_id,
                                                                          int_fast32_t user_id);
   inline std::experimental::optional<types::chat_member> get_chat_member(std::string const &chat_id,
@@ -552,9 +559,22 @@ std::experimental::optional<std::vector<types::chat_member>> sender::get_chat_ad
   return send_json_and_parse_vector<types::chat_member>("getChatAdministrators", tree);
 }
 
+inline std::experimental::optional<int_fast32_t> sender::get_chat_members_count(int_fast64_t chat_id) {
+  /// Get a count of users in a chat, numerical chat id variant - see https://core.telegram.org/bots/api#getchatmemberscount
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_parse<int_fast32_t>("getChatMembersCount", tree);
+}
+inline std::experimental::optional<int_fast32_t> sender::get_chat_members_count(std::string const &chat_id) {
+  /// Get a count of users in a chat, string supergroup name variant - see https://core.telegram.org/bots/api#getchatmemberscount
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_parse<int_fast32_t>("getChatMembersCount", tree);
+}
+
 inline std::experimental::optional<types::chat_member> sender::get_chat_member(int_fast64_t chat_id,
                                                                                int_fast32_t user_id) {
-  /// Get a chat member by id, numerical chat id variant- see https://core.telegram.org/bots/api#getchatmember
+  /// Get a chat member by id, numerical chat id variant - see https://core.telegram.org/bots/api#getchatmember
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   tree["user_id"] = user_id;
