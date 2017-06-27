@@ -11,8 +11,8 @@ struct inline_keyboard_button {
     URL,
     CALLBACK,
     SWITCH,
-    //GAME,
     SWITCH_CURRENT,
+    //GAME,
     PAY
   };
 
@@ -40,18 +40,18 @@ inline_keyboard_button::inline_keyboard_button(std::string const &this_text,
     url = content;
     break;
   case type::CALLBACK:
-    switch_inline_query = content;
+    callback_data = content;
     break;
   case type::SWITCH:
+    switch_inline_query = content;
+    break;
+  case type::SWITCH_CURRENT:
     switch_inline_query_current_chat = content;
     break;
   //case type::GAME:
   //  callback_game = content;
   //  break;
   //
-  case type::SWITCH_CURRENT:
-    callback_data = content;
-    break;
   case type::PAY:
     pay = true;
     break;
