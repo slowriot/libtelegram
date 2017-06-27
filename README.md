@@ -120,8 +120,8 @@ Simply run:
 You can also set the webhook yourself by just sending an appropriate request
 from your browser, check the telegram bot documentation for the correct syntax.
 
-It's possible to run multiple bots with a single program, and multiple webhooks -
-see below under "advanced usage".
+It's possible to run multiple bots with a single program, and multiple webhooks
+or polling listeners - see below under "advanced usage".
 
 ## Refer to the examples ##
 Consult with the [examples](https://github.com/slowriot/libtelegram/blob/master/examples/)
@@ -223,9 +223,18 @@ senders.  In that case, you can just `#include "libtelegram/listener.h"`.
 To send from multiple bots simultaneously, simply create multiple senders, each
 initiated with the API key of the bot you wish to send as - it's that simple.
 
-To receive from multiple bots, just use a single listener and symlink your bot
-to multiple webhook locations on your web server, then distinguish between the
-bots by examining the URI each callback is called for.
+To receive from multiple bots with FastCGI or CGI, just use a single listener
+and symlink your bot to multiple webhook locations on your web server, then
+distinguish between the bots by examining the URI each callback is called for.
+
+To receive from multiple bots with polling, create a thread for each polling
+listener to run in.  They can each either have their own sender, or can share
+a single global sender.  Senders maintain no global state and create independent
+connections to the server for each request, thus ensuring lock-free and
+wait-free thread safety.  Calling methods concurrently on the same sender from
+multiple threads is therefore perfectly safe, should you choose to do that.  On
+the other hand, each sender also has a tiny memory footprint, so creating many
+senders has very little cost.
 
 ### Maintaining state without a database or writing to disk with FastCGI ###
 If your bot has short-term state you'd like to maintain between requests, you
