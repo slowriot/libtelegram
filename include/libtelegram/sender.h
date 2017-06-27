@@ -369,7 +369,7 @@ inline bool sender::send_chat_action(int_fast64_t chat_id,
     tree["action"] = "record_video";
     break;
   case chat_action_type::UPLOAD_VIDEO:
-    tree["action"] = "pload_video";
+    tree["action"] = "upload_video";
     break;
   case chat_action_type::RECORD_AUDIO:
     tree["action"] = "record_audio";
