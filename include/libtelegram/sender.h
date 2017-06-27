@@ -91,6 +91,12 @@ public:
   inline bool send_chat_action(int_fast64_t chat_id, chat_action_type action = chat_action_type::TYPING);
 
   inline std::experimental::optional<types::file> get_file(std::string const &file_id);
+
+  inline bool answer_callback_query(std::string const &callback_query_id,
+                                    std::string const &text = {},
+                                    bool show_alert = false,
+                                    std::string const &url = {},
+                                    int_fast32_t cache_time = 0);
 };
 
 inline sender::sender(std::string const &this_token,
@@ -380,7 +386,7 @@ inline bool sender::send_chat_action(int_fast64_t chat_id,
   }
   auto reply_tree(send_json("sendChatAction", tree));
   #ifndef NDEBUG
-    std::cerr << tree.dump(2) << std::endl;
+    std::cerr << reply_tree.dump(2) << std::endl;
   #endif // NDEBUG
   if(reply_tree["ok"] != true) {
     std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to sendChatAction expecting a bool:" << std::endl;
@@ -395,6 +401,38 @@ inline std::experimental::optional<types::file> sender::get_file(std::string con
   nlohmann::json tree;
   tree["file_id"] = file_id;
   return send_json_and_parse<types::file>("getFile", tree);
+}
+
+inline bool sender::answer_callback_query(std::string const &callback_query_id,
+                                          std::string const &text,
+                                          bool show_alert,
+                                          std::string const &url,
+                                          int_fast32_t cache_time) {
+  /// Send an acknowledgement to a callback query - see https://core.telegram.org/bots/api#answercallbackquery
+  nlohmann::json tree;
+  tree["callback_query_id"] = callback_query_id;
+  if(!text.empty()) {
+    tree["text"] = text;
+  }
+  if(show_alert) {
+    tree["show_alert"] = true;
+  }
+  if(!url.empty()) {
+    tree["url"] = url;
+  }
+  if(cache_time != 0) {
+    tree["cache_time"] = cache_time;
+  }
+  auto reply_tree(send_json("answerCallbackQuery", tree));
+  #ifndef NDEBUG
+    std::cerr << reply_tree.dump(2) << std::endl;
+  #endif // NDEBUG
+  if(reply_tree["ok"] != true) {
+    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to answerCallbackQuery expecting a bool:" << std::endl;
+    std::cerr << reply_tree.dump(2) << std::endl;
+    return false;
+  }
+  return reply_tree.at("result");
 }
 
 }
