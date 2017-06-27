@@ -549,7 +549,7 @@ inline bool sender::edit_message_text(std::string const &text,
   if(reply_markup) {
     reply_markup->get(tree);
   }
-  return send_json_and_parse<types::message>("editMessageText", tree);
+  return send_json_and_get_bool("editMessageText", tree);
 }
 template<typename Treply_markup>
 inline bool sender::edit_message_text(std::string const &text,
@@ -595,7 +595,7 @@ inline bool sender::edit_message_text(std::string const &text,
   if(reply_markup) {
     reply_markup->get(tree);
   }
-  return send_json_and_parse<types::message>("editMessageText", tree);
+  return send_json_and_get_bool("editMessageText", tree);
 }
 template<typename Treply_markup>
 inline bool sender::edit_message_text(std::string const &text,
@@ -639,7 +639,7 @@ inline bool sender::edit_message_text(std::string const &text,
   if(reply_markup) {
     reply_markup->get(tree);
   }
-  return send_json_and_parse<types::message>("editMessageText", tree);
+  return send_json_and_get_bool("editMessageText", tree);
 }
 
 inline bool sender::send_chat_action(int_fast64_t chat_id,
