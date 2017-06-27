@@ -29,16 +29,19 @@ public:
     NONE,
     MARKDOWN,
     HTML,
+    UNCHANGED,                                                                  // used when editing messages
     DEFAULT = NONE
   };
   enum class web_preview_mode : char {                                          // whether or not to allow the web preview for links, see https://core.telegram.org/bots/api#sendmessage
     DISABLE,
     ENABLE,
+    UNCHANGED,                                                                  // used when editing messages
     DEFAULT = ENABLE
   };
   enum class notification_mode : char {                                         // whether to send the message silently, see https://core.telegram.org/bots/api#sendmessage
     DISABLE,
     ENABLE,
+    UNCHANGED,                                                                  // used when editing messages
     DEFAULT = ENABLE
   };
   enum class chat_action_type : char {                                          // chat actions, see https://core.telegram.org/bots/api#sendchataction
@@ -81,17 +84,49 @@ public:
                                                                   web_preview_mode web_preview = web_preview_mode::DEFAULT,
                                                                   notification_mode notification = notification_mode::DEFAULT,
                                                                   types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
-  inline std::experimental::optional<types::message> send_message(std::string channel_name,
+  template<typename Treply_markup = types::reply_markup::force_reply>
+  inline std::experimental::optional<types::message> send_message(std::string const &chat_id,
                                                                   std::string const &text,
                                                                   int_fast32_t reply_to_message_id = reply_to_message_id_none,
                                                                   parse_mode parse = parse_mode::DEFAULT,
                                                                   web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                                                                  notification_mode notification = notification_mode::DEFAULT);
+                                                                  notification_mode notification = notification_mode::DEFAULT,
+                                                                  types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
 
   inline std::experimental::optional<types::message> forward_message(int_fast64_t chat_id,
                                                                      int_fast64_t from_chat_id,
                                                                      int_fast32_t message_id,
                                                                      notification_mode notification = notification_mode::DEFAULT);
+  inline std::experimental::optional<types::message> forward_message(std::string const &chat_id,
+                                                                     int_fast64_t from_chat_id,
+                                                                     int_fast32_t message_id,
+                                                                     notification_mode notification = notification_mode::DEFAULT);
+
+  // updating messages
+  template<typename Treply_markup = types::reply_markup::force_reply>
+  inline bool edit_message_text(std::string const &text,
+                                int_fast64_t chat_id,
+                                int_fast32_t message_id,
+                                parse_mode parse = parse_mode::DEFAULT,
+                                web_preview_mode web_preview = web_preview_mode::DEFAULT,
+                                types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+  template<typename Treply_markup = types::reply_markup::force_reply>
+  inline bool edit_message_text(std::string const &text,
+                                std::string const &chat_id,
+                                int_fast32_t message_id,
+                                parse_mode parse = parse_mode::DEFAULT,
+                                web_preview_mode web_preview = web_preview_mode::DEFAULT,
+                                types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+  template<typename Treply_markup = types::reply_markup::force_reply>
+  inline bool edit_message_text(std::string const &text,
+                                std::string const &inline_message_id = {},
+                                parse_mode parse = parse_mode::DEFAULT,
+                                web_preview_mode web_preview = web_preview_mode::DEFAULT,
+                                types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+  // TODO: editMessageText
+  // TODO: editMessageCaption
+  // TODO: editMessageReplyMarkup
+  // TODO: deleteMessage
 
   // TODO: sendPhoto
   // TODO: sendAudio
@@ -104,7 +139,10 @@ public:
   // TODO: sendVenue
   // TODO: sendContact
 
-  inline bool send_chat_action(int_fast64_t chat_id, chat_action_type action = chat_action_type::TYPING);
+  inline bool send_chat_action(int_fast64_t chat_id,
+                               chat_action_type action = chat_action_type::TYPING);
+  inline bool send_chat_action(std::string const &chat_id,
+                               chat_action_type action = chat_action_type::TYPING);
 
   // TODO: getUserProfilePhotos
 
@@ -142,12 +180,6 @@ public:
                                     bool show_alert = false,
                                     std::string const &url = {},
                                     int_fast32_t cache_time = 0);
-
-  // updating messages
-  // TODO: editMessageText
-  // TODO: editMessageCaption
-  // TODO: editMessageReplyMarkup
-  // TODO: deleteMessage
 
   // inline mode
   // TODO: answerInlineQuery
@@ -311,7 +343,7 @@ inline std::experimental::optional<types::message> sender::send_message(int_fast
   nlohmann::json tree;                                                          // a json container object for our data
   tree["chat_id"] = chat_id;
   tree["text"] = text;
-  if(parse != parse_mode::DEFAULT) {                                            // don't waste bandwidth sending the default option
+  if(parse != parse_mode::DEFAULT && parse != parse_mode::UNCHANGED) {          // don't waste bandwidth sending the default option
     switch(parse) {
     case parse_mode::NONE:
       break;
@@ -323,7 +355,7 @@ inline std::experimental::optional<types::message> sender::send_message(int_fast
       break;
     }
   }
-  if(web_preview != web_preview_mode::DEFAULT) {                                // don't waste bandwidth sending the default option
+  if(web_preview != web_preview_mode::DEFAULT && web_preview != web_preview_mode::UNCHANGED) { // don't waste bandwidth sending the default option
     switch(web_preview) {
     case web_preview_mode::DISABLE:
       tree["disable_web_page_preview"] = true;
@@ -333,7 +365,7 @@ inline std::experimental::optional<types::message> sender::send_message(int_fast
       break;
     }
   }
-  if(notification != notification_mode::DEFAULT) {                              // don't waste bandwidth sending the default option
+  if(notification != notification_mode::DEFAULT && notification != notification_mode::UNCHANGED) { // don't waste bandwidth sending the default option
     switch(notification) {
     case notification_mode::DISABLE:
       tree["disable_notification"] = true;
@@ -351,24 +383,26 @@ inline std::experimental::optional<types::message> sender::send_message(int_fast
   }
   return send_json_and_parse<types::message>("sendMessage", tree);
 }
-inline std::experimental::optional<types::message> sender::send_message(std::string channel_name,
+template<typename Treply_markup>
+inline std::experimental::optional<types::message> sender::send_message(std::string const &chat_id,
                                                                         std::string const &text,
                                                                         int_fast32_t reply_to_message_id,
                                                                         parse_mode parse,
                                                                         web_preview_mode web_preview,
-                                                                        notification_mode notification) {
+                                                                        notification_mode notification,
+                                                                        types::reply_markup::base<Treply_markup> const *reply_markup) {
   /// Send a message to a channel name - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
     return std::experimental::nullopt;                                          // don't attempt to send empty messages - this would be an error
   }
   if(text.size() > message_length_limit) {                                      // recursively split this message if it's too long
-    send_message(channel_name,
+    send_message(chat_id,
                  text.substr(0, message_length_limit),                          // send just the first allowed number of characters in the first half
                  reply_to_message_id,
                  parse,
                  web_preview,
                  notification);
-    return send_message(channel_name,
+    return send_message(chat_id,
                         text.substr(message_length_limit, std::string::npos),   // send the remaining characters - this will subdivide again recursively if need be
                         reply_to_message_id,
                         parse,
@@ -376,12 +410,12 @@ inline std::experimental::optional<types::message> sender::send_message(std::str
                         notification);                                          // note - we disregard return messages from any except the last
   }
   #ifndef NDEBUG
-    std::cerr << "LibTelegram: Sender: DEBUG: sending message \"" << text << "\" to channel name " << channel_name << std::endl;
+    std::cerr << "LibTelegram: Sender: DEBUG: sending message \"" << text << "\" to chat id " << chat_id << std::endl;
   #endif // NDEBUG
   nlohmann::json tree;                                                          // a json container object for our data
-  tree["chat_id"] = channel_name;
+  tree["chat_id"] = chat_id;
   tree["text"] = text;
-  if(parse != parse_mode::DEFAULT) {                                            // don't waste bandwidth sending the default option
+  if(parse != parse_mode::DEFAULT && parse != parse_mode::UNCHANGED) {          // don't waste bandwidth sending the default option
     switch(parse) {
     case parse_mode::NONE:
       break;
@@ -393,7 +427,7 @@ inline std::experimental::optional<types::message> sender::send_message(std::str
       break;
     }
   }
-  if(web_preview != web_preview_mode::DEFAULT) {                                // don't waste bandwidth sending the default option
+  if(web_preview != web_preview_mode::DEFAULT && web_preview != web_preview_mode::UNCHANGED) { // don't waste bandwidth sending the default option
     switch(web_preview) {
     case web_preview_mode::DISABLE:
       tree["disable_web_page_preview"] = true;
@@ -403,7 +437,7 @@ inline std::experimental::optional<types::message> sender::send_message(std::str
       break;
     }
   }
-  if(notification != notification_mode::DEFAULT) {                              // don't waste bandwidth sending the default option
+  if(notification != notification_mode::DEFAULT && notification != notification_mode::UNCHANGED) { // don't waste bandwidth sending the default option
     switch(notification) {
     case notification_mode::DISABLE:
       tree["disable_notification"] = true;
@@ -415,6 +449,9 @@ inline std::experimental::optional<types::message> sender::send_message(std::str
   }
   if(reply_to_message_id != reply_to_message_id_none) {
     tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    reply_markup->get(tree);
   }
   return send_json_and_parse<types::message>("sendMessage", tree);
 }
@@ -443,8 +480,203 @@ inline std::experimental::optional<types::message> sender::forward_message(int_f
   }
   return send_json_and_parse<types::message>("forwardMessage", tree);
 }
+inline std::experimental::optional<types::message> sender::forward_message(std::string const &chat_id,
+                                                                           int_fast64_t from_chat_id,
+                                                                           int_fast32_t message_id,
+                                                                           notification_mode notification) {
+  /// Forward a message to a chat id - see https://core.telegram.org/bots/api#forwardmessage
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: forwarding message " << message_id << " from chat " << from_chat_id << " to chat id " << chat_id << std::endl;
+  #endif // NDEBUG
+  nlohmann::json tree;                                                          // json object to put our data into
+  tree["chat_id"]      = chat_id;
+  tree["from_chat_id"] = from_chat_id;
+  tree["message_id"]   = message_id;
+  if(notification != notification_mode::DEFAULT) {                              // don't waste bandwidth sending the default option
+    switch(notification) {
+    case notification_mode::DISABLE:
+      tree["disable_notification"] = true;
+      break;
+    case notification_mode::ENABLE:
+      tree["disable_notification"] = false;
+      break;
+    }
+  }
+  return send_json_and_parse<types::message>("forwardMessage", tree);
+}
+
+template<typename Treply_markup>
+inline bool sender::edit_message_text(std::string const &text,
+                                      int_fast64_t chat_id,
+                                      int_fast32_t message_id,
+                                      parse_mode parse,
+                                      web_preview_mode web_preview,
+                                      types::reply_markup::base<Treply_markup> const *reply_markup) {
+  /// Edit text and game messages sent by or via the bot, numerical chat id variant - see https://core.telegram.org/bots/api#editmessagetext
+  if(text.empty()) {
+    return false;                                                               // don't attempt to send empty messages - this would be an error
+  }
+  nlohmann::json tree;                                                          // a json container object for our data
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: editing message \"" << text << "\" in chat_id " << chat_id << " message_id " << message_id << std::endl;
+  #endif // NDEBUG
+  tree["chat_id"] = chat_id;
+  tree["message_id"] = message_id;
+  tree["text"] = text;
+  if(parse != parse_mode::UNCHANGED) {                                          // only send values we wish to change
+    switch(parse) {
+    case parse_mode::NONE:
+      tree["parse_mode"] = "";
+      break;
+    case parse_mode::MARKDOWN:
+      tree["parse_mode"] = "Markdown";
+      break;
+    case parse_mode::HTML:
+      tree["parse_mode"] = "HTML";
+      break;
+    }
+  }
+  if(web_preview != web_preview_mode::UNCHANGED) {                              // only send values we wish to change
+    switch(web_preview) {
+    case web_preview_mode::DISABLE:
+      tree["disable_web_page_preview"] = true;
+      break;
+    case web_preview_mode::ENABLE:
+      tree["disable_web_page_preview"] = false;
+      break;
+    }
+  }
+  if(reply_markup) {
+    reply_markup->get(tree);
+  }
+  return send_json_and_parse<types::message>("editMessageText", tree);
+}
+template<typename Treply_markup>
+inline bool sender::edit_message_text(std::string const &text,
+                                      std::string const &chat_id,
+                                      int_fast32_t message_id,
+                                      parse_mode parse,
+                                      web_preview_mode web_preview,
+                                      types::reply_markup::base<Treply_markup> const *reply_markup) {
+  /// Edit text and game messages sent by or via the bot, string chat id variant - see https://core.telegram.org/bots/api#editmessagetext
+  if(text.empty()) {
+    return false;                                                               // don't attempt to send empty messages - this would be an error
+  }
+  nlohmann::json tree;                                                          // a json container object for our data
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: editing message \"" << text << "\" in chat_id " << chat_id << " message_id " << message_id << std::endl;
+  #endif // NDEBUG
+  tree["chat_id"] = chat_id;
+  tree["message_id"] = message_id;
+  tree["text"] = text;
+  if(parse != parse_mode::UNCHANGED) {                                          // only send values we wish to change
+    switch(parse) {
+    case parse_mode::NONE:
+      tree["parse_mode"] = "";
+      break;
+    case parse_mode::MARKDOWN:
+      tree["parse_mode"] = "Markdown";
+      break;
+    case parse_mode::HTML:
+      tree["parse_mode"] = "HTML";
+      break;
+    }
+  }
+  if(web_preview != web_preview_mode::UNCHANGED) {                              // only send values we wish to change
+    switch(web_preview) {
+    case web_preview_mode::DISABLE:
+      tree["disable_web_page_preview"] = true;
+      break;
+    case web_preview_mode::ENABLE:
+      tree["disable_web_page_preview"] = false;
+      break;
+    }
+  }
+  if(reply_markup) {
+    reply_markup->get(tree);
+  }
+  return send_json_and_parse<types::message>("editMessageText", tree);
+}
+template<typename Treply_markup>
+inline bool sender::edit_message_text(std::string const &text,
+                                      std::string const &inline_message_id,
+                                      parse_mode parse,
+                                      web_preview_mode web_preview,
+                                      types::reply_markup::base<Treply_markup> const *reply_markup) {
+  /// Edit text and game messages sent by or via the bot, inline message variant - see https://core.telegram.org/bots/api#editmessagetext
+  if(text.empty()) {
+    return false;                                                               // don't attempt to send empty messages - this would be an error
+  }
+  nlohmann::json tree;                                                          // a json container object for our data
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: editing message \"" << text << "\" in inline_message_id " << inline_message_id << std::endl;
+  #endif // NDEBUG
+  tree["inline_message_id"] = inline_message_id;
+  tree["text"] = text;
+  if(parse != parse_mode::UNCHANGED) {                                          // only send values we wish to change
+    switch(parse) {
+    case parse_mode::NONE:
+      tree["parse_mode"] = "";
+      break;
+    case parse_mode::MARKDOWN:
+      tree["parse_mode"] = "Markdown";
+      break;
+    case parse_mode::HTML:
+      tree["parse_mode"] = "HTML";
+      break;
+    }
+  }
+  if(web_preview != web_preview_mode::UNCHANGED) {                              // only send values we wish to change
+    switch(web_preview) {
+    case web_preview_mode::DISABLE:
+      tree["disable_web_page_preview"] = true;
+      break;
+    case web_preview_mode::ENABLE:
+      tree["disable_web_page_preview"] = false;
+      break;
+    }
+  }
+  if(reply_markup) {
+    reply_markup->get(tree);
+  }
+  return send_json_and_parse<types::message>("editMessageText", tree);
+}
 
 inline bool sender::send_chat_action(int_fast64_t chat_id,
+                                     chat_action_type action) {
+  /// Send a chat action - see https://core.telegram.org/bots/api#sendchataction
+  /// Return is whether it succeeded
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  switch(action) {
+  case chat_action_type::TYPING:
+    tree["action"] = "typing";
+    break;
+  case chat_action_type::UPLOAD_PHOTO:
+    tree["action"] = "upload_photo";
+    break;
+  case chat_action_type::RECORD_VIDEO:
+    tree["action"] = "record_video";
+    break;
+  case chat_action_type::UPLOAD_VIDEO:
+    tree["action"] = "upload_video";
+    break;
+  case chat_action_type::RECORD_AUDIO:
+    tree["action"] = "record_audio";
+    break;
+  case chat_action_type::UPLOAD_AUDIO:
+    tree["action"] = "upload_audio";
+    break;
+  case chat_action_type::UPLOAD_DOCUMENT:
+    tree["action"] = "upload_document";
+    break;
+  case chat_action_type::FIND_LOCATION:
+    tree["action"] = "find_location";
+    break;
+  }
+  return send_json_and_get_bool("sendChatAction", tree);
+}
+inline bool sender::send_chat_action(std::string const &chat_id,
                                      chat_action_type action) {
   /// Send a chat action - see https://core.telegram.org/bots/api#sendchataction
   /// Return is whether it succeeded
