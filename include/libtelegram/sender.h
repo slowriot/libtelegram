@@ -65,6 +65,9 @@ public:
   template<typename T>
   inline std::experimental::optional<T> send_json_and_parse(std::string const &method,
                                                             nlohmann::json const &tree = {});
+  template<typename T>
+  inline std::experimental::optional<std::vector<T>> send_json_and_parse_vector(std::string const &method,
+                                                                                nlohmann::json const &tree = {});
   inline bool send_json_and_get_bool(std::string const &method,
                                      nlohmann::json const &tree = {});
 
@@ -117,9 +120,10 @@ public:
                                 int_fast32_t user_id);
   inline bool leave_chat(int_fast64_t chat_id);
   inline bool leave_chat(std::string const &chat_id);
-  // TODO: leaveChat
-  // TODO: getChat
-  // TODO: getChatAdministrators
+  inline std::experimental::optional<types::chat> get_chat(int_fast64_t chat_id);
+  inline std::experimental::optional<types::chat> get_chat(std::string const &chat_id);
+  std::experimental::optional<std::vector<types::chat_member>> get_chat_administrators(int_fast64_t chat_id);
+  std::experimental::optional<std::vector<types::chat_member>> get_chat_administrators(std::string const &chat_id);
   // TODO: getChatMembersCount
   // TODO: getChatMember
 
@@ -219,12 +223,35 @@ inline std::experimental::optional<T> sender::send_json_and_parse(std::string co
     return std::experimental::nullopt;
   }
 }
+template<typename T>
+inline std::experimental::optional<std::vector<T>> sender::send_json_and_parse_vector(std::string const &method,
+                                                                                      nlohmann::json const &tree) {
+  /// Wrapper function to send a json object and get back a complete object of the specified template type
+  auto reply_tree(send_json(method, tree));
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: json vector reply:" << std::endl;
+    std::cerr << reply_tree.dump(2) << std::endl;
+  #endif // NDEBUG
+  if(reply_tree["ok"] != true) {
+    std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to " << method << " trying to get a vector of " << typeid(T).name() << ":" << std::endl;
+    std::cerr << reply_tree.dump(2) << std::endl;
+    return std::experimental::nullopt;
+  }
+  try {
+    return types::make_optional_vector<T>(reply_tree, "result");
+  } catch(std::exception &e) {
+    std::cerr << "LibTelegram: Sender: Exception parsing the following tree to extract a vector of " << typeid(T).name() << ": " << e.what() << std::endl;
+    std::cerr << reply_tree.dump(2) << std::endl;
+    return std::experimental::nullopt;
+  }
+}
 
 inline bool sender::send_json_and_get_bool(std::string const &method,
                                            nlohmann::json const &tree) {
   /// Wrapper function to send a json object and get back a boolean result
   auto reply_tree(send_json(method, tree));
   #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: boolean reply:" << std::endl;
     std::cerr << reply_tree.dump(2) << std::endl;
   #endif // NDEBUG
   if(reply_tree["ok"] != true) {
@@ -494,6 +521,32 @@ inline bool sender::leave_chat(std::string const &chat_id) {
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   return send_json_and_get_bool("leaveChat", tree);
+}
+
+inline std::experimental::optional<types::chat> sender::get_chat(int_fast64_t chat_id) {
+  /// Get latest information about a chat id, numerical chat id variant- see https://core.telegram.org/bots/api#getchat
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_parse<types::chat>("getChat", tree);
+}
+inline std::experimental::optional<types::chat> sender::get_chat(std::string const &chat_id) {
+  /// Get latest information about a chat id, string supergroup name variant - see https://core.telegram.org/bots/api#getchat
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_parse<types::chat>("getChat", tree);
+}
+
+std::experimental::optional<std::vector<types::chat_member>> sender::get_chat_administrators(int_fast64_t chat_id) {
+  /// Get a list of administrators in a chat, numerical chat id variant- see https://core.telegram.org/bots/api#getchatadministrators
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_parse_vector<types::chat_member>("getChatAdministrators", tree);
+}
+std::experimental::optional<std::vector<types::chat_member>> sender::get_chat_administrators(std::string const &chat_id) {
+  /// Get a list of administrators in a chat, string supergroup name variant - see https://core.telegram.org/bots/api#getchatadministrators
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_parse_vector<types::chat_member>("getChatAdministrators", tree);
 }
 
 inline bool sender::answer_callback_query(std::string const &callback_query_id,
