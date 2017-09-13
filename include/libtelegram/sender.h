@@ -66,18 +66,18 @@ public:
                                   nlohmann::json const &tree = {},
                                   unsigned int poll_timeout = 30);
   template<typename T>
-  inline std::experimental::optional<T> send_json_and_parse(std::string const &method,
+  inline std::optional<T> send_json_and_parse(std::string const &method,
                                                             nlohmann::json const &tree = {});
   template<typename T>
-  inline std::experimental::optional<std::vector<T>> send_json_and_parse_vector(std::string const &method,
+  inline std::optional<std::vector<T>> send_json_and_parse_vector(std::string const &method,
                                                                                 nlohmann::json const &tree = {});
   inline bool send_json_and_get_bool(std::string const &method,
                                      nlohmann::json const &tree = {});
 
-  inline std::experimental::optional<types::user> const get_me();
+  inline std::optional<types::user> const get_me();
 
   template<typename Treply_markup = types::reply_markup::force_reply>
-  inline std::experimental::optional<types::message> send_message(int_fast64_t chat_id,
+  inline std::optional<types::message> send_message(int_fast64_t chat_id,
                                                                   std::string const &text,
                                                                   int_fast32_t reply_to_message_id = reply_to_message_id_none,
                                                                   parse_mode parse = parse_mode::DEFAULT,
@@ -85,7 +85,7 @@ public:
                                                                   notification_mode notification = notification_mode::DEFAULT,
                                                                   types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
   template<typename Treply_markup = types::reply_markup::force_reply>
-  inline std::experimental::optional<types::message> send_message(std::string const &chat_id,
+  inline std::optional<types::message> send_message(std::string const &chat_id,
                                                                   std::string const &text,
                                                                   int_fast32_t reply_to_message_id = reply_to_message_id_none,
                                                                   parse_mode parse = parse_mode::DEFAULT,
@@ -93,11 +93,11 @@ public:
                                                                   notification_mode notification = notification_mode::DEFAULT,
                                                                   types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
 
-  inline std::experimental::optional<types::message> forward_message(int_fast64_t chat_id,
+  inline std::optional<types::message> forward_message(int_fast64_t chat_id,
                                                                      int_fast64_t from_chat_id,
                                                                      int_fast32_t message_id,
                                                                      notification_mode notification = notification_mode::DEFAULT);
-  inline std::experimental::optional<types::message> forward_message(std::string const &chat_id,
+  inline std::optional<types::message> forward_message(std::string const &chat_id,
                                                                      int_fast64_t from_chat_id,
                                                                      int_fast32_t message_id,
                                                                      notification_mode notification = notification_mode::DEFAULT);
@@ -146,7 +146,7 @@ public:
 
   // TODO: getUserProfilePhotos
 
-  inline std::experimental::optional<types::file> get_file(std::string const &file_id);
+  inline std::optional<types::file> get_file(std::string const &file_id);
 
   inline bool kick_chat_member(int_fast64_t chat_id,
                                int_fast32_t user_id);
@@ -161,18 +161,18 @@ public:
   inline bool leave_chat(int_fast64_t chat_id);
   inline bool leave_chat(std::string const &chat_id);
 
-  inline std::experimental::optional<types::chat> get_chat(int_fast64_t chat_id);
-  inline std::experimental::optional<types::chat> get_chat(std::string const &chat_id);
+  inline std::optional<types::chat> get_chat(int_fast64_t chat_id);
+  inline std::optional<types::chat> get_chat(std::string const &chat_id);
 
-  std::experimental::optional<std::vector<types::chat_member>> get_chat_administrators(int_fast64_t chat_id);
-  std::experimental::optional<std::vector<types::chat_member>> get_chat_administrators(std::string const &chat_id);
+  std::optional<std::vector<types::chat_member>> get_chat_administrators(int_fast64_t chat_id);
+  std::optional<std::vector<types::chat_member>> get_chat_administrators(std::string const &chat_id);
 
-  inline std::experimental::optional<int_fast32_t> get_chat_members_count(int_fast64_t chat_id);
-  inline std::experimental::optional<int_fast32_t> get_chat_members_count(std::string const &chat_id);
+  inline std::optional<int_fast32_t> get_chat_members_count(int_fast64_t chat_id);
+  inline std::optional<int_fast32_t> get_chat_members_count(std::string const &chat_id);
 
-  inline std::experimental::optional<types::chat_member> get_chat_member(int_fast64_t chat_id,
+  inline std::optional<types::chat_member> get_chat_member(int_fast64_t chat_id,
                                                                          int_fast32_t user_id);
-  inline std::experimental::optional<types::chat_member> get_chat_member(std::string const &chat_id,
+  inline std::optional<types::chat_member> get_chat_member(std::string const &chat_id,
                                                                          int_fast32_t user_id);
 
   inline bool answer_callback_query(std::string const &callback_query_id,
@@ -244,7 +244,7 @@ inline nlohmann::json sender::send_json(std::string const &method,
 }
 
 template<typename T>
-inline std::experimental::optional<T> sender::send_json_and_parse(std::string const &method,
+inline std::optional<T> sender::send_json_and_parse(std::string const &method,
                                                                   nlohmann::json const &tree) {
   /// Wrapper function to send a json object and get back a complete object of the specified template type
   auto reply_tree(send_json(method, tree));
@@ -255,18 +255,18 @@ inline std::experimental::optional<T> sender::send_json_and_parse(std::string co
   if(reply_tree["ok"] != true) {
     std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to " << method << " trying to get " << typeid(T).name() << ":" << std::endl;
     std::cerr << reply_tree.dump(2) << std::endl;
-    return std::experimental::nullopt;
+    return std::nullopt;
   }
   try {
-    return types::make_optional<T>(reply_tree, "result");
+    return types::make_optional_from_json<T>(reply_tree, "result");
   } catch(std::exception &e) {
     std::cerr << "LibTelegram: Sender: Exception parsing the following tree to extract a " << typeid(T).name() << ": " << e.what() << std::endl;
     std::cerr << reply_tree.dump(2) << std::endl;
-    return std::experimental::nullopt;
+    return std::nullopt;
   }
 }
 template<typename T>
-inline std::experimental::optional<std::vector<T>> sender::send_json_and_parse_vector(std::string const &method,
+inline std::optional<std::vector<T>> sender::send_json_and_parse_vector(std::string const &method,
                                                                                       nlohmann::json const &tree) {
   /// Wrapper function to send a json object and get back a complete object of the specified template type
   auto reply_tree(send_json(method, tree));
@@ -277,14 +277,14 @@ inline std::experimental::optional<std::vector<T>> sender::send_json_and_parse_v
   if(reply_tree["ok"] != true) {
     std::cerr << "LibTelegram: Sender: Returned status other than OK in reply to " << method << " trying to get a vector of " << typeid(T).name() << ":" << std::endl;
     std::cerr << reply_tree.dump(2) << std::endl;
-    return std::experimental::nullopt;
+    return std::nullopt;
   }
   try {
-    return types::make_optional_vector<T>(reply_tree, "result");
+    return types::make_optional_vector_from_json<T>(reply_tree, "result");
   } catch(std::exception &e) {
     std::cerr << "LibTelegram: Sender: Exception parsing the following tree to extract a vector of " << typeid(T).name() << ": " << e.what() << std::endl;
     std::cerr << reply_tree.dump(2) << std::endl;
-    return std::experimental::nullopt;
+    return std::nullopt;
   }
 }
 
@@ -304,13 +304,13 @@ inline bool sender::send_json_and_get_bool(std::string const &method,
   return reply_tree.at("result");
 }
 
-inline std::experimental::optional<types::user> const sender::get_me() {
+inline std::optional<types::user> const sender::get_me() {
   /// Send a getme request - see https://core.telegram.org/bots/api#getme
   return send_json_and_parse<types::user>("getMe");
 }
 
 template<typename Treply_markup>
-inline std::experimental::optional<types::message> sender::send_message(int_fast64_t chat_id,
+inline std::optional<types::message> sender::send_message(int_fast64_t chat_id,
                                                                         std::string const &text,
                                                                         int_fast32_t reply_to_message_id,
                                                                         parse_mode parse,
@@ -319,7 +319,7 @@ inline std::experimental::optional<types::message> sender::send_message(int_fast
                                                                         types::reply_markup::base<Treply_markup> const *reply_markup) {
   /// Send a message to a chat id - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
-    return std::experimental::nullopt;                                          // don't attempt to send empty messages - this would be an error
+    return std::nullopt;                                                        // don't attempt to send empty messages - this would be an error
   }
   if(text.size() > message_length_limit) {                                      // recursively split this message if it's too long
     send_message(chat_id,
@@ -390,7 +390,7 @@ inline std::experimental::optional<types::message> sender::send_message(int_fast
   return send_json_and_parse<types::message>("sendMessage", tree);
 }
 template<typename Treply_markup>
-inline std::experimental::optional<types::message> sender::send_message(std::string const &chat_id,
+inline std::optional<types::message> sender::send_message(std::string const &chat_id,
                                                                         std::string const &text,
                                                                         int_fast32_t reply_to_message_id,
                                                                         parse_mode parse,
@@ -399,7 +399,7 @@ inline std::experimental::optional<types::message> sender::send_message(std::str
                                                                         types::reply_markup::base<Treply_markup> const *reply_markup) {
   /// Send a message to a channel name - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
-    return std::experimental::nullopt;                                          // don't attempt to send empty messages - this would be an error
+    return std::nullopt;                                                        // don't attempt to send empty messages - this would be an error
   }
   if(text.size() > message_length_limit) {                                      // recursively split this message if it's too long
     send_message(chat_id,
@@ -462,7 +462,7 @@ inline std::experimental::optional<types::message> sender::send_message(std::str
   return send_json_and_parse<types::message>("sendMessage", tree);
 }
 
-inline std::experimental::optional<types::message> sender::forward_message(int_fast64_t chat_id,
+inline std::optional<types::message> sender::forward_message(int_fast64_t chat_id,
                                                                            int_fast64_t from_chat_id,
                                                                            int_fast32_t message_id,
                                                                            notification_mode notification) {
@@ -488,7 +488,7 @@ inline std::experimental::optional<types::message> sender::forward_message(int_f
   }
   return send_json_and_parse<types::message>("forwardMessage", tree);
 }
-inline std::experimental::optional<types::message> sender::forward_message(std::string const &chat_id,
+inline std::optional<types::message> sender::forward_message(std::string const &chat_id,
                                                                            int_fast64_t from_chat_id,
                                                                            int_fast32_t message_id,
                                                                            notification_mode notification) {
@@ -721,7 +721,7 @@ inline bool sender::send_chat_action(std::string const &chat_id,
   return send_json_and_get_bool("sendChatAction", tree);
 }
 
-inline std::experimental::optional<types::file> sender::get_file(std::string const &file_id) {
+inline std::optional<types::file> sender::get_file(std::string const &file_id) {
   /// Get download info about a file (as a file object) - see https://core.telegram.org/bots/api#getfile
   nlohmann::json tree;
   tree["file_id"] = file_id;
@@ -775,46 +775,46 @@ inline bool sender::leave_chat(std::string const &chat_id) {
   return send_json_and_get_bool("leaveChat", tree);
 }
 
-inline std::experimental::optional<types::chat> sender::get_chat(int_fast64_t chat_id) {
+inline std::optional<types::chat> sender::get_chat(int_fast64_t chat_id) {
   /// Get latest information about a chat id, numerical chat id variant- see https://core.telegram.org/bots/api#getchat
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   return send_json_and_parse<types::chat>("getChat", tree);
 }
-inline std::experimental::optional<types::chat> sender::get_chat(std::string const &chat_id) {
+inline std::optional<types::chat> sender::get_chat(std::string const &chat_id) {
   /// Get latest information about a chat id, string supergroup name variant - see https://core.telegram.org/bots/api#getchat
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   return send_json_and_parse<types::chat>("getChat", tree);
 }
 
-std::experimental::optional<std::vector<types::chat_member>> sender::get_chat_administrators(int_fast64_t chat_id) {
+std::optional<std::vector<types::chat_member>> sender::get_chat_administrators(int_fast64_t chat_id) {
   /// Get a list of administrators in a chat, numerical chat id variant- see https://core.telegram.org/bots/api#getchatadministrators
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   return send_json_and_parse_vector<types::chat_member>("getChatAdministrators", tree);
 }
-std::experimental::optional<std::vector<types::chat_member>> sender::get_chat_administrators(std::string const &chat_id) {
+std::optional<std::vector<types::chat_member>> sender::get_chat_administrators(std::string const &chat_id) {
   /// Get a list of administrators in a chat, string supergroup name variant - see https://core.telegram.org/bots/api#getchatadministrators
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   return send_json_and_parse_vector<types::chat_member>("getChatAdministrators", tree);
 }
 
-inline std::experimental::optional<int_fast32_t> sender::get_chat_members_count(int_fast64_t chat_id) {
+inline std::optional<int_fast32_t> sender::get_chat_members_count(int_fast64_t chat_id) {
   /// Get a count of users in a chat, numerical chat id variant - see https://core.telegram.org/bots/api#getchatmemberscount
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   return send_json_and_parse<int_fast32_t>("getChatMembersCount", tree);
 }
-inline std::experimental::optional<int_fast32_t> sender::get_chat_members_count(std::string const &chat_id) {
+inline std::optional<int_fast32_t> sender::get_chat_members_count(std::string const &chat_id) {
   /// Get a count of users in a chat, string supergroup name variant - see https://core.telegram.org/bots/api#getchatmemberscount
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   return send_json_and_parse<int_fast32_t>("getChatMembersCount", tree);
 }
 
-inline std::experimental::optional<types::chat_member> sender::get_chat_member(int_fast64_t chat_id,
+inline std::optional<types::chat_member> sender::get_chat_member(int_fast64_t chat_id,
                                                                                int_fast32_t user_id) {
   /// Get a chat member by id, numerical chat id variant - see https://core.telegram.org/bots/api#getchatmember
   nlohmann::json tree;
@@ -822,7 +822,7 @@ inline std::experimental::optional<types::chat_member> sender::get_chat_member(i
   tree["user_id"] = user_id;
   return send_json_and_parse<types::chat_member>("getChatMember", tree);
 }
-inline std::experimental::optional<types::chat_member> sender::get_chat_member(std::string const &chat_id,
+inline std::optional<types::chat_member> sender::get_chat_member(std::string const &chat_id,
                                                                                int_fast32_t user_id) {
   /// Get a chat member by id, string supergroup name variant - see https://core.telegram.org/bots/api#getchatmember
   nlohmann::json tree;

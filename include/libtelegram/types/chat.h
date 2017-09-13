@@ -1,7 +1,7 @@
 #ifndef TELEGRAM_TYPES_CHAT_H_INCLUDED
 #define TELEGRAM_TYPES_CHAT_H_INCLUDED
 
-#include <experimental/optional>
+#include <optional>
 #include <json.hpp>
 #include "optional.h"
 
@@ -19,10 +19,10 @@ struct chat {
 
   int_fast64_t id = 0;                                                          // Unique identifier for this chat. This number may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it. But it smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe for storing this identifier.
   types type = types::UNKNOWN;                                                  // Type of chat, can be either “private”, “group”, “supergroup” or “channel”
-  std::experimental::optional<std::string> title;                               // Optional. Title, for channels and group chats
-  std::experimental::optional<std::string> username;                            // Optional. Username, for private chats, supergroups and channels if available
-  std::experimental::optional<std::string> first_name;                          // Optional. First name of the other party in a private chat
-  std::experimental::optional<std::string> last_name;                           // Optional. Last name of the other party in a private chat
+  std::optional<std::string> title;                                             // Optional. Title, for channels and group chats
+  std::optional<std::string> username;                                          // Optional. Username, for private chats, supergroups and channels if available
+  std::optional<std::string> first_name;                                        // Optional. First name of the other party in a private chat
+  std::optional<std::string> last_name;                                         // Optional. Last name of the other party in a private chat
 
   static chat const from_json(nlohmann::json const &tree);
   static chat const from_json(nlohmann::json const &tree, std::string const &path);
@@ -46,10 +46,10 @@ chat const chat::from_json(nlohmann::json const &tree) {
   }
   return chat{tree.at("id"),
               this_type,
-              make_optional<std::string>(tree, "title"),
-              make_optional<std::string>(tree, "username"),
-              make_optional<std::string>(tree, "first_name"),
-              make_optional<std::string>(tree, "last_name")};
+              make_optional_from_json<std::string>(tree, "title"),
+              make_optional_from_json<std::string>(tree, "username"),
+              make_optional_from_json<std::string>(tree, "first_name"),
+              make_optional_from_json<std::string>(tree, "last_name")};
 }
 chat const chat::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree

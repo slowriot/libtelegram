@@ -8,7 +8,7 @@ struct photosize {
   std::string file_id;                                                          // Unique identifier for this file
   int_fast32_t width     = 0;                                                   // Photo width
   int_fast32_t height    = 0;                                                   // Photo height
-  std::experimental::optional<int_fast32_t> file_size;                          // Optional. File size (in bytes)
+  std::optional<int_fast32_t> file_size;                                        // Optional. File size (in bytes)
 
   static photosize const from_json(nlohmann::json const &tree);
   static photosize const from_json(nlohmann::json const &tree, std::string const &path);
@@ -20,7 +20,7 @@ photosize const photosize::from_json(nlohmann::json const &tree) {
   return photosize{tree.at("file_id"),
                    tree.at("width"),
                    tree.at("height"),
-                   make_optional<int_fast32_t>(tree, "file_size")};
+                   make_optional_from_json<int_fast32_t>(tree, "file_size")};
 }
 photosize const photosize::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
