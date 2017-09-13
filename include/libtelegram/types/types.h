@@ -11,6 +11,7 @@
 #include "photosize.h"
 #include "user.h"
 #include "video.h"
+#include "video_note.h"
 #include "voice.h"
 
 #include "reply_markup/reply_markup.h"
