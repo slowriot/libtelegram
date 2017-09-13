@@ -8,8 +8,8 @@ namespace telegram::types {
 struct photosize {
   /// See https://core.telegram.org/bots/api#photosize
   std::string file_id;                                                          // Unique identifier for this file
-  int_fast32_t width     = 0;                                                   // Photo width
-  int_fast32_t height    = 0;                                                   // Photo height
+  int_fast32_t width  = 0;                                                      // Photo width
+  int_fast32_t height = 0;                                                      // Photo height
   std::optional<int_fast32_t> file_size;                                        // Optional. File size (in bytes)
 
   static photosize const from_json(nlohmann::json const &tree);

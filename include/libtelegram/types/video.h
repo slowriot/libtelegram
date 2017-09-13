@@ -8,9 +8,9 @@ namespace telegram::types {
 struct video {
   /// See https://core.telegram.org/bots/api#video
   std::string file_id;                                                          // Unique identifier for this file
-  std::optional<int_fast32_t> width;                                            // Optional. Video width as defined by sender
-  std::optional<int_fast32_t> height;                                           // Optional. Video height as defined by sender
-  std::optional<int_fast32_t> duration;                                         // Optional. Duration of the video in seconds as defined by sender
+  int_fast32_t width    = 0;                                                    // Video width as defined by sender
+  int_fast32_t height   = 0;                                                    // Video height as defined by sender
+  int_fast32_t duration = 0;                                                    // Duration of the video in seconds as defined by sender
   std::optional<photosize> thumb;                                               // Optional. Video thumbnail
   std::optional<std::string> mime_type;                                         // Optional. MIME type of the file as defined by sender
   std::optional<int_fast32_t> file_size;                                        // Optional. File size (in bytes)
@@ -23,9 +23,9 @@ video const video::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return video{tree.at("file_id"),
-               helpers::make_optional_from_json<int_fast32_t>(tree, "width"),
-               helpers::make_optional_from_json<int_fast32_t>(tree, "height"),
-               helpers::make_optional_from_json<int_fast32_t>(tree, "duration"),
+               tree.at("width"),
+               tree.at("height"),
+               tree.at("duration"),
                helpers::make_optional_from_json<photosize>(tree, "thumb"),
                helpers::make_optional_from_json<std::string>(tree, "mime_type"),
                helpers::make_optional_from_json<int_fast32_t>(tree, "file_size")};
