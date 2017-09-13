@@ -1,7 +1,6 @@
 #ifndef TELEGRAM_TYPES_FILE_H_INCLUDED
 #define TELEGRAM_TYPES_FILE_H_INCLUDED
 
-#include <optional>
 #define URDL_HEADER_ONLY 1
 #ifdef LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
   #warning "SSL is disabled for outgoing messages - that is such a bad idea."
@@ -11,6 +10,7 @@
 #include "urdl/url.hpp"
 #include "urdl/istream.hpp"
 #include "urdl/http.hpp"
+#include "helpers/optional.h"
 
 namespace telegram::types {
 
@@ -34,8 +34,8 @@ file const file::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return file{tree.at("file_id"),
-              make_optional_from_json<int_fast32_t>(tree, "file_size"),
-              make_optional_from_json<std::string>(tree, "file_path")};
+              helpers::make_optional_from_json<int_fast32_t>(tree, "file_size"),
+              helpers::make_optional_from_json<std::string>(tree, "file_path")};
 }
 file const file::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree

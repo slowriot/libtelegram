@@ -1,7 +1,7 @@
 #ifndef TELEGRAM_TYPES_CALLBACK_QUERY_H_INCLUDED
 #define TELEGRAM_TYPES_CALLBACK_QUERY_H_INCLUDED
 
-#include "optional.h"
+#include "helpers/optional.h"
 #include "user.h"
 #include "message.h"
 
@@ -29,12 +29,12 @@ callback_query const callback_query::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return callback_query{tree.at("id"),
-                        types::user::from_json(tree, "from"),
-                        make_optional_from_json<message>(tree, "message"),
-                        make_optional_from_json<std::string>(tree, "inline_message_id"),
-                        make_optional_from_json<std::string>(tree, "chat_instance"),
-                        make_optional_from_json<std::string>(tree, "data"),
-                        make_optional_from_json<std::string>(tree, "game_short_name")};
+                        user::from_json(tree, "from"),
+                        helpers::make_optional_from_json<message>(tree, "message"),
+                        helpers::make_optional_from_json<std::string>(tree, "inline_message_id"),
+                        helpers::make_optional_from_json<std::string>(tree, "chat_instance"),
+                        helpers::make_optional_from_json<std::string>(tree, "data"),
+                        helpers::make_optional_from_json<std::string>(tree, "game_short_name")};
 }
 callback_query const callback_query::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree

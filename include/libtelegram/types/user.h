@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_USER_H_INCLUDED
 #define TELEGRAM_TYPES_USER_H_INCLUDED
 
+#include "helpers/optional.h"
+
 namespace telegram::types {
 
 struct user {
@@ -18,8 +20,8 @@ user const user::from_json(nlohmann::json const &tree) {
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return user{tree.at("id"),
               tree.at("first_name"),
-              make_optional_from_json<std::string>(tree, "last_name"),
-              make_optional_from_json<std::string>(tree, "username")};
+              helpers::make_optional_from_json<std::string>(tree, "last_name"),
+              helpers::make_optional_from_json<std::string>(tree, "username")};
 }
 user const user::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree

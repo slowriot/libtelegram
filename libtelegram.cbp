@@ -32,8 +32,8 @@
 		<Unit filename="include/libtelegram/types/chat_member.h" />
 		<Unit filename="include/libtelegram/types/document.h" />
 		<Unit filename="include/libtelegram/types/file.h" />
+		<Unit filename="include/libtelegram/types/helpers/optional.h" />
 		<Unit filename="include/libtelegram/types/message.h" />
-		<Unit filename="include/libtelegram/types/optional.h" />
 		<Unit filename="include/libtelegram/types/photosize.h" />
 		<Unit filename="include/libtelegram/types/reply_markup/base.h" />
 		<Unit filename="include/libtelegram/types/reply_markup/force_reply.h" />

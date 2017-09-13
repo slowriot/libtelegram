@@ -1,9 +1,7 @@
 #ifndef TELEGRAM_TYPES_CHAT_H_INCLUDED
 #define TELEGRAM_TYPES_CHAT_H_INCLUDED
 
-#include <optional>
-#include <json.hpp>
-#include "optional.h"
+#include "helpers/optional.h"
 
 namespace telegram::types {
 
@@ -46,10 +44,10 @@ chat const chat::from_json(nlohmann::json const &tree) {
   }
   return chat{tree.at("id"),
               this_type,
-              make_optional_from_json<std::string>(tree, "title"),
-              make_optional_from_json<std::string>(tree, "username"),
-              make_optional_from_json<std::string>(tree, "first_name"),
-              make_optional_from_json<std::string>(tree, "last_name")};
+              helpers::make_optional_from_json<std::string>(tree, "title"),
+              helpers::make_optional_from_json<std::string>(tree, "username"),
+              helpers::make_optional_from_json<std::string>(tree, "first_name"),
+              helpers::make_optional_from_json<std::string>(tree, "last_name")};
 }
 chat const chat::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree

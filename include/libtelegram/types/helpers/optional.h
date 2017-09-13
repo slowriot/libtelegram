@@ -1,10 +1,10 @@
-#ifndef TELEGRAM_TYPES_OPTIONAL_H_INCLUDED
-#define TELEGRAM_TYPES_OPTIONAL_H_INCLUDED
+#ifndef TELEGRAM_TYPES_HELPERS_OPTIONAL_H_INCLUDED
+#define TELEGRAM_TYPES_HELPERS_OPTIONAL_H_INCLUDED
 
 #include <optional>
 #include <json.hpp>
 
-namespace telegram::types {
+namespace telegram::types::helpers {
 
 template<typename T>
 std::optional<T> make_optional_from_json(nlohmann::json const &tree, std::string const &path);
@@ -87,4 +87,4 @@ std::optional<std::vector<T>> make_optional_vector_from_json(nlohmann::json cons
 
 }
 
-#endif // TELEGRAM_TYPES_OPTIONAL_H_INCLUDED
+#endif // TELEGRAM_TYPES_HELPERS_OPTIONAL_H_INCLUDED

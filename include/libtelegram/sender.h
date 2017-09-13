@@ -258,7 +258,7 @@ inline std::optional<T> sender::send_json_and_parse(std::string const &method,
     return std::nullopt;
   }
   try {
-    return types::make_optional_from_json<T>(reply_tree, "result");
+    return types::helpers::make_optional_from_json<T>(reply_tree, "result");
   } catch(std::exception &e) {
     std::cerr << "LibTelegram: Sender: Exception parsing the following tree to extract a " << typeid(T).name() << ": " << e.what() << std::endl;
     std::cerr << reply_tree.dump(2) << std::endl;
@@ -280,7 +280,7 @@ inline std::optional<std::vector<T>> sender::send_json_and_parse_vector(std::str
     return std::nullopt;
   }
   try {
-    return types::make_optional_vector_from_json<T>(reply_tree, "result");
+    return types::helpers::make_optional_vector_from_json<T>(reply_tree, "result");
   } catch(std::exception &e) {
     std::cerr << "LibTelegram: Sender: Exception parsing the following tree to extract a vector of " << typeid(T).name() << ": " << e.what() << std::endl;
     std::cerr << reply_tree.dump(2) << std::endl;

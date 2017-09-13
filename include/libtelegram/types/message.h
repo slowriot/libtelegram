@@ -1,7 +1,6 @@
 #ifndef TELEGRAM_TYPES_MESSAGE_H_INCLUDED
 #define TELEGRAM_TYPES_MESSAGE_H_INCLUDED
 
-#include "optional.h"
 #include "user.h"
 #include "chat.h"
 #include "document.h"
@@ -18,7 +17,7 @@ struct message {
   std::optional<user> forward_from;                                             // Optional. For forwarded messages, sender of the original message
   std::optional<types::chat> forward_from_chat;                                 // Optional. For messages forwarded from a channel, information about the original channel
   std::optional<int_fast32_t> forward_date;                                     // Optional. For forwarded messages, date the original message was sent in Unix time
-  //std::optional<message> reply_to_message;                                      // Optional. For replies, the original message. Note that the Message object in this field will not contain further reply_to_message fields even if it itself is a reply.
+  //std::shared_ptr<message> reply_to_message;                                    // Optional. For replies, the original message. Note that the Message object in this field will not contain further reply_to_message fields even if it itself is a reply.
   std::optional<int_fast32_t> edit_date;                                        // Optional. Date the message was last edited in Unix time
   std::optional<std::string> text;                                              // Optional. For text messages, the actual UTF-8 text of the message, 0-4096 characters.
   //entities                      Array of MessageEntity                          // Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
@@ -42,7 +41,7 @@ struct message {
   std::optional<bool> channel_chat_created;                                     // Optional. Service message: the channel has been created. This field can‘t be received in a message coming through updates, because bot can’t be a member of a channel when it is created. It can only be found in reply_to_message if someone replies to a very first message in a channel.
   std::optional<int_fast64_t> migrate_to_chat_id;                               // Optional. The group has been migrated to a supergroup with the specified identifier. This number may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it. But it smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe for storing this identifier.
   std::optional<int_fast64_t> migrate_from_chat_id;                             // Optional. The supergroup has been migrated from a group with the specified identifier. This number may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it. But it smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe for storing this identifier.
-  //std::optional<message>pinned_message;                                         // Optional. Specified message was pinned. Note that the Message object in this field will not contain further reply_to_message fields even if it is itself a reply.
+  //std::shared_ptr<message>pinned_message;                                       // Optional. Specified message was pinned. Note that the Message object in this field will not contain further reply_to_message fields even if it is itself a reply.
 
   static message const from_json(nlohmann::json const &tree);
   static message const from_json(nlohmann::json const &tree, std::string const &path);
@@ -52,37 +51,37 @@ message const message::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return message{tree.at("message_id"),
-                 make_optional_from_json<user>(tree, "from"),
+                 helpers::make_optional_from_json<user>(tree, "from"),
                  tree.at("date"),
                  types::chat::from_json(tree, "chat"),
-                 make_optional_from_json<user>(tree, "forward_from"),
-                 make_optional_from_json<types::chat>(tree, "forward_from_chat"),
-                 make_optional_from_json<int_fast32_t>(tree, "forward_date"),
-                 //make_optional_from_json<message>(tree, "reply_to_message"),
-                 make_optional_from_json<int_fast32_t>(tree, "edit_date"),
-                 make_optional_from_json<std::string>(tree, "text"),
+                 helpers::make_optional_from_json<user>(tree, "forward_from"),
+                 helpers::make_optional_from_json<types::chat>(tree, "forward_from_chat"),
+                 helpers::make_optional_from_json<int_fast32_t>(tree, "forward_date"),
+                 //helpers::make_shared_from_json<message>(tree, "reply_to_message"),
+                 helpers::make_optional_from_json<int_fast32_t>(tree, "edit_date"),
+                 helpers::make_optional_from_json<std::string>(tree, "text"),
                  //tree.get("entities                                             // Array of MessageEntity
-                 //make_optional_from_json<types::audio>(tree, "audio"),
-                 make_optional_from_json<types::document>(tree, "document"),
-                 make_optional_vector_from_json<photosize>(tree, "photo"),
-                 //make_optional_vector_from_json<sticker>(tree, "sticker"),
-                 //make_optional_vector_from_json<video>(tree, "video"),
-                 //make_optional_vector_from_json<voice>(tree, "voice"),
-                 make_optional_from_json<std::string>(tree, "caption"),
-                 //make_optional_vector_from_json<contact>(tree, "contact"),
-                 //make_optional_vector_from_json<location>(tree, "location"),
-                 //make_optional_vector_from_json<venue>(tree, "venue"),
-                 make_optional_from_json<user>(tree, "new_chat_member"),
-                 make_optional_from_json<user>(tree, "left_chat_member"),
-                 make_optional_from_json<std::string>(tree, "new_chat_title"),
-                 make_optional_vector_from_json<photosize>(tree, "new_chat_photo"),
-                 make_optional_from_json<bool>(tree, "delete_chat_photo"),
-                 make_optional_from_json<bool>(tree, "group_chat_created"),
-                 make_optional_from_json<bool>(tree, "supergroup_chat_created"),
-                 make_optional_from_json<bool>(tree, "channel_chat_created"),
-                 make_optional_from_json<int_fast64_t>(tree, "migrate_to_chat_id"),
-                 make_optional_from_json<int_fast64_t>(tree, "migrate_from_chat_id")};
-                 //make_optional_from_json<message>(tree, "pinned_message"};
+                 //helpers::make_optional_from_json<types::audio>(tree, "audio"),
+                 helpers::make_optional_from_json<types::document>(tree, "document"),
+                 helpers::make_optional_vector_from_json<photosize>(tree, "photo"),
+                 //helpers::make_optional_vector_from_json<sticker>(tree, "sticker"),
+                 //helpers::make_optional_vector_from_json<video>(tree, "video"),
+                 //helpers::make_optional_vector_from_json<voice>(tree, "voice"),
+                 helpers::make_optional_from_json<std::string>(tree, "caption"),
+                 //helpers::make_optional_vector_from_json<contact>(tree, "contact"),
+                 //helpers::make_optional_vector_from_json<location>(tree, "location"),
+                 //helpers::make_optional_vector_from_json<venue>(tree, "venue"),
+                 helpers::make_optional_from_json<user>(tree, "new_chat_member"),
+                 helpers::make_optional_from_json<user>(tree, "left_chat_member"),
+                 helpers::make_optional_from_json<std::string>(tree, "new_chat_title"),
+                 helpers::make_optional_vector_from_json<photosize>(tree, "new_chat_photo"),
+                 helpers::make_optional_from_json<bool>(tree, "delete_chat_photo"),
+                 helpers::make_optional_from_json<bool>(tree, "group_chat_created"),
+                 helpers::make_optional_from_json<bool>(tree, "supergroup_chat_created"),
+                 helpers::make_optional_from_json<bool>(tree, "channel_chat_created"),
+                 helpers::make_optional_from_json<int_fast64_t>(tree, "migrate_to_chat_id"),
+                 helpers::make_optional_from_json<int_fast64_t>(tree, "migrate_from_chat_id")};
+                 //helpers::make_shared_from_json<message>(tree, "pinned_message"};
 }
 message const message::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
