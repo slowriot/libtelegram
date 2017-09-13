@@ -2,9 +2,10 @@
 #define TELEGRAM_TYPES_MESSAGE_H_INCLUDED
 
 #include "optional.h"
-#include "photosize.h"
 #include "user.h"
 #include "chat.h"
+#include "document.h"
+#include "photosize.h"
 
 namespace telegram::types {
 
@@ -22,7 +23,7 @@ struct message {
   std::experimental::optional<std::string> text;                                // Optional. For text messages, the actual UTF-8 text of the message, 0-4096 characters.
   //entities                      Array of MessageEntity                          // Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
   //std::experimental::optional<types::audio> audio;                              // Optional. Message is an audio file, information about the file
-  //std::experimental::optional<types::document> document;                        // Optional. Message is a general file, information about the file
+  std::experimental::optional<types::document> document;                        // Optional. Message is a general file, information about the file
   std::experimental::optional<std::vector<photosize>> photo;                    // Optional. Message is a photo, available sizes of the photo
   //std::experimental::optional<types::sticker> sticker;                          // Optional. Message is a sticker, information about the sticker
   //std::experimental::optional<types::video> video;                              // Optional. Message is a video, information about the video
@@ -57,20 +58,20 @@ message const message::from_json(nlohmann::json const &tree) {
                  make_optional<user>(tree, "forward_from"),
                  make_optional<types::chat>(tree, "forward_from_chat"),
                  make_optional<int_fast32_t>(tree, "forward_date"),
-                 //message::from_json(tree, "reply_to_message"),
+                 //make_optional<message>(tree, "reply_to_message"),
                  make_optional<int_fast32_t>(tree, "edit_date"),
                  make_optional<std::string>(tree, "text"),
                  //tree.get("entities                                             // Array of MessageEntity
-                 //audio::from_json(tree, "audio"),
-                 //document::from_json(tree, "document"),
+                 //make_optional<types::audio>(tree, "audio"),
+                 make_optional<types::document>(tree, "document"),
                  make_optional_vector<photosize>(tree, "photo"),
-                 //sticker::from_json(tree, "sticker"),
-                 //video::from_json(tree, "video"),
-                 //voice::from_json(tree, "voice"),
+                 //make_optional_vector<sticker>(tree, "sticker"),
+                 //make_optional_vector<video>(tree, "video"),
+                 //make_optional_vector<voice>(tree, "voice"),
                  make_optional<std::string>(tree, "caption"),
-                 //contact::from_json(tree, "contact"),
-                 //location::from_json(tree, "location"),
-                 //venue::from_json(tree, "venue"),
+                 //make_optional_vector<contact>(tree, "contact"),
+                 //make_optional_vector<location>(tree, "location"),
+                 //make_optional_vector<venue>(tree, "venue"),
                  make_optional<user>(tree, "new_chat_member"),
                  make_optional<user>(tree, "left_chat_member"),
                  make_optional<std::string>(tree, "new_chat_title"),
