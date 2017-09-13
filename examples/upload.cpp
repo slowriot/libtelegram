@@ -1,6 +1,6 @@
 /// This example demonstrates a bot that uploads binary data in various formats
 
-#include "libtelegram/libtelegram.h"
+#include <libtelegram/libtelegram.h>
 
 auto main()->int {
   std::string const token("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11");

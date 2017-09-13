@@ -4,7 +4,7 @@
 /// unexpected errors, and how to send chat actions.
 /// It also shows how to switch to single-threaded mode.
 
-#include "libtelegram/libtelegram.h"
+#include <libtelegram/libtelegram.h>
 
 auto main()->int {
   std::string const token("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11");

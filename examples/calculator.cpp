@@ -1,7 +1,7 @@
 /// This example demonstrates a bot that takes provides a custom keyboard and
 /// processes the results of pressing those keys.
 
-#include "libtelegram/libtelegram.h"
+#include <libtelegram/libtelegram.h>
 
 auto main()->int {
   std::string const token("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11");

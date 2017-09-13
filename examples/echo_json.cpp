@@ -3,7 +3,7 @@
 /// objects, accesses the property tree directly.  It's a bit more verbose but
 /// potentially far more powerful.
 
-#include "libtelegram/libtelegram.h"
+#include <libtelegram/libtelegram.h>
 
 auto main()->int {
   std::string const token("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11");         // in practice you would probably read this from config file or database
