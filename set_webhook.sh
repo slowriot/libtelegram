@@ -12,7 +12,12 @@ fi
 endpoint="https://api.telegram.org"
 api="$endpoint/bot$token"
 
-result=$(wget -q "$api/setWebhook?url=$url" -O -)
+if [ -z "$url" ]; then
+  result=$(wget -q "$api/deleteWebhook" -O -)
+else
+  result=$(wget -q "$api/setWebhook?url=$url" -O -)
+fi
+
 # pretty-print the result only if jq is available
 jq_path=$(which jq)
 if [ -x "$jq_path" ]; then
