@@ -1,15 +1,12 @@
 #ifndef TELEGRAM_TYPES_LOCATION_H_INCLUDED
 #define TELEGRAM_TYPES_LOCATION_H_INCLUDED
 
-#include "helpers/optional.h"
-
 namespace telegram::types {
 
 struct location {
   /// See https://core.telegram.org/bots/api#location
   float longitude = 0.0f;                                                       // Longitude as defined by sender
   float latitude  = 0.0f;                                                       // Latitude as defined by sender
-
 
   static location const from_json(nlohmann::json const &tree);
   static location const from_json(nlohmann::json const &tree, std::string const &path);

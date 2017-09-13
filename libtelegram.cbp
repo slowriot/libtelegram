@@ -49,6 +49,7 @@
 		<Unit filename="include/libtelegram/types/reply_markup/reply_markup.h" />
 		<Unit filename="include/libtelegram/types/types.h" />
 		<Unit filename="include/libtelegram/types/user.h" />
+		<Unit filename="include/libtelegram/types/venue.h" />
 		<Unit filename="include/libtelegram/types/video.h" />
 		<Unit filename="include/libtelegram/types/video_note.h" />
 		<Unit filename="include/libtelegram/types/voice.h" />
