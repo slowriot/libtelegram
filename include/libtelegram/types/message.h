@@ -27,7 +27,7 @@ struct message {
   std::optional<types::document> document;                                      // Optional. Message is a general file, information about the file
   std::optional<std::vector<photosize>> photo;                                  // Optional. Message is a photo, available sizes of the photo
   //std::optional<types::sticker> sticker;                                        // Optional. Message is a sticker, information about the sticker
-  //std::optional<types::video> video;                                            // Optional. Message is a video, information about the video
+  std::optional<types::video> video;                                            // Optional. Message is a video, information about the video
   //std::optional<types::voice> voice;                                            // Optional. Message is a voice message, information about the file
   std::optional<std::string> caption;                                           // Optional. Caption for the document, photo or video, 0-200 characters
   //std::optional<types::contact> contact;                                        // Optional. Message is a shared contact, information about the contact
@@ -67,7 +67,7 @@ message const message::from_json(nlohmann::json const &tree) {
                  helpers::make_optional_from_json<types::document>(tree, "document"),
                  helpers::make_optional_vector_from_json<photosize>(tree, "photo"),
                  //helpers::make_optional_vector_from_json<sticker>(tree, "sticker"),
-                 //helpers::make_optional_vector_from_json<video>(tree, "video"),
+                 helpers::make_optional_vector_from_json<video>(tree, "video"),
                  //helpers::make_optional_vector_from_json<voice>(tree, "voice"),
                  helpers::make_optional_from_json<std::string>(tree, "caption"),
                  //helpers::make_optional_vector_from_json<contact>(tree, "contact"),

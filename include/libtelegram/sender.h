@@ -48,7 +48,7 @@ public:
     TYPING,                                                                     // typing for text messages
     UPLOAD_PHOTO,                                                               // upload_photo for photos
     RECORD_VIDEO,                                                               // record_video for videos
-    UPLOAD_VIDEO,                                                               // pload_video for videos
+    UPLOAD_VIDEO,                                                               // upload_video for videos
     RECORD_AUDIO,                                                               // record_audio for audio files
     UPLOAD_AUDIO,                                                               // upload_audio for audio files
     UPLOAD_DOCUMENT,                                                            // upload_document for general files
