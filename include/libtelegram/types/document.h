@@ -8,7 +8,7 @@ namespace telegram::types {
 struct document {
   /// See https://core.telegram.org/bots/api#document
   std::string file_id;                                                          // Unique file identifier
-  std::experimental::optional<std::vector<photosize>> thumb;                    // Optional. Document thumbnail as defined by sender
+  std::experimental::optional<photosize> thumb;                                 // Optional. Document thumbnail as defined by sender
   std::experimental::optional<std::string> file_name;                           // Optional. Original filename as defined by sender
   std::experimental::optional<std::string> mime_type;                           // Optional. MIME type of the file as defined by sender
   std::experimental::optional<int_fast32_t> file_size;                          // Optional. File size (in bytes)
