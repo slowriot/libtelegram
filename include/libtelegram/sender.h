@@ -482,6 +482,8 @@ inline std::experimental::optional<types::message> sender::forward_message(int_f
     case notification_mode::ENABLE:
       tree["disable_notification"] = false;
       break;
+    case notification_mode::UNCHANGED:
+      break;
     }
   }
   return send_json_and_parse<types::message>("forwardMessage", tree);
@@ -505,6 +507,8 @@ inline std::experimental::optional<types::message> sender::forward_message(std::
       break;
     case notification_mode::ENABLE:
       tree["disable_notification"] = false;
+      break;
+    case notification_mode::UNCHANGED:
       break;
     }
   }
