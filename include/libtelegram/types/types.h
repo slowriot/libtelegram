@@ -8,6 +8,7 @@
 #include "contact.h"
 #include "document.h"
 #include "file.h"
+#include "location.h"
 #include "message.h"
 #include "photosize.h"
 #include "user.h"

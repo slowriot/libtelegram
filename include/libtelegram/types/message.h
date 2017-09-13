@@ -10,6 +10,7 @@
 #include "voice.h"
 #include "video_note.h"
 #include "contact.h"
+#include "location.h"
 
 namespace telegram::types {
 
@@ -35,7 +36,7 @@ struct message {
   std::optional<types::video_note> video_note;                                  // Optional. Message is a video note, information about the video message
   std::optional<std::string> caption;                                           // Optional. Caption for the document, photo or video, 0-200 characters
   std::optional<types::contact> contact;                                        // Optional. Message is a shared contact, information about the contact
-  //std::optional<types::location> location;                                      // Optional. Message is a shared location, information about the location
+  std::optional<types::location> location;                                      // Optional. Message is a shared location, information about the location
   //std::optional<types::venue> venue;                                            // Optional. Message is a venue, information about the venue
   std::optional<user> new_chat_member;                                          // Optional. A new member was added to the group, information about them (this member may be the bot itself)
   std::optional<user> left_chat_member;                                         // Optional. A member was removed from the group, information about them (this member may be the bot itself)
@@ -76,7 +77,7 @@ message const message::from_json(nlohmann::json const &tree) {
                  helpers::make_optional_from_json<types::video_note>(tree, "video_note"),
                  helpers::make_optional_from_json<std::string>(tree, "caption"),
                  helpers::make_optional_from_json<types::contact>(tree, "contact"),
-                 //helpers::make_optional_from_json<location>(tree, "location"),
+                 helpers::make_optional_from_json<types::location>(tree, "location"),
                  //helpers::make_optional_from_json<venue>(tree, "venue"),
                  helpers::make_optional_from_json<user>(tree, "new_chat_member"),
                  helpers::make_optional_from_json<user>(tree, "left_chat_member"),
