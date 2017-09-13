@@ -7,6 +7,7 @@
 #include "audio.h"
 #include "document.h"
 #include "video.h"
+#include "voice.h"
 
 namespace telegram::types {
 
@@ -28,7 +29,7 @@ struct message {
   std::optional<std::vector<photosize>> photo;                                  // Optional. Message is a photo, available sizes of the photo
   //std::optional<types::sticker> sticker;                                        // Optional. Message is a sticker, information about the sticker
   std::optional<types::video> video;                                            // Optional. Message is a video, information about the video
-  //std::optional<types::voice> voice;                                            // Optional. Message is a voice message, information about the file
+  std::optional<types::voice> voice;                                            // Optional. Message is a voice message, information about the file
   std::optional<std::string> caption;                                           // Optional. Caption for the document, photo or video, 0-200 characters
   //std::optional<types::contact> contact;                                        // Optional. Message is a shared contact, information about the contact
   //std::optional<types::location> location;                                      // Optional. Message is a shared location, information about the location
@@ -68,7 +69,7 @@ message const message::from_json(nlohmann::json const &tree) {
                  helpers::make_optional_vector_from_json<photosize>(tree, "photo"),
                  //helpers::make_optional_from_json<sticker>(tree, "sticker"),
                  helpers::make_optional_from_json<types::video>(tree, "video"),
-                 //helpers::make_optional_vector_from_json<voice>(tree, "voice"),
+                 helpers::make_optional_from_json<types::voice>(tree, "voice"),
                  helpers::make_optional_from_json<std::string>(tree, "caption"),
                  //helpers::make_optional_from_json<contact>(tree, "contact"),
                  //helpers::make_optional_from_json<location>(tree, "location"),

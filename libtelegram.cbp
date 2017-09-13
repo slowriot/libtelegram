@@ -48,6 +48,7 @@
 		<Unit filename="include/libtelegram/types/types.h" />
 		<Unit filename="include/libtelegram/types/user.h" />
 		<Unit filename="include/libtelegram/types/video.h" />
+		<Unit filename="include/libtelegram/types/voice.h" />
 		<Unit filename="version.h" />
 		<Extensions>
 			<code_completion />
