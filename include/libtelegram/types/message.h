@@ -4,6 +4,7 @@
 #include "helpers/shared.h"
 #include "user.h"
 #include "chat.h"
+#include "audio.h"
 #include "document.h"
 #include "photosize.h"
 
@@ -22,7 +23,7 @@ struct message {
   std::optional<int_fast32_t> edit_date;                                        // Optional. Date the message was last edited in Unix time
   std::optional<std::string> text;                                              // Optional. For text messages, the actual UTF-8 text of the message, 0-4096 characters.
   //entities                      Array of MessageEntity                          // Optional. For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
-  //std::optional<types::audio> audio;                                            // Optional. Message is an audio file, information about the file
+  std::optional<types::audio> audio;                                            // Optional. Message is an audio file, information about the file
   std::optional<types::document> document;                                      // Optional. Message is a general file, information about the file
   std::optional<std::vector<photosize>> photo;                                  // Optional. Message is a photo, available sizes of the photo
   //std::optional<types::sticker> sticker;                                        // Optional. Message is a sticker, information about the sticker
@@ -62,7 +63,7 @@ message const message::from_json(nlohmann::json const &tree) {
                  helpers::make_optional_from_json<int_fast32_t>(tree, "edit_date"),
                  helpers::make_optional_from_json<std::string>(tree, "text"),
                  //tree.get("entities                                             // Array of MessageEntity
-                 //helpers::make_optional_from_json<types::audio>(tree, "audio"),
+                 helpers::make_optional_from_json<types::audio>(tree, "audio"),
                  helpers::make_optional_from_json<types::document>(tree, "document"),
                  helpers::make_optional_vector_from_json<photosize>(tree, "photo"),
                  //helpers::make_optional_vector_from_json<sticker>(tree, "sticker"),
