@@ -23,7 +23,6 @@
 		<Unit filename="README.md" />
 		<Unit filename="include/libtelegram/libtelegram.h" />
 		<Unit filename="include/libtelegram/listener.h" />
-		<Unit filename="include/libtelegram/listeners" />
 		<Unit filename="include/libtelegram/listeners/base.h" />
 		<Unit filename="include/libtelegram/listeners/fcgi.h" />
 		<Unit filename="include/libtelegram/listeners/poll.h" />
