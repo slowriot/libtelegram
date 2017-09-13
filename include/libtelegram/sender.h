@@ -353,6 +353,8 @@ inline std::experimental::optional<types::message> sender::send_message(int_fast
     case parse_mode::HTML:
       tree["parse_mode"] = "HTML";
       break;
+    case parse_mode::UNCHANGED:
+      break;
     }
   }
   if(web_preview != web_preview_mode::DEFAULT && web_preview != web_preview_mode::UNCHANGED) { // don't waste bandwidth sending the default option
@@ -363,6 +365,8 @@ inline std::experimental::optional<types::message> sender::send_message(int_fast
     case web_preview_mode::ENABLE:
       tree["disable_web_page_preview"] = false;
       break;
+    case web_preview_mode::UNCHANGED:
+      break;
     }
   }
   if(notification != notification_mode::DEFAULT && notification != notification_mode::UNCHANGED) { // don't waste bandwidth sending the default option
@@ -372,6 +376,8 @@ inline std::experimental::optional<types::message> sender::send_message(int_fast
       break;
     case notification_mode::ENABLE:
       tree["disable_notification"] = false;
+      break;
+    case notification_mode::UNCHANGED:
       break;
     }
   }
