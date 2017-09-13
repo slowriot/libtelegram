@@ -6,7 +6,7 @@
 #include "chat.h"
 #include "audio.h"
 #include "document.h"
-#include "photosize.h"
+#include "video.h"
 
 namespace telegram::types {
 

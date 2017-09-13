@@ -1,8 +1,6 @@
 #ifndef TELEGRAM_TYPES_CALLBACK_QUERY_H_INCLUDED
 #define TELEGRAM_TYPES_CALLBACK_QUERY_H_INCLUDED
 
-#include "helpers/optional.h"
-#include "user.h"
 #include "message.h"
 
 namespace telegram::types {

@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_AUDIO_H_INCLUDED
 #define TELEGRAM_TYPES_AUDIO_H_INCLUDED
 
+#include "helpers/optional.h"
+
 namespace telegram::types {
 
 struct audio {
