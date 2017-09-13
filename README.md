@@ -79,30 +79,25 @@ object format.
 * Detailed real time state monitoring data and lifetime statistics to help you diagnose bottlenecks and squeeze every last drop of performance from your code.
 
 # Dependencies #
+* C++17-compatible compiler with std::optional library support (G++ 7 upwards)
 * Boost 1.60 upwards
 * Boost CGI - https://github.com/slowriot/cgi (included)
 * URDL - https://github.com/chriskohlhoff/urdl (included)
 * JSON for Modern C++ - https://nlohmann.github.io/json/ (included)
 
 # Project status #
-The project is currently in an early stage (less than a week old at the time of
-writing), so some native convenience functions are missing or incomplete -
-however, almost all functionality is available by reading or specifying the json
-you require manually through the functions that expose the json types to you.
+The project is currently in an intermediate stage, so some native convenience
+functions and types are missing or incomplete - however, almost all
+functionality is available by reading or specifying the json you require
+manually through the functions that expose the json types to you.
 
 ## Not yet supported ##
 
-* Audio
 * Stickers
-* Documents
-* Video
-* Voice
 * Uploading files
-* Native types for contacts, user profile photos & locations (but can be
-accessed manually through the json)
+* Native types for contacts & locations (but can be accessed manually through the json)
 * Native functions to send files of any kind
-* Native functions to edit messages, kick, ban or unban chat members or leave a
-chat (but these actions can be performed manually by sending the json yourself).
+* Native functions to edit and delete messages (but these actions can be performed manually by sending the json yourself).
 
 ## Supported ##
 All Telegram API types and methods not mentioned above.
