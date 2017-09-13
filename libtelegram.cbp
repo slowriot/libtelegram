@@ -33,6 +33,7 @@
 		<Unit filename="include/libtelegram/types/document.h" />
 		<Unit filename="include/libtelegram/types/file.h" />
 		<Unit filename="include/libtelegram/types/helpers/optional.h" />
+		<Unit filename="include/libtelegram/types/helpers/shared.h" />
 		<Unit filename="include/libtelegram/types/message.h" />
 		<Unit filename="include/libtelegram/types/photosize.h" />
 		<Unit filename="include/libtelegram/types/reply_markup/base.h" />
