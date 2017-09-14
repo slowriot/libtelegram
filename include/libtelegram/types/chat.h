@@ -21,6 +21,11 @@ struct chat {
   std::optional<std::string> username;                                          // Optional. Username, for private chats, supergroups and channels if available
   std::optional<std::string> first_name;                                        // Optional. First name of the other party in a private chat
   std::optional<std::string> last_name;                                         // Optional. Last name of the other party in a private chat
+  std::optional<bool> all_members_are_administrators = false;                   // Optional. True if a group has ‘All Members Are Admins’ enabled.
+  //std::optional<chat_photo> photo;                                              // Optional. Chat photo. Returned only in getChat.
+  std::optional<std::string> description;                                       // Optional. Description, for supergroups and channel chats. Returned only in getChat.
+  std::optional<std::string> invite_link;                                       // Optional. Chat invite link, for supergroups and channel chats. Returned only in getChat.
+  //std::optional<message> pinned_message;                                        // Optional. Pinned message, for supergroups. Returned only in getChat.
 
   static chat const from_json(nlohmann::json const &tree);
   static chat const from_json(nlohmann::json const &tree, std::string const &path);
@@ -47,7 +52,12 @@ chat const chat::from_json(nlohmann::json const &tree) {
               helpers::make_optional_from_json<std::string>(tree, "title"),
               helpers::make_optional_from_json<std::string>(tree, "username"),
               helpers::make_optional_from_json<std::string>(tree, "first_name"),
-              helpers::make_optional_from_json<std::string>(tree, "last_name")};
+              helpers::make_optional_from_json<std::string>(tree, "last_name"),
+              helpers::make_optional_from_json<bool>(tree, "all_members_are_administrators"),
+              //helpers::make_optional_from_json<chat_photo>(tree, "photo"),
+              helpers::make_optional_from_json<std::string>(tree, "description"),
+              helpers::make_optional_from_json<std::string>(tree, "invite_link")};
+              //helpers::make_optional_from_json<message>(tree, "pinned_message")};
 }
 chat const chat::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
