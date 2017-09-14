@@ -98,6 +98,7 @@ manually through the functions that expose the json types to you.
 * Native types for contacts & locations (but can be accessed manually through the json)
 * Native functions to send files of any kind
 * Native functions to edit and delete messages (but these actions can be performed manually by sending the json yourself).
+* Native functions to export chat links and set chat pictures.
 
 ## Supported ##
 All Telegram API types and methods not mentioned above.

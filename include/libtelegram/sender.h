@@ -67,10 +67,10 @@ public:
                                   unsigned int poll_timeout = 30);
   template<typename T>
   inline std::optional<T> send_json_and_parse(std::string const &method,
-                                                            nlohmann::json const &tree = {});
+                                              nlohmann::json const &tree = {});
   template<typename T>
   inline std::optional<std::vector<T>> send_json_and_parse_vector(std::string const &method,
-                                                                                nlohmann::json const &tree = {});
+                                                                  nlohmann::json const &tree = {});
   inline bool send_json_and_get_bool(std::string const &method,
                                      nlohmann::json const &tree = {});
 
@@ -78,29 +78,29 @@ public:
 
   template<typename Treply_markup = types::reply_markup::force_reply>
   inline std::optional<types::message> send_message(int_fast64_t chat_id,
-                                                                  std::string const &text,
-                                                                  int_fast32_t reply_to_message_id = reply_to_message_id_none,
-                                                                  parse_mode parse = parse_mode::DEFAULT,
-                                                                  web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                                                                  notification_mode notification = notification_mode::DEFAULT,
-                                                                  types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+                                                    std::string const &text,
+                                                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                    parse_mode parse = parse_mode::DEFAULT,
+                                                    web_preview_mode web_preview = web_preview_mode::DEFAULT,
+                                                    notification_mode notification = notification_mode::DEFAULT,
+                                                    types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
   template<typename Treply_markup = types::reply_markup::force_reply>
   inline std::optional<types::message> send_message(std::string const &chat_id,
-                                                                  std::string const &text,
-                                                                  int_fast32_t reply_to_message_id = reply_to_message_id_none,
-                                                                  parse_mode parse = parse_mode::DEFAULT,
-                                                                  web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                                                                  notification_mode notification = notification_mode::DEFAULT,
-                                                                  types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+                                                    std::string const &text,
+                                                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                    parse_mode parse = parse_mode::DEFAULT,
+                                                    web_preview_mode web_preview = web_preview_mode::DEFAULT,
+                                                    notification_mode notification = notification_mode::DEFAULT,
+                                                    types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
 
   inline std::optional<types::message> forward_message(int_fast64_t chat_id,
-                                                                     int_fast64_t from_chat_id,
-                                                                     int_fast32_t message_id,
-                                                                     notification_mode notification = notification_mode::DEFAULT);
+                                                       int_fast64_t from_chat_id,
+                                                       int_fast32_t message_id,
+                                                       notification_mode notification = notification_mode::DEFAULT);
   inline std::optional<types::message> forward_message(std::string const &chat_id,
-                                                                     int_fast64_t from_chat_id,
-                                                                     int_fast32_t message_id,
-                                                                     notification_mode notification = notification_mode::DEFAULT);
+                                                       int_fast64_t from_chat_id,
+                                                       int_fast32_t message_id,
+                                                       notification_mode notification = notification_mode::DEFAULT);
 
   // updating messages
   template<typename Treply_markup = types::reply_markup::force_reply>
@@ -159,15 +159,68 @@ public:
                                 int_fast32_t user_id);
   inline bool unban_chat_member(std::string const &chat_id,
                                 int_fast32_t user_id);
-  // TODO: restrictChatMember
-  // TODO: promoteChatMember
+
+  inline bool restrict_chat_member(int_fast64_t chat_id,
+                                   int_fast32_t user_id,
+                                   int_fast32_t until_date,
+                                   bool can_send_messages = false,
+                                   bool can_send_media_messages = false,
+                                   bool can_send_other_messages = false,
+                                   bool can_add_web_page_previews = false);
+  inline bool restrict_chat_member(std::string const &chat_id,
+                                   int_fast32_t user_id,
+                                   int_fast32_t until_date,
+                                   bool can_send_messages = false,
+                                   bool can_send_media_messages = false,
+                                   bool can_send_other_messages = false,
+                                   bool can_add_web_page_previews = false);
+
+  inline bool promote_chat_member(int_fast64_t chat_id,
+                                  int_fast32_t user_id,
+                                  bool can_change_info = false,
+                                  bool can_post_messages = false,
+                                  bool can_edit_messages = false,
+                                  bool can_delete_messages = false,
+                                  bool can_invite_users = false,
+                                  bool can_restrict_members = false,
+                                  bool can_pin_messages = false,
+                                  bool can_promote_members = false);
+  inline bool promote_chat_member(std::string const &chat_id,
+                                  int_fast32_t user_id,
+                                  bool can_change_info = false,
+                                  bool can_post_messages = false,
+                                  bool can_edit_messages = false,
+                                  bool can_delete_messages = false,
+                                  bool can_invite_users = false,
+                                  bool can_restrict_members = false,
+                                  bool can_pin_messages = false,
+                                  bool can_promote_members = false);
+
   // TODO: exportChatInviteLink
   // TODO: setChatPhoto
-  // TODO: deleteChatPhoto
-  // TODO: setChatTitle
-  // TODO: setChatDescription
-  // TODO: pinChatMessage
-  // TODO: unpinChatMessage
+
+  inline bool delete_chat_photo(int_fast64_t chat_id);
+  inline bool delete_chat_photo(std::string const &chat_id);
+
+  inline bool set_chat_title(int_fast64_t chat_id,
+                             std::string const &title);
+  inline bool set_chat_title(std::string const &chat_id,
+                             std::string const &title);
+
+  inline bool set_chat_description(int_fast64_t chat_id,
+                                   std::string const &description);
+  inline bool set_chat_description(std::string const &chat_id,
+                                   std::string const &description);
+
+  inline bool pin_chat_message(int_fast64_t chat_id,
+                               int_fast32_t message_id,
+                               bool disable_notification = false);
+  inline bool pin_chat_message(std::string const &chat_id,
+                               int_fast32_t message_id,
+                               bool disable_notification = false);
+
+  inline bool unpin_chat_message(int_fast64_t chat_id);
+  inline bool unpin_chat_message(std::string const &chat_id);
 
   inline bool leave_chat(int_fast64_t chat_id);
   inline bool leave_chat(std::string const &chat_id);
@@ -182,9 +235,9 @@ public:
   inline std::optional<int_fast32_t> get_chat_members_count(std::string const &chat_id);
 
   inline std::optional<types::chat_member> get_chat_member(int_fast64_t chat_id,
-                                                                         int_fast32_t user_id);
+                                                           int_fast32_t user_id);
   inline std::optional<types::chat_member> get_chat_member(std::string const &chat_id,
-                                                                         int_fast32_t user_id);
+                                                           int_fast32_t user_id);
 
   inline bool answer_callback_query(std::string const &callback_query_id,
                                     std::string const &text = {},
@@ -256,7 +309,7 @@ inline nlohmann::json sender::send_json(std::string const &method,
 
 template<typename T>
 inline std::optional<T> sender::send_json_and_parse(std::string const &method,
-                                                                  nlohmann::json const &tree) {
+                                                    nlohmann::json const &tree) {
   /// Wrapper function to send a json object and get back a complete object of the specified template type
   auto reply_tree(send_json(method, tree));
   #ifndef NDEBUG
@@ -278,7 +331,7 @@ inline std::optional<T> sender::send_json_and_parse(std::string const &method,
 }
 template<typename T>
 inline std::optional<std::vector<T>> sender::send_json_and_parse_vector(std::string const &method,
-                                                                                      nlohmann::json const &tree) {
+                                                                        nlohmann::json const &tree) {
   /// Wrapper function to send a json object and get back a complete object of the specified template type
   auto reply_tree(send_json(method, tree));
   #ifndef NDEBUG
@@ -322,12 +375,12 @@ inline std::optional<types::user> const sender::get_me() {
 
 template<typename Treply_markup>
 inline std::optional<types::message> sender::send_message(int_fast64_t chat_id,
-                                                                        std::string const &text,
-                                                                        int_fast32_t reply_to_message_id,
-                                                                        parse_mode parse,
-                                                                        web_preview_mode web_preview,
-                                                                        notification_mode notification,
-                                                                        types::reply_markup::base<Treply_markup> const *reply_markup) {
+                                                          std::string const &text,
+                                                          int_fast32_t reply_to_message_id,
+                                                          parse_mode parse,
+                                                          web_preview_mode web_preview,
+                                                          notification_mode notification,
+                                                          types::reply_markup::base<Treply_markup> const *reply_markup) {
   /// Send a message to a chat id - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
     return std::nullopt;                                                        // don't attempt to send empty messages - this would be an error
@@ -402,12 +455,12 @@ inline std::optional<types::message> sender::send_message(int_fast64_t chat_id,
 }
 template<typename Treply_markup>
 inline std::optional<types::message> sender::send_message(std::string const &chat_id,
-                                                                        std::string const &text,
-                                                                        int_fast32_t reply_to_message_id,
-                                                                        parse_mode parse,
-                                                                        web_preview_mode web_preview,
-                                                                        notification_mode notification,
-                                                                        types::reply_markup::base<Treply_markup> const *reply_markup) {
+                                                          std::string const &text,
+                                                          int_fast32_t reply_to_message_id,
+                                                          parse_mode parse,
+                                                          web_preview_mode web_preview,
+                                                          notification_mode notification,
+                                                          types::reply_markup::base<Treply_markup> const *reply_markup) {
   /// Send a message to a channel name - see https://core.telegram.org/bots/api#sendmessage
   if(text.empty()) {
     return std::nullopt;                                                        // don't attempt to send empty messages - this would be an error
@@ -474,9 +527,9 @@ inline std::optional<types::message> sender::send_message(std::string const &cha
 }
 
 inline std::optional<types::message> sender::forward_message(int_fast64_t chat_id,
-                                                                           int_fast64_t from_chat_id,
-                                                                           int_fast32_t message_id,
-                                                                           notification_mode notification) {
+                                                             int_fast64_t from_chat_id,
+                                                             int_fast32_t message_id,
+                                                             notification_mode notification) {
   /// Forward a message to a chat id - see https://core.telegram.org/bots/api#forwardmessage
   #ifndef NDEBUG
     std::cerr << "LibTelegram: Sender: DEBUG: forwarding message " << message_id << " from chat " << from_chat_id << " to chat id " << chat_id << std::endl;
@@ -500,9 +553,9 @@ inline std::optional<types::message> sender::forward_message(int_fast64_t chat_i
   return send_json_and_parse<types::message>("forwardMessage", tree);
 }
 inline std::optional<types::message> sender::forward_message(std::string const &chat_id,
-                                                                           int_fast64_t from_chat_id,
-                                                                           int_fast32_t message_id,
-                                                                           notification_mode notification) {
+                                                             int_fast64_t from_chat_id,
+                                                             int_fast32_t message_id,
+                                                             notification_mode notification) {
   /// Forward a message to a chat id - see https://core.telegram.org/bots/api#forwardmessage
   #ifndef NDEBUG
     std::cerr << "LibTelegram: Sender: DEBUG: forwarding message " << message_id << " from chat " << from_chat_id << " to chat id " << chat_id << std::endl;
@@ -781,6 +834,240 @@ inline bool sender::unban_chat_member(std::string const &chat_id,
   return send_json_and_get_bool("unbanChatMember", tree);
 }
 
+inline bool sender::restrict_chat_member(int_fast64_t chat_id,
+                                         int_fast32_t user_id,
+                                         int_fast32_t until_date,
+                                         bool can_send_messages,
+                                         bool can_send_media_messages,
+                                         bool can_send_other_messages,
+                                         bool can_add_web_page_previews) {
+  /// Restrict a user in a supergroup, numerical variant. The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights. Pass True for all boolean parameters to lift restrictions from a user. - see https://core.telegram.org/bots/api#restrictchatmember
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["user_id"] = user_id;
+  if(until_date) {
+    tree["until_date"] = until_date;
+  }
+  if(can_send_messages) {
+    tree["can_send_messages"] = can_send_messages;
+  }
+  if(can_send_media_messages) {
+    tree["can_send_media_messages"] = can_send_media_messages;
+  }
+  if(can_send_other_messages) {
+    tree["can_send_other_messages"] = can_send_other_messages;
+  }
+  if(can_add_web_page_previews) {
+    tree["can_add_web_page_previews"] = can_add_web_page_previews;
+  }
+  return send_json_and_get_bool("restrictChatMember", tree);
+}
+inline bool sender::restrict_chat_member(std::string const &chat_id,
+                                         int_fast32_t user_id,
+                                         int_fast32_t until_date,
+                                         bool can_send_messages,
+                                         bool can_send_media_messages,
+                                         bool can_send_other_messages,
+                                         bool can_add_web_page_previews) {
+  /// Restrict a user in a supergroup, string variant. The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights. Pass True for all boolean parameters to lift restrictions from a user. - see https://core.telegram.org/bots/api#restrictchatmember
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["user_id"] = user_id;
+  if(until_date) {
+    tree["until_date"] = until_date;
+  }
+  if(can_send_messages) {
+    tree["can_send_messages"] = can_send_messages;
+  }
+  if(can_send_media_messages) {
+    tree["can_send_media_messages"] = can_send_media_messages;
+  }
+  if(can_send_other_messages) {
+    tree["can_send_other_messages"] = can_send_other_messages;
+  }
+  if(can_add_web_page_previews) {
+    tree["can_add_web_page_previews"] = can_add_web_page_previews;
+  }
+  return send_json_and_get_bool("restrictChatMember", tree);
+}
+
+inline bool sender::promote_chat_member(int_fast64_t chat_id,
+                                        int_fast32_t user_id,
+                                        bool can_change_info,
+                                        bool can_post_messages,
+                                        bool can_edit_messages,
+                                        bool can_delete_messages,
+                                        bool can_invite_users,
+                                        bool can_restrict_members,
+                                        bool can_pin_messages,
+                                        bool can_promote_members) {
+  /// Promote or demote a user in a supergroup or a channel, numerical variant. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Pass False for all boolean parameters to demote a user. - see https://core.telegram.org/bots/api#promotechatmember
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["user_id"] = user_id;
+  if(can_change_info) {
+    tree["can_change_info"] = can_change_info;
+  }
+  if(can_post_messages) {
+    tree["can_post_messages"] = can_post_messages;
+  }
+  if(can_edit_messages) {
+    tree["can_edit_messages"] = can_edit_messages;
+  }
+  if(can_delete_messages) {
+    tree["can_delete_messages"] = can_delete_messages;
+  }
+  if(can_invite_users) {
+    tree["can_invite_users"] = can_invite_users;
+  }
+  if(can_restrict_members) {
+    tree["can_restrict_members"] = can_restrict_members;
+  }
+  if(can_pin_messages) {
+    tree["can_pin_messages"] = can_pin_messages;
+  }
+  if(can_promote_members) {
+    tree["can_promote_members"] = can_promote_members;
+  }
+  return send_json_and_get_bool("promoteChatMember", tree);
+}
+inline bool sender::promote_chat_member(std::string const &chat_id,
+                                        int_fast32_t user_id,
+                                        bool can_change_info,
+                                        bool can_post_messages,
+                                        bool can_edit_messages,
+                                        bool can_delete_messages,
+                                        bool can_invite_users,
+                                        bool can_restrict_members,
+                                        bool can_pin_messages,
+                                        bool can_promote_members) {
+  /// Promote or demote a user in a supergroup or a channel, string variant. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Pass False for all boolean parameters to demote a user. - see https://core.telegram.org/bots/api#promotechatmember
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["user_id"] = user_id;
+  if(can_change_info) {
+    tree["can_change_info"] = can_change_info;
+  }
+  if(can_post_messages) {
+    tree["can_post_messages"] = can_post_messages;
+  }
+  if(can_edit_messages) {
+    tree["can_edit_messages"] = can_edit_messages;
+  }
+  if(can_delete_messages) {
+    tree["can_delete_messages"] = can_delete_messages;
+  }
+  if(can_invite_users) {
+    tree["can_invite_users"] = can_invite_users;
+  }
+  if(can_restrict_members) {
+    tree["can_restrict_members"] = can_restrict_members;
+  }
+  if(can_pin_messages) {
+    tree["can_pin_messages"] = can_pin_messages;
+  }
+  if(can_promote_members) {
+    tree["can_promote_members"] = can_promote_members;
+  }
+  return send_json_and_get_bool("promoteChatMember", tree);
+}
+
+// TODO: exportChatInviteLink
+// TODO: setChatPhoto
+
+inline bool sender::delete_chat_photo(int_fast64_t chat_id) {
+  /// Delete a chat photo - numerical variant. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_get_bool("deleteChatPhoto", tree);
+}
+inline bool sender::delete_chat_photo(std::string const &chat_id) {
+  /// Delete a chat photo - string variant. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights.
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_get_bool("deleteChatPhoto", tree);
+}
+
+inline bool sender::set_chat_title(int_fast64_t chat_id,
+                                   std::string const &title) {
+  /// Change the title of a chat - numerical variant. Titles can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. - see https://core.telegram.org/bots/api#setchattitle
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  if(!title.empty()) {
+    tree["title"] = title;
+  }
+  return send_json_and_get_bool("setChatTitle", tree);
+}
+inline bool sender::set_chat_title(std::string const &chat_id,
+                                   std::string const &title) {
+  /// Change the title of a chat - string variant. Titles can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. - see https://core.telegram.org/bots/api#setchattitle
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  if(!title.empty()) {
+    tree["title"] = title;
+  }
+  return send_json_and_get_bool("setChatTitle", tree);
+}
+
+inline bool sender::set_chat_description(int_fast64_t chat_id,
+                                         std::string const &description) {
+  /// Change the description of a supergroup or a channel - numerical variant. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. - see https://core.telegram.org/bots/api#setchatdescription
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  if(!description.empty()) {
+    tree["description"] = description;
+  }
+  return send_json_and_get_bool("setChatDescription", tree);
+}
+inline bool sender::set_chat_description(std::string const &chat_id,
+                                         std::string const &description) {
+  /// Change the description of a supergroup or a channel - string variant. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. - see https://core.telegram.org/bots/api#setchatdescription
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  if(!description.empty()) {
+    tree["description"] = description;
+  }
+  return send_json_and_get_bool("setChatDescription", tree);
+}
+
+inline bool sender::pin_chat_message(int_fast64_t chat_id,
+                                     int_fast32_t message_id,
+                                     bool disable_notification) {
+  /// Unpin a message in a supergroup chat - numerical variant. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. - see https://core.telegram.org/bots/api#pinchatmessage
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["message_id"] = message_id;
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  return send_json_and_get_bool("pinChatMessage", tree);
+}
+inline bool sender::pin_chat_message(std::string const &chat_id,
+                                     int_fast32_t message_id,
+                                     bool disable_notification) {
+  /// Unpin a message in a supergroup chat - string variant. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. - see https://core.telegram.org/bots/api#pinchatmessage
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["message_id"] = message_id;
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  return send_json_and_get_bool("pinChatMessage", tree);
+}
+
+inline bool sender::unpin_chat_message(int_fast64_t chat_id) {
+  /// Unpin a message in a supergroup chat - numerical variant. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. - see https://core.telegram.org/bots/api#unpinchatmessage
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_get_bool("unpinChatMessage", tree);
+}
+inline bool sender::unpin_chat_message(std::string const &chat_id) {
+  /// Unpin a message in a supergroup chat - string variant. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. - see https://core.telegram.org/bots/api#unpinchatmessage
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  return send_json_and_get_bool("unpinChatMessage", tree);
+}
+
 inline bool sender::leave_chat(int_fast64_t chat_id) {
   /// Leave a group or a channel, numerical chat id variant - see https://core.telegram.org/bots/api#leavechat
   nlohmann::json tree;
@@ -834,7 +1121,7 @@ inline std::optional<int_fast32_t> sender::get_chat_members_count(std::string co
 }
 
 inline std::optional<types::chat_member> sender::get_chat_member(int_fast64_t chat_id,
-                                                                               int_fast32_t user_id) {
+                                                                 int_fast32_t user_id) {
   /// Get a chat member by id, numerical chat id variant - see https://core.telegram.org/bots/api#getchatmember
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
@@ -842,7 +1129,7 @@ inline std::optional<types::chat_member> sender::get_chat_member(int_fast64_t ch
   return send_json_and_parse<types::chat_member>("getChatMember", tree);
 }
 inline std::optional<types::chat_member> sender::get_chat_member(std::string const &chat_id,
-                                                                               int_fast32_t user_id) {
+                                                                 int_fast32_t user_id) {
   /// Get a chat member by id, string supergroup name variant - see https://core.telegram.org/bots/api#getchatmember
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
