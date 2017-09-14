@@ -9,6 +9,7 @@
 #include "document.h"
 #include "file.h"
 #include "location.h"
+#include "mask_position.h"
 #include "message.h"
 #include "photosize.h"
 #include "user.h"
