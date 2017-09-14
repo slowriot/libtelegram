@@ -50,6 +50,7 @@
 		<Unit filename="include/libtelegram/types/reply_markup/reply_keyboard_hide.h" />
 		<Unit filename="include/libtelegram/types/reply_markup/reply_keyboard_markup.h" />
 		<Unit filename="include/libtelegram/types/reply_markup/reply_markup.h" />
+		<Unit filename="include/libtelegram/types/shipping_address.h" />
 		<Unit filename="include/libtelegram/types/sticker.h" />
 		<Unit filename="include/libtelegram/types/sticker_set.h" />
 		<Unit filename="include/libtelegram/types/successful_payment.h" />
