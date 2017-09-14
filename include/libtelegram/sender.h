@@ -13,7 +13,10 @@
 #endif // LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
 #include <urdl/istream.hpp>
 #include <json.hpp>
-#include "types/user.h"
+#include "types/message.h"
+#include "types/file.h"
+#include "types/chat_member.h"
+#include "types/reply_markup/force_reply.h"
 
 namespace telegram {
 
