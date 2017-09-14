@@ -15,7 +15,7 @@
 #include "location.h"
 #include "venue.h"
 #include "invoice.h"
-//#include "successful_payment.h"
+#include "successful_payment.h"
 
 namespace telegram::types {
 
@@ -59,7 +59,7 @@ struct message {
   std::optional<int_fast64_t> migrate_from_chat_id;                             // Optional. The supergroup has been migrated from a group with the specified identifier. This number may be greater than 32 bits and some programming languages may have difficulty/silent defects in interpreting it. But it smaller than 52 bits, so a signed 64 bit integer or double-precision float type are safe for storing this identifier.
   std::shared_ptr<message>pinned_message;                                       // Optional. Specified message was pinned. Note that the Message object in this field will not contain further reply_to_message fields even if it is itself a reply.
   std::optional<types::invoice> invoice;                                        // Optional. Message is an invoice for a payment, information about the invoice. See https://core.telegram.org/bots/api#payments
-  //std::optional<types::successful_payment> successful_payment;                  // Optional. Message is a service message about a successful payment, information about the payment. See https://core.telegram.org/bots/api#payments
+  std::optional<types::successful_payment> successful_payment;                  // Optional. Message is a service message about a successful payment, information about the payment. See https://core.telegram.org/bots/api#payments
 
   static message const from_json(nlohmann::json const &tree);
   static message const from_json(nlohmann::json const &tree, std::string const &path);
@@ -105,8 +105,8 @@ message const message::from_json(nlohmann::json const &tree) {
                  helpers::make_optional_from_json<int64_t>(tree, "migrate_to_chat_id"),
                  helpers::make_optional_from_json<int64_t>(tree, "migrate_from_chat_id"),
                  helpers::make_shared_from_json<message>(tree, "pinned_message"),
-                 // helpers::make_optional_from_json<types::successful_payment>(tree, "successful_payment"),
                  helpers::make_optional_from_json<types::invoice>(tree, "invoice"),
+                 helpers::make_optional_from_json<types::successful_payment>(tree, "successful_payment")};
 }
 message const message::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
