@@ -8,9 +8,9 @@ namespace telegram::types {
 struct venue {
   /// See https://core.telegram.org/bots/api#venue
   types::location location;                                                     // Venue location
-  std::string title;                                                          // Name of the venue
+  std::string title;                                                            // Name of the venue
   std::string address;                                                          // Address of the venue
-  std::optional<std::string> foursquare_id;                                         // Optional. Foursquare identifier of the venue
+  std::optional<std::string> foursquare_id;                                     // Optional. Foursquare identifier of the venue
 
   static venue const from_json(nlohmann::json const &tree);
   static venue const from_json(nlohmann::json const &tree, std::string const &path);
