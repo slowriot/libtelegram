@@ -2,8 +2,11 @@
 #define TELEGRAM_TYPES_CHAT_H_INCLUDED
 
 #include "helpers/optional.h"
+#include "helpers/shared.h"
 
 namespace telegram::types {
+
+struct message;
 
 struct chat {
   /// See https://core.telegram.org/bots/api#chat
@@ -25,7 +28,7 @@ struct chat {
   //std::optional<chat_photo> photo;                                              // Optional. Chat photo. Returned only in getChat.
   std::optional<std::string> description;                                       // Optional. Description, for supergroups and channel chats. Returned only in getChat.
   std::optional<std::string> invite_link;                                       // Optional. Chat invite link, for supergroups and channel chats. Returned only in getChat.
-  //std::optional<message> pinned_message;                                        // Optional. Pinned message, for supergroups. Returned only in getChat.
+  std::shared_ptr<message> pinned_message;                                      // Optional. Pinned message, for supergroups. Returned only in getChat.
 
   static chat const from_json(nlohmann::json const &tree);
   static chat const from_json(nlohmann::json const &tree, std::string const &path);
@@ -56,8 +59,8 @@ chat const chat::from_json(nlohmann::json const &tree) {
               helpers::make_optional_from_json<bool>(tree, "all_members_are_administrators"),
               //helpers::make_optional_from_json<chat_photo>(tree, "photo"),
               helpers::make_optional_from_json<std::string>(tree, "description"),
-              helpers::make_optional_from_json<std::string>(tree, "invite_link")};
-              //helpers::make_optional_from_json<message>(tree, "pinned_message")};
+              helpers::make_optional_from_json<std::string>(tree, "invite_link"),
+              helpers::make_shared_from_json<message>(tree, "pinned_message")};
 }
 chat const chat::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
