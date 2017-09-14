@@ -149,9 +149,11 @@ public:
   inline std::optional<types::file> get_file(std::string const &file_id);
 
   inline bool kick_chat_member(int_fast64_t chat_id,
-                               int_fast32_t user_id);
+                               int_fast32_t user_id,
+                               int_fast32_t until_date = 0);
   inline bool kick_chat_member(std::string const &chat_id,
-                               int_fast32_t user_id);
+                               int_fast32_t user_id,
+                               int_fast32_t until_date = 0);
 
   inline bool unban_chat_member(int_fast64_t chat_id,
                                 int_fast32_t user_id);
@@ -729,19 +731,27 @@ inline std::optional<types::file> sender::get_file(std::string const &file_id) {
 }
 
 inline bool sender::kick_chat_member(int_fast64_t chat_id,
-                                     int_fast32_t user_id) {
+                                     int_fast32_t user_id,
+                                     int_fast32_t until_date) {
   /// Kick a user and ban them from the chat, numerical chat id variant - see https://core.telegram.org/bots/api#kickchatmember
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   tree["user_id"] = user_id;
+  if(until_date != 0) {
+    tree["until_date"] = until_date;
+  }
   return send_json_and_get_bool("kickChatMember", tree);
 }
 inline bool sender::kick_chat_member(std::string const &chat_id,
-                                     int_fast32_t user_id) {
+                                     int_fast32_t user_id,
+                                     int_fast32_t until_date) {
   /// Kick a user and ban them from the chat, string supergroup name variant - see https://core.telegram.org/bots/api#kickchatmember
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   tree["user_id"] = user_id;
+  if(until_date != 0) {
+    tree["until_date"] = until_date;
+  }
   return send_json_and_get_bool("kickChatMember", tree);
 }
 
