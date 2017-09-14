@@ -64,9 +64,9 @@ message const message::from_json(nlohmann::json const &tree) {
                  types::chat::from_json(tree, "chat"),
                  helpers::make_optional_from_json<user>(tree, "forward_from"),
                  helpers::make_optional_from_json<types::chat>(tree, "forward_from_chat"),
-                 helpers::make_optional_from_json<int_fast32_t>(tree, "forward_date"),
+                 helpers::make_optional_from_json<int32_t>(tree, "forward_date"),
                  helpers::make_shared_from_json<message>(tree, "reply_to_message"),
-                 helpers::make_optional_from_json<int_fast32_t>(tree, "edit_date"),
+                 helpers::make_optional_from_json<int32_t>(tree, "edit_date"),
                  helpers::make_optional_from_json<std::string>(tree, "text"),
                  //tree.get("entities                                             // Array of MessageEntity
                  helpers::make_optional_from_json<types::audio>(tree, "audio"),
@@ -88,8 +88,8 @@ message const message::from_json(nlohmann::json const &tree) {
                  helpers::make_optional_from_json<bool>(tree, "group_chat_created"),
                  helpers::make_optional_from_json<bool>(tree, "supergroup_chat_created"),
                  helpers::make_optional_from_json<bool>(tree, "channel_chat_created"),
-                 helpers::make_optional_from_json<int_fast64_t>(tree, "migrate_to_chat_id"),
-                 helpers::make_optional_from_json<int_fast64_t>(tree, "migrate_from_chat_id"),
+                 helpers::make_optional_from_json<int64_t>(tree, "migrate_to_chat_id"),
+                 helpers::make_optional_from_json<int64_t>(tree, "migrate_from_chat_id"),
                  helpers::make_shared_from_json<message>(tree, "pinned_message")};
 }
 message const message::from_json(nlohmann::json const &tree, std::string const &path) {

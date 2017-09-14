@@ -24,7 +24,7 @@ document const document::from_json(nlohmann::json const &tree) {
                   helpers::make_optional_from_json<photosize>(tree, "thumb"),
                   helpers::make_optional_from_json<std::string>(tree, "file_name"),
                   helpers::make_optional_from_json<std::string>(tree, "mime_type"),
-                  helpers::make_optional_from_json<int_fast32_t>(tree, "file_size")};
+                  helpers::make_optional_from_json<int32_t>(tree, "file_size")};
 }
 document const document::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree

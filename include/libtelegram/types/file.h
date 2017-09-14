@@ -34,7 +34,7 @@ file const file::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return file{tree.at("file_id"),
-              helpers::make_optional_from_json<int_fast32_t>(tree, "file_size"),
+              helpers::make_optional_from_json<int32_t>(tree, "file_size"),
               helpers::make_optional_from_json<std::string>(tree, "file_path")};
 }
 file const file::from_json(nlohmann::json const &tree, std::string const &path) {
