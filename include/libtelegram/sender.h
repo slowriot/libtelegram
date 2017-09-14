@@ -159,6 +159,15 @@ public:
                                 int_fast32_t user_id);
   inline bool unban_chat_member(std::string const &chat_id,
                                 int_fast32_t user_id);
+  // TODO: restrictChatMember
+  // TODO: promoteChatMember
+  // TODO: exportChatInviteLink
+  // TODO: setChatPhoto
+  // TODO: deleteChatPhoto
+  // TODO: setChatTitle
+  // TODO: setChatDescription
+  // TODO: pinChatMessage
+  // TODO: unpinChatMessage
 
   inline bool leave_chat(int_fast64_t chat_id);
   inline bool leave_chat(std::string const &chat_id);
