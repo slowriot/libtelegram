@@ -49,6 +49,7 @@
 		<Unit filename="include/libtelegram/types/reply_markup/reply_keyboard_markup.h" />
 		<Unit filename="include/libtelegram/types/reply_markup/reply_markup.h" />
 		<Unit filename="include/libtelegram/types/sticker.h" />
+		<Unit filename="include/libtelegram/types/sticker_set.h" />
 		<Unit filename="include/libtelegram/types/types.h" />
 		<Unit filename="include/libtelegram/types/user.h" />
 		<Unit filename="include/libtelegram/types/user_profile_photos.h" />
