@@ -7,7 +7,7 @@ namespace telegram::types {
 
 struct user_profile_photos {
   /// See https://core.telegram.org/bots/api#userprofilephotos
-  int_fast32_t total_count;                                                     // Total number of profile pictures the target user has
+  int_fast32_t total_count = 0;                                                 // Total number of profile pictures the target user has
   std::vector<std::vector<photosize>> photos;                                   // Requested profile pictures (in up to 4 sizes each)
 
   static user_profile_photos const from_json(nlohmann::json const &tree);

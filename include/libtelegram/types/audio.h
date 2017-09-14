@@ -8,7 +8,7 @@ namespace telegram::types {
 struct audio {
   /// See https://core.telegram.org/bots/api#audio
   std::string file_id;                                                          // Unique identifier for this file
-  int_fast32_t duration;                                                        // Duration of the audio in seconds as defined by sender
+  int_fast32_t duration = 0;                                                    // Duration of the audio in seconds as defined by sender
   std::optional<std::string> performer;                                         // Optional. Performer of the audio as defined by sender or by audio tags
   std::optional<std::string> title;                                             // Optional. Title of the audio as defined by sender or by audio tags
   std::optional<std::string> mime_type;                                         // Optional. MIME type of the file as defined by sender
