@@ -37,6 +37,7 @@
 		<Unit filename="include/libtelegram/types/file.h" />
 		<Unit filename="include/libtelegram/types/helpers/optional.h" />
 		<Unit filename="include/libtelegram/types/helpers/shared.h" />
+		<Unit filename="include/libtelegram/types/invoice.h" />
 		<Unit filename="include/libtelegram/types/location.h" />
 		<Unit filename="include/libtelegram/types/mask_position.h" />
 		<Unit filename="include/libtelegram/types/message.h" />
