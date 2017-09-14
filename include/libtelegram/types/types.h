@@ -5,6 +5,7 @@
 #include "callback_query.h"
 #include "chat.h"
 #include "chat_member.h"
+#include "chat_photo.h"
 #include "contact.h"
 #include "document.h"
 #include "file.h"
