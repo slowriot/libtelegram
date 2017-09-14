@@ -55,7 +55,7 @@ public:
     RECORD_AUDIO,                                                               // record_audio for audio files
     UPLOAD_AUDIO,                                                               // upload_audio for audio files
     UPLOAD_DOCUMENT,                                                            // upload_document for general files
-    FIND_LOCATION                                                               // find_location for location data.
+    FIND_LOCATION                                                               // find_location for location data
   };
   static int_fast32_t constexpr const reply_to_message_id_none = -1;
   static int_fast32_t constexpr const message_length_limit = 4096;              // see https://core.telegram.org/method/messages.sendMessage
@@ -231,8 +231,8 @@ public:
   inline std::optional<types::chat> get_chat(int_fast64_t chat_id);
   inline std::optional<types::chat> get_chat(std::string const &chat_id);
 
-  std::optional<std::vector<types::chat_member>> get_chat_administrators(int_fast64_t chat_id);
-  std::optional<std::vector<types::chat_member>> get_chat_administrators(std::string const &chat_id);
+  inline std::optional<std::vector<types::chat_member>> get_chat_administrators(int_fast64_t chat_id);
+  inline std::optional<std::vector<types::chat_member>> get_chat_administrators(std::string const &chat_id);
 
   inline std::optional<int_fast32_t> get_chat_members_count(int_fast64_t chat_id);
   inline std::optional<int_fast32_t> get_chat_members_count(std::string const &chat_id);
@@ -1097,13 +1097,13 @@ inline std::optional<types::chat> sender::get_chat(std::string const &chat_id) {
   return send_json_and_parse<types::chat>("getChat", tree);
 }
 
-std::optional<std::vector<types::chat_member>> sender::get_chat_administrators(int_fast64_t chat_id) {
+inline std::optional<std::vector<types::chat_member>> sender::get_chat_administrators(int_fast64_t chat_id) {
   /// Get a list of administrators in a chat, numerical chat id variant- see https://core.telegram.org/bots/api#getchatadministrators
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
   return send_json_and_parse_vector<types::chat_member>("getChatAdministrators", tree);
 }
-std::optional<std::vector<types::chat_member>> sender::get_chat_administrators(std::string const &chat_id) {
+inline std::optional<std::vector<types::chat_member>> sender::get_chat_administrators(std::string const &chat_id) {
   /// Get a list of administrators in a chat, string supergroup name variant - see https://core.telegram.org/bots/api#getchatadministrators
   nlohmann::json tree;
   tree["chat_id"] = chat_id;
