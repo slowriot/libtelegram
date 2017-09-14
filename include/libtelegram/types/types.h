@@ -13,6 +13,7 @@
 #include "location.h"
 #include "mask_position.h"
 #include "message.h"
+#include "order_info.h"
 #include "photosize.h"
 #include "shipping_address.h"
 #include "sticker.h"
