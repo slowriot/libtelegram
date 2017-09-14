@@ -7,10 +7,10 @@
 namespace telegram::types::helpers {
 
 template<typename T>
-std::shared_ptr<T> make_shared_from_json(nlohmann::json const &tree, std::string const &path);
+inline std::shared_ptr<T> make_shared_from_json(nlohmann::json const &tree, std::string const &path);
 
 template<typename T>
-std::shared_ptr<T> make_shared_from_json(nlohmann::json const &tree, std::string const &path) {
+inline std::shared_ptr<T> make_shared_from_json(nlohmann::json const &tree, std::string const &path) {
   /// Attempt to read an object of the specified type from the tree at the given path, and return it - useful for circular dependencies, such as messages containing other messages
   try {
     auto const child_shared_ptr(tree.at(path));                                 // first try to get the path

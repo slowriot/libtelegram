@@ -15,7 +15,7 @@ struct contact {
   static contact const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-contact const contact::from_json(nlohmann::json const &tree) {
+inline contact const contact::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return contact{tree.at("phone_number"),
@@ -23,7 +23,7 @@ contact const contact::from_json(nlohmann::json const &tree) {
                  helpers::make_optional_from_json<std::string>(tree, "last_name"),
                  helpers::make_optional_from_json<int32_t>(tree, "user_id")};
 }
-contact const contact::from_json(nlohmann::json const &tree, std::string const &path) {
+inline contact const contact::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

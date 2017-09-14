@@ -20,7 +20,7 @@ struct sticker {
   static sticker const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-sticker const sticker::from_json(nlohmann::json const &tree) {
+inline sticker const sticker::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return sticker{tree.at("file_id"),
@@ -32,7 +32,7 @@ sticker const sticker::from_json(nlohmann::json const &tree) {
                  helpers::make_optional_from_json<types::mask_position>(tree, "mask_position"),
                  helpers::make_optional_from_json<int32_t>(tree, "file_size")};
 }
-sticker const sticker::from_json(nlohmann::json const &tree, std::string const &path) {
+inline sticker const sticker::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

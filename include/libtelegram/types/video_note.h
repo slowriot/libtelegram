@@ -17,7 +17,7 @@ struct video_note {
   static video_note const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-video_note const video_note::from_json(nlohmann::json const &tree) {
+inline video_note const video_note::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return video_note{tree.at("file_id"),
@@ -26,7 +26,7 @@ video_note const video_note::from_json(nlohmann::json const &tree) {
                     helpers::make_optional_from_json<photosize>(tree, "thumb"),
                     helpers::make_optional_from_json<int32_t>(tree, "file_size")};
 }
-video_note const video_note::from_json(nlohmann::json const &tree, std::string const &path) {
+inline video_note const video_note::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

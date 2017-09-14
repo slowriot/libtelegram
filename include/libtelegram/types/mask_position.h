@@ -22,7 +22,7 @@ struct mask_position {
   static mask_position const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-mask_position const mask_position::from_json(nlohmann::json const &tree) {
+inline mask_position const mask_position::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   std::string const &point_str{tree.at("point")};
@@ -43,7 +43,7 @@ mask_position const mask_position::from_json(nlohmann::json const &tree) {
                        tree.at("y_shift"),
                        tree.at("scale")};
 }
-mask_position const mask_position::from_json(nlohmann::json const &tree, std::string const &path) {
+inline mask_position const mask_position::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

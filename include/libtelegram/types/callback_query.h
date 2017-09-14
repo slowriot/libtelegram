@@ -23,7 +23,7 @@ struct callback_query {
   static callback_query const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-callback_query const callback_query::from_json(nlohmann::json const &tree) {
+inline callback_query const callback_query::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return callback_query{tree.at("id"),
@@ -34,7 +34,7 @@ callback_query const callback_query::from_json(nlohmann::json const &tree) {
                         helpers::make_optional_from_json<std::string>(tree, "data"),
                         helpers::make_optional_from_json<std::string>(tree, "game_short_name")};
 }
-callback_query const callback_query::from_json(nlohmann::json const &tree, std::string const &path) {
+inline callback_query const callback_query::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

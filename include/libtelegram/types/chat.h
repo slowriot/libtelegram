@@ -35,7 +35,7 @@ struct chat {
   static chat const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-chat const chat::from_json(nlohmann::json const &tree) {
+inline chat const chat::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   types this_type;
@@ -63,7 +63,7 @@ chat const chat::from_json(nlohmann::json const &tree) {
               helpers::make_optional_from_json<std::string>(tree, "invite_link"),
               helpers::make_shared_from_json<message>(tree, "pinned_message")};
 }
-chat const chat::from_json(nlohmann::json const &tree, std::string const &path) {
+inline chat const chat::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

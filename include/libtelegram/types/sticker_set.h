@@ -16,7 +16,7 @@ struct sticker_set {
   static sticker_set const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-sticker_set const sticker_set::from_json(nlohmann::json const &tree) {
+inline sticker_set const sticker_set::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   auto const &entries(tree.at("stickers"));                                     // try to get the path first
@@ -31,7 +31,7 @@ sticker_set const sticker_set::from_json(nlohmann::json const &tree) {
                      tree.at("contains_masks"),
                      these_stickers};
 }
-sticker_set const sticker_set::from_json(nlohmann::json const &tree, std::string const &path) {
+inline sticker_set const sticker_set::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

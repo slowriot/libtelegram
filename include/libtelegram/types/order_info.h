@@ -16,7 +16,7 @@ struct order_info {
   static order_info const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-order_info const order_info::from_json(nlohmann::json const &tree) {
+inline order_info const order_info::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return order_info{helpers::make_optional_from_json<std::string>(tree, "name"),
@@ -24,7 +24,7 @@ order_info const order_info::from_json(nlohmann::json const &tree) {
                     helpers::make_optional_from_json<std::string>(tree, "email"),
                     helpers::make_optional_from_json<types::shipping_address>(tree, "shipping_address")};
 }
-order_info const order_info::from_json(nlohmann::json const &tree, std::string const &path) {
+inline order_info const order_info::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

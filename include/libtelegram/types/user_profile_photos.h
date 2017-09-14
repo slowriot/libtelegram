@@ -14,7 +14,7 @@ struct user_profile_photos {
   static user_profile_photos const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-user_profile_photos const user_profile_photos::from_json(nlohmann::json const &tree) {
+inline user_profile_photos const user_profile_photos::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   // decode a two-dimensional array of images
@@ -31,7 +31,7 @@ user_profile_photos const user_profile_photos::from_json(nlohmann::json const &t
   return user_profile_photos{tree.at("total_count"),
                              these_photos};
 }
-user_profile_photos const user_profile_photos::from_json(nlohmann::json const &tree, std::string const &path) {
+inline user_profile_photos const user_profile_photos::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

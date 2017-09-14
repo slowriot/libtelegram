@@ -20,7 +20,7 @@ struct successful_payment {
   static successful_payment const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-successful_payment const successful_payment::from_json(nlohmann::json const &tree) {
+inline successful_payment const successful_payment::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return successful_payment{tree.at("currency"),
@@ -31,7 +31,7 @@ successful_payment const successful_payment::from_json(nlohmann::json const &tre
                             tree.at("telegram_payment_charge_id"),
                             tree.at("provider_payment_charge_id")};
 }
-successful_payment const successful_payment::from_json(nlohmann::json const &tree, std::string const &path) {
+inline successful_payment const successful_payment::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

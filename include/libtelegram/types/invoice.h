@@ -15,7 +15,7 @@ struct invoice {
   static invoice const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-invoice const invoice::from_json(nlohmann::json const &tree) {
+inline invoice const invoice::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return invoice{tree.at("title"),
@@ -24,7 +24,7 @@ invoice const invoice::from_json(nlohmann::json const &tree) {
                  tree.at("currency"),
                  tree.at("total_amount")};
 }
-invoice const invoice::from_json(nlohmann::json const &tree, std::string const &path) {
+inline invoice const invoice::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

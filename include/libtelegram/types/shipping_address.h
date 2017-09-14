@@ -16,7 +16,7 @@ struct shipping_address {
   static shipping_address const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-shipping_address const shipping_address::from_json(nlohmann::json const &tree) {
+inline shipping_address const shipping_address::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return shipping_address{tree.at("country_code"),
@@ -26,7 +26,7 @@ shipping_address const shipping_address::from_json(nlohmann::json const &tree) {
                           tree.at("street_line2"),
                           tree.at("post_code")};
 }
-shipping_address const shipping_address::from_json(nlohmann::json const &tree, std::string const &path) {
+inline shipping_address const shipping_address::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));

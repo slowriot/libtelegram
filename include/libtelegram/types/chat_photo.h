@@ -12,13 +12,13 @@ struct chat_photo {
   static chat_photo const from_json(nlohmann::json const &tree, std::string const &path);
 };
 
-chat_photo const chat_photo::from_json(nlohmann::json const &tree) {
+inline chat_photo const chat_photo::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
   return chat_photo{tree.at("small_file_id"),
                     tree.at("big_file_id")};
 }
-chat_photo const chat_photo::from_json(nlohmann::json const &tree, std::string const &path) {
+inline chat_photo const chat_photo::from_json(nlohmann::json const &tree, std::string const &path) {
   /// Helper to generate a struct of this type from a path within a tree
   /// If there is no such child, throws std::domain_error
   return from_json(tree.at(path));
