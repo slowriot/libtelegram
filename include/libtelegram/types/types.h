@@ -12,6 +12,7 @@
 #include "message.h"
 #include "photosize.h"
 #include "user.h"
+#include "user_profile_photos.h"
 #include "venue.h"
 #include "video.h"
 #include "video_note.h"
