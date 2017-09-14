@@ -12,6 +12,7 @@
 #include "mask_position.h"
 #include "message.h"
 #include "photosize.h"
+#include "sticker.h"
 #include "user.h"
 #include "user_profile_photos.h"
 #include "venue.h"
