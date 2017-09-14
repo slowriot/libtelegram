@@ -95,6 +95,22 @@ public:
                                                     web_preview_mode web_preview = web_preview_mode::DEFAULT,
                                                     notification_mode notification = notification_mode::DEFAULT,
                                                     types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+  template<typename Treply_markup = types::reply_markup::force_reply>
+  inline std::optional<types::message> send_message(int_fast64_t chat_id,
+                                                    std::string const &text,
+                                                    types::reply_markup::base<Treply_markup> const *reply_markup,
+                                                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                    parse_mode parse = parse_mode::DEFAULT,
+                                                    web_preview_mode web_preview = web_preview_mode::DEFAULT,
+                                                    notification_mode notification = notification_mode::DEFAULT);
+  template<typename Treply_markup = types::reply_markup::force_reply>
+  inline std::optional<types::message> send_message(std::string const &chat_id,
+                                                    std::string const &text,
+                                                    types::reply_markup::base<Treply_markup> const *reply_markup,
+                                                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                    parse_mode parse = parse_mode::DEFAULT,
+                                                    web_preview_mode web_preview = web_preview_mode::DEFAULT,
+                                                    notification_mode notification = notification_mode::DEFAULT);
 
   inline std::optional<types::message> forward_message(int_fast64_t chat_id,
                                                        int_fast64_t from_chat_id,
@@ -527,6 +543,28 @@ inline std::optional<types::message> sender::send_message(std::string const &cha
     reply_markup->get(tree);
   }
   return send_json_and_parse<types::message>("sendMessage", tree);
+}
+template<typename Treply_markup>
+inline std::optional<types::message> sender::send_message(int_fast64_t chat_id,
+                                                          std::string const &text,
+                                                          types::reply_markup::base<Treply_markup> const *reply_markup,
+                                                          int_fast32_t reply_to_message_id,
+                                                          parse_mode parse,
+                                                          web_preview_mode web_preview,
+                                                          notification_mode notification) {
+  /// Convenience wrapper to send different argument order to allow others to be used as defaults while providing reply markup first
+  return send_message(chat_id, text, reply_to_message_id, parse, web_preview, notification, reply_markup);
+}
+template<typename Treply_markup>
+inline std::optional<types::message> sender::send_message(std::string const &chat_id,
+                                                          std::string const &text,
+                                                          types::reply_markup::base<Treply_markup> const *reply_markup,
+                                                          int_fast32_t reply_to_message_id,
+                                                          parse_mode parse,
+                                                          web_preview_mode web_preview,
+                                                          notification_mode notification) {
+  /// Convenience wrapper to send different argument order to allow others to be used as defaults while providing reply markup first
+  return send_message(chat_id, text, reply_to_message_id, parse, web_preview, notification, reply_markup);
 }
 
 inline std::optional<types::message> sender::forward_message(int_fast64_t chat_id,
