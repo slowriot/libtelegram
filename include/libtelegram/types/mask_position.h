@@ -25,7 +25,7 @@ struct mask_position {
 inline mask_position const mask_position::from_json(nlohmann::json const &tree) {
   /// Factory to generate a struct of this type from the correct property tree
   /// If any non-optional elements are missing from the tree, throws std::domain_error
-  std::string const &point_str{tree.at("point")};
+  std::string const &point_str{tree.at("point").get<std::string>()};
   point_types this_point;
   if(point_str == "forehead") {
     this_point = point_types::FOREHEAD;
