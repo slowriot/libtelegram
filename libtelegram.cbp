@@ -28,6 +28,7 @@
 		<Unit filename="include/libtelegram/listeners/poll.h" />
 		<Unit filename="include/libtelegram/sender.h" />
 		<Unit filename="include/libtelegram/types/audio.h" />
+		<Unit filename="include/libtelegram/types/callback_game.h" />
 		<Unit filename="include/libtelegram/types/callback_query.h" />
 		<Unit filename="include/libtelegram/types/chat.h" />
 		<Unit filename="include/libtelegram/types/chat_member.h" />
