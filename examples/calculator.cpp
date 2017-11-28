@@ -34,10 +34,6 @@ auto main()->int {
       reply_markup.keyboard_buttons.back().emplace_back("-");
       sender.send_message(message.chat.id,
                           "Calculator is ready.",
-                          telegram::sender::reply_to_message_id_none,
-                          telegram::sender::parse_mode::DEFAULT,
-                          telegram::sender::web_preview_mode::DEFAULT,
-                          telegram::sender::notification_mode::DEFAULT,
                           &reply_markup);
     }
     return;
