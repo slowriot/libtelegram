@@ -95,7 +95,7 @@ manually through the functions that expose the json types to you.
 
 * Stickers
 * Uploading files
-* Native types for contacts & locations (but can be accessed manually through the json)
+* Native types for contacts (but can be accessed manually through the json)
 * Native functions to send files of any kind
 * Native functions to edit and delete messages (but these actions can be performed manually by sending the json yourself).
 * Native functions to export chat links and set chat pictures.
@@ -133,6 +133,7 @@ For that reason, there's a suggested reading order for the examples:
 1. Fetch a file from the web and read it back: [examples/webfetch.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/webfetch.cpp)
 1. Get and process photos sent by the user: [examples/getphoto.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/getphoto.cpp)
 1. Stateful calculator, using a custom keyboard: [examples/calculator.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/calculator.cpp)
+1. Accept locations and update a live location: [examples/livelocation.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/livelocation.cpp)
 
 ### How to build the examples ###
 Each example can be built with the included `Makefile`, by using
