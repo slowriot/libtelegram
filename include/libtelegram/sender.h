@@ -2,6 +2,7 @@
 #define TELEGRAM_SENDER_H_INCLUDED
 
 #include <string>
+#include <variant>
 #include <boost/iostreams/stream.hpp>
 #define URDL_HEADER_ONLY 1
 #ifdef LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
@@ -16,7 +17,7 @@
 #include "types/message.h"
 #include "types/file.h"
 #include "types/chat_member.h"
-#include "types/reply_markup/force_reply.h"
+#include "types/reply_markup/reply_markup.h"
 
 // helper for chat id template verification
 #define VERIFY_CHAT_ID static_assert(std::is_same<Tchat_id, int_fast64_t>::value || std::is_same<Tchat_id, std::string const&>::value, "Chat ID must be either a 64bit integer or a string");
@@ -83,18 +84,24 @@ public:
 
   inline std::optional<types::user> const get_me();
 
-  template<typename Tchat_id = int_fast64_t, typename Treply_markup = types::reply_markup::force_reply>
+  template<typename Tchat_id = int_fast64_t>
   inline std::optional<types::message> send_message(Tchat_id chat_id,
                                                     std::string const &text,
                                                     int_fast32_t reply_to_message_id = reply_to_message_id_none,
                                                     parse_mode parse = parse_mode::DEFAULT,
                                                     web_preview_mode web_preview = web_preview_mode::DEFAULT,
                                                     notification_mode notification = notification_mode::DEFAULT,
-                                                    types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
-  template<typename Tchat_id = int_fast64_t, typename Treply_markup = types::reply_markup::force_reply>
+                                                    std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                               types::reply_markup::reply_keyboard_markup,
+                                                                               types::reply_markup::reply_keyboard_remove,
+                                                                               types::reply_markup::force_reply>> reply_markup = std::nullopt);
+  template<typename Tchat_id = int_fast64_t>
   inline std::optional<types::message> send_message(Tchat_id chat_id,
                                                     std::string const &text,
-                                                    types::reply_markup::base<Treply_markup> const *reply_markup,
+                                                    std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                 types::reply_markup::reply_keyboard_markup,
+                                                                 types::reply_markup::reply_keyboard_remove,
+                                                                 types::reply_markup::force_reply> reply_markup,
                                                     int_fast32_t reply_to_message_id = reply_to_message_id_none,
                                                     parse_mode parse = parse_mode::DEFAULT,
                                                     web_preview_mode web_preview = web_preview_mode::DEFAULT,
@@ -107,20 +114,24 @@ public:
                                                        notification_mode notification = notification_mode::DEFAULT);
 
   // updating messages
-  template<typename Tchat_id = int_fast64_t, typename Treply_markup = types::reply_markup::force_reply>
+  template<typename Tchat_id = int_fast64_t>
   inline bool edit_message_text(std::string const &text,
                                 Tchat_id chat_id,
                                 int_fast32_t message_id,
                                 parse_mode parse = parse_mode::DEFAULT,
                                 web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                                types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
-  template<typename Treply_markup = types::reply_markup::force_reply>
+                                std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                           types::reply_markup::reply_keyboard_markup,
+                                                           types::reply_markup::reply_keyboard_remove,
+                                                           types::reply_markup::force_reply>> reply_markup = std::nullopt);
   inline bool edit_message_text(std::string const &text,
                                 std::string const &inline_message_id = {},
                                 parse_mode parse = parse_mode::DEFAULT,
                                 web_preview_mode web_preview = web_preview_mode::DEFAULT,
-                                types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
-  // TODO: editMessageText
+                                std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                           types::reply_markup::reply_keyboard_markup,
+                                                           types::reply_markup::reply_keyboard_remove,
+                                                           types::reply_markup::force_reply>> reply_markup = std::nullopt);
   // TODO: editMessageCaption
   // TODO: editMessageReplyMarkup
   // TODO: deleteMessage
@@ -134,23 +145,25 @@ public:
   // TODO: sendVideoNote
   // TODO: sendMediaGroup
 
-  template<typename Tchat_id = int_fast64_t, typename Treply_markup = types::reply_markup::force_reply>
+  template<typename Tchat_id = int_fast64_t>
   inline std::optional<types::message> send_location(Tchat_id chat_id,
                                                      types::location const &location,
                                                      int_fast32_t live_period = live_location_period_none,
                                                      bool disable_notification = false,
                                                      int_fast32_t reply_to_message_id = reply_to_message_id_none,
-                                                     types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+                                                     std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                types::reply_markup::reply_keyboard_markup,
+                                                                                types::reply_markup::reply_keyboard_remove,
+                                                                                types::reply_markup::force_reply>> reply_markup = std::nullopt);
 
-  template<typename Tchat_id = int_fast64_t, typename Treply_markup = types::reply_markup::force_reply>
+  template<typename Tchat_id = int_fast64_t>
   inline std::optional<types::message> edit_message_live_location(Tchat_id chat_id,
                                                                   int_fast32_t message_id,
                                                                   types::location const &location,
-                                                                  types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
-  template<typename Treply_markup = types::reply_markup::force_reply>
+                                                                  std::optional<types::reply_markup::inline_keyboard_markup> reply_markup = std::nullopt);
   inline std::optional<types::message> edit_message_live_location(std::string const &inline_message_id,
                                                                   types::location const &location,
-                                                                  types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+                                                                  std::optional<types::reply_markup::inline_keyboard_markup> reply_markup = std::nullopt);
 
   // TODO: stopMessageLiveLocation
   // TODO: sendVenue
@@ -366,14 +379,17 @@ inline std::optional<types::user> const sender::get_me() {
   return send_json_and_parse<types::user>("getMe");
 }
 
-template<typename Tchat_id, typename Treply_markup>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_message(Tchat_id chat_id,
                                                           std::string const &text,
                                                           int_fast32_t reply_to_message_id,
                                                           parse_mode parse,
                                                           web_preview_mode web_preview,
                                                           notification_mode notification,
-                                                          types::reply_markup::base<Treply_markup> const *reply_markup) {
+                                                          std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                     types::reply_markup::reply_keyboard_markup,
+                                                                                     types::reply_markup::reply_keyboard_remove,
+                                                                                     types::reply_markup::force_reply>> reply_markup) {
   /// Send a message to a chat id - see https://core.telegram.org/bots/api#sendmessage
   VERIFY_CHAT_ID
   if(text.empty()) {
@@ -443,14 +459,18 @@ inline std::optional<types::message> sender::send_message(Tchat_id chat_id,
     tree["reply_to_message_id"] = reply_to_message_id;
   }
   if(reply_markup) {
-    reply_markup->get(tree);
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
   }
   return send_json_and_parse<types::message>("sendMessage", tree);
 }
-template<typename Tchat_id, typename Treply_markup>
+
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_message(Tchat_id chat_id,
                                                           std::string const &text,
-                                                          types::reply_markup::base<Treply_markup> const *reply_markup,
+                                                          std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                       types::reply_markup::reply_keyboard_markup,
+                                                                       types::reply_markup::reply_keyboard_remove,
+                                                                       types::reply_markup::force_reply> reply_markup,
                                                           int_fast32_t reply_to_message_id,
                                                           parse_mode parse,
                                                           web_preview_mode web_preview,
@@ -489,13 +509,16 @@ inline std::optional<types::message> sender::forward_message(Tchat_id chat_id,
   return send_json_and_parse<types::message>("forwardMessage", tree);
 }
 
-template<typename Tchat_id, typename Treply_markup>
+template<typename Tchat_id>
 inline bool sender::edit_message_text(std::string const &text,
                                       Tchat_id chat_id,
                                       int_fast32_t message_id,
                                       parse_mode parse,
                                       web_preview_mode web_preview,
-                                      types::reply_markup::base<Treply_markup> const *reply_markup) {
+                                      std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                 types::reply_markup::reply_keyboard_markup,
+                                                                 types::reply_markup::reply_keyboard_remove,
+                                                                 types::reply_markup::force_reply>> reply_markup) {
   /// Edit text and game messages sent by or via the bot - see https://core.telegram.org/bots/api#editmessagetext
   VERIFY_CHAT_ID
   if(text.empty()) {
@@ -532,16 +555,18 @@ inline bool sender::edit_message_text(std::string const &text,
     }
   }
   if(reply_markup) {
-    reply_markup->get(tree);
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
   }
   return send_json_and_get_bool("editMessageText", tree);
 }
-template<typename Treply_markup>
 inline bool sender::edit_message_text(std::string const &text,
                                       std::string const &inline_message_id,
                                       parse_mode parse,
                                       web_preview_mode web_preview,
-                                      types::reply_markup::base<Treply_markup> const *reply_markup) {
+                                      std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                 types::reply_markup::reply_keyboard_markup,
+                                                                 types::reply_markup::reply_keyboard_remove,
+                                                                 types::reply_markup::force_reply>> reply_markup) {
   /// Edit text and game messages sent by or via the bot, inline message variant - see https://core.telegram.org/bots/api#editmessagetext
   if(text.empty()) {
     return false;                                                               // don't attempt to send empty messages - this would be an error
@@ -576,18 +601,21 @@ inline bool sender::edit_message_text(std::string const &text,
     }
   }
   if(reply_markup) {
-    reply_markup->get(tree);
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
   }
   return send_json_and_get_bool("editMessageText", tree);
 }
 
-template<typename Tchat_id, typename Treply_markup>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_location(Tchat_id chat_id,
                                                            types::location const &location,
                                                            int_fast32_t live_period,
                                                            bool disable_notification ,
                                                            int_fast32_t reply_to_message_id,
-                                                           types::reply_markup::base<Treply_markup> const *reply_markup) {
+                                                           std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                      types::reply_markup::reply_keyboard_markup,
+                                                                                      types::reply_markup::reply_keyboard_remove,
+                                                                                      types::reply_markup::force_reply>> reply_markup) {
   /// Send a point on a map - see https://core.telegram.org/bots/api#sendlocation
   VERIFY_CHAT_ID
   nlohmann::json tree;
@@ -604,16 +632,16 @@ inline std::optional<types::message> sender::send_location(Tchat_id chat_id,
     tree["reply_to_message_id"] = reply_to_message_id;
   }
   if(reply_markup) {
-    reply_markup->get(tree);
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
   }
   return send_json_and_parse<types::message>("sendLocation", tree);
 }
 
-template<typename Tchat_id, typename Treply_markup>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::edit_message_live_location(Tchat_id chat_id,
                                                                         int_fast32_t message_id,
                                                                         types::location const &location,
-                                                                        types::reply_markup::base<Treply_markup> const *reply_markup) {
+                                                                        std::optional<types::reply_markup::inline_keyboard_markup> reply_markup) {
   /// Edit live location messages sent by the bot or via the bot - see https://core.telegram.org/bots/api#editmessagelivelocation
   VERIFY_CHAT_ID
   nlohmann::json tree;
@@ -626,10 +654,9 @@ inline std::optional<types::message> sender::edit_message_live_location(Tchat_id
   }
   return send_json_and_parse<types::message>("editMessageLiveLocation", tree);
 }
-template<typename Treply_markup>
 inline std::optional<types::message> sender::edit_message_live_location(std::string const &inline_message_id,
                                                                         types::location const &location,
-                                                                        types::reply_markup::base<Treply_markup> const *reply_markup) {
+                                                                        std::optional<types::reply_markup::inline_keyboard_markup> reply_markup) {
   /// Edit live location messages sent by the bot or via the bot - see https://core.telegram.org/bots/api#editmessagelivelocation
   nlohmann::json tree;
   tree["inline_message_id"] = inline_message_id;

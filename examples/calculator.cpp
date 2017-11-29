@@ -34,7 +34,7 @@ auto main()->int {
       reply_markup.keyboard_buttons.back().emplace_back("-");
       sender.send_message(message.chat.id,
                           "Calculator is ready.",
-                          &reply_markup);
+                          reply_markup);
     }
     return;
 
