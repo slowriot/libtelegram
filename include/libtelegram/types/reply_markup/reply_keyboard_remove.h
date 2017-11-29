@@ -1,11 +1,11 @@
-#ifndef TELEGRAM_TYPES_REPLY_MARKUP_REPLY_KEYBOARD_HIDE_H_INCLUDED
-#define TELEGRAM_TYPES_REPLY_MARKUP_REPLY_KEYBOARD_HIDE_H_INCLUDED
+#ifndef TELEGRAM_TYPES_REPLY_MARKUP_REPLY_KEYBOARD_REMOVE_H_INCLUDED
+#define TELEGRAM_TYPES_REPLY_MARKUP_REPLY_KEYBOARD_REMOVE_H_INCLUDED
 
 #include "base.h"
 
 namespace telegram::types::reply_markup {
 
-struct reply_keyboard_hide final : base<reply_keyboard_hide> {
+struct reply_keyboard_remove final : base<reply_keyboard_remove> {
   /// See https://core.telegram.org/bots/api/#replykeyboardhide
   enum class selective_type : char {
     SELECTIVE,
@@ -16,9 +16,9 @@ struct reply_keyboard_hide final : base<reply_keyboard_hide> {
   inline void get(nlohmann::json &target_tree) const;
 };
 
-inline void reply_keyboard_hide::get(nlohmann::json &tree) const {
+inline void reply_keyboard_remove::get(nlohmann::json &tree) const {
   /// Get this reply markup into a json object
-  tree["reply_markup"]["hide_keyboard"] = true;
+  tree["reply_markup"]["remove_keyboard"] = true;
   if(selective != selective_type::DEFAULT) {
     switch(selective) {
     case selective_type::SELECTIVE:
@@ -33,4 +33,4 @@ inline void reply_keyboard_hide::get(nlohmann::json &tree) const {
 
 }
 
-#endif // TELEGRAM_TYPES_REPLY_MARKUP_REPLY_KEYBOARD_HIDE_H_INCLUDED
+#endif // TELEGRAM_TYPES_REPLY_MARKUP_REPLY_KEYBOARD_REMOVE_H_INCLUDED

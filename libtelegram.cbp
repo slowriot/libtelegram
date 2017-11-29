@@ -49,8 +49,8 @@
 		<Unit filename="include/libtelegram/types/reply_markup/inline_keyboard_button.h" />
 		<Unit filename="include/libtelegram/types/reply_markup/inline_keyboard_markup.h" />
 		<Unit filename="include/libtelegram/types/reply_markup/keyboard_button.h" />
-		<Unit filename="include/libtelegram/types/reply_markup/reply_keyboard_hide.h" />
 		<Unit filename="include/libtelegram/types/reply_markup/reply_keyboard_markup.h" />
+		<Unit filename="include/libtelegram/types/reply_markup/reply_keyboard_remove.h" />
 		<Unit filename="include/libtelegram/types/reply_markup/reply_markup.h" />
 		<Unit filename="include/libtelegram/types/shipping_address.h" />
 		<Unit filename="include/libtelegram/types/sticker.h" />
