@@ -8,5 +8,6 @@
 		<Project filename="example_getphoto.cbp" />
 		<Project filename="example_calculator.cbp" />
 		<Project filename="example_upload.cbp" />
+		<Project filename="example_livelocation.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
