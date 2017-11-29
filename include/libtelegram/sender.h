@@ -577,28 +577,28 @@ inline bool sender::edit_message_text(std::string const &text,
   #endif // NDEBUG
   tree["inline_message_id"] = inline_message_id;
   tree["text"] = text;
-  if(parse != parse_mode::UNCHANGED) {                                          // only send values we wish to change
-    switch(parse) {
-    case parse_mode::NONE:
-      tree["parse_mode"] = "";
-      break;
-    case parse_mode::MARKDOWN:
-      tree["parse_mode"] = "Markdown";
-      break;
-    case parse_mode::HTML:
-      tree["parse_mode"] = "HTML";
-      break;
-    }
+  switch(parse) {
+  case parse_mode::UNCHANGED:                                                   // only send values we wish to change
+    break;
+  case parse_mode::NONE:
+    tree["parse_mode"] = "";
+    break;
+  case parse_mode::MARKDOWN:
+    tree["parse_mode"] = "Markdown";
+    break;
+  case parse_mode::HTML:
+    tree["parse_mode"] = "HTML";
+    break;
   }
-  if(web_preview != web_preview_mode::UNCHANGED) {                              // only send values we wish to change
-    switch(web_preview) {
-    case web_preview_mode::DISABLE:
-      tree["disable_web_page_preview"] = true;
-      break;
-    case web_preview_mode::ENABLE:
-      tree["disable_web_page_preview"] = false;
-      break;
-    }
+  switch(web_preview) {
+  case web_preview_mode::UNCHANGED:                                             // only send values we wish to change
+    break;
+  case web_preview_mode::DISABLE:
+    tree["disable_web_page_preview"] = true;
+    break;
+  case web_preview_mode::ENABLE:
+    tree["disable_web_page_preview"] = false;
+    break;
   }
   if(reply_markup) {
     std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
