@@ -58,6 +58,7 @@ public:
     FIND_LOCATION                                                               // find_location for location data
   };
   static int_fast32_t constexpr const reply_to_message_id_none = -1;
+  static int_fast32_t constexpr const live_location_period_none = -1;
   static int_fast32_t constexpr const message_length_limit = 4096;              // see https://core.telegram.org/method/messages.sendMessage
 
   // TODO: add message sending stream class
@@ -154,7 +155,39 @@ public:
   // TODO: sendVideo
   // TODO: sendVoice
   // TODO: sendVideoNote
-  // TODO: sendLocation
+  // TODO: sendMediaGroup
+
+  template<typename Treply_markup = types::reply_markup::force_reply>
+  inline std::optional<types::message> send_location(int_fast64_t chat_id,
+                                                     types::location const &location,
+                                                     int_fast32_t live_period = live_location_period_none,
+                                                     bool disable_notification = false,
+                                                     int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                     types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+  template<typename Treply_markup = types::reply_markup::force_reply>
+  inline std::optional<types::message> send_location(std::string const &chat_id,
+                                                     types::location const &location,
+                                                     int_fast32_t live_period = live_location_period_none,
+                                                     bool disable_notification = false,
+                                                     int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                     types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+
+  template<typename Treply_markup = types::reply_markup::force_reply>
+  inline std::optional<types::message> edit_message_live_location(int_fast64_t chat_id,
+                                                                  int_fast32_t message_id,
+                                                                  types::location const &location,
+                                                                  types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+  template<typename Treply_markup = types::reply_markup::force_reply>
+  inline std::optional<types::message> edit_message_live_location(std::string const &chat_id,
+                                                                  int_fast32_t message_id,
+                                                                  types::location const &location,
+                                                                  types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+  template<typename Treply_markup = types::reply_markup::force_reply>
+  inline std::optional<types::message> edit_message_live_location(std::string const &inline_message_id,
+                                                                  types::location const &location,
+                                                                  types::reply_markup::base<Treply_markup> const *reply_markup = nullptr);
+
+  // TODO: stopMessageLiveLocation
   // TODO: sendVenue
   // TODO: sendContact
 
@@ -755,6 +788,106 @@ inline bool sender::edit_message_text(std::string const &text,
     reply_markup->get(tree);
   }
   return send_json_and_get_bool("editMessageText", tree);
+}
+
+template<typename Treply_markup>
+inline std::optional<types::message> sender::send_location(int_fast64_t chat_id,
+                                                           types::location const &location,
+                                                           int_fast32_t live_period,
+                                                           bool disable_notification ,
+                                                           int_fast32_t reply_to_message_id,
+                                                           types::reply_markup::base<Treply_markup> const *reply_markup) {
+  /// Send a point on a map - see https://core.telegram.org/bots/api#sendlocation
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["latitude"] = location.latitude;
+  tree["longitude"] = location.longitude;
+  if(live_period != live_location_period_none) {
+    tree["live_period"] = live_period;
+  }
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    reply_markup->get(tree);
+  }
+  return send_json_and_parse<types::message>("sendLocation", tree);
+}
+template<typename Treply_markup>
+inline std::optional<types::message> sender::send_location(std::string const &chat_id,
+                                                           types::location const &location,
+                                                           int_fast32_t live_period,
+                                                           bool disable_notification,
+                                                           int_fast32_t reply_to_message_id,
+                                                           types::reply_markup::base<Treply_markup> const *reply_markup) {
+  /// Send a point on a map - see https://core.telegram.org/bots/api#sendlocation
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["latitude"] = location.latitude;
+  tree["longitude"] = location.longitude;
+  if(live_period != live_location_period_none) {
+    tree["live_period"] = live_period;
+  }
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    reply_markup->get(tree);
+  }
+  return send_json_and_parse<types::message>("sendLocation", tree);
+}
+
+template<typename Treply_markup = types::reply_markup::force_reply>
+inline std::optional<types::message> sender::edit_message_live_location(int_fast64_t chat_id,
+                                                                        int_fast32_t message_id,
+                                                                        types::location const &location,
+                                                                        types::reply_markup::base<Treply_markup> const *reply_markup) {
+  /// Edit live location messages sent by the bot or via the bot - see https://core.telegram.org/bots/api#editmessagelivelocation
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["message_id"] = message_id;
+  tree["latitude"] = location.latitude;
+  tree["longitude"] = location.longitude;
+  if(reply_markup) {
+    reply_markup->get(tree);
+  }
+  return send_json_and_parse<types::message>("editMessageLiveLocation", tree);
+}
+template<typename Treply_markup = types::reply_markup::force_reply>
+inline std::optional<types::message> sender::edit_message_live_location(std::string const &chat_id,
+                                                                        int_fast32_t message_id,
+                                                                        types::location const &location,
+                                                                        types::reply_markup::base<Treply_markup> const *reply_markup) {
+  /// Edit live location messages sent by the bot or via the bot - see https://core.telegram.org/bots/api#editmessagelivelocation
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["message_id"] = message_id;
+  tree["latitude"] = location.latitude;
+  tree["longitude"] = location.longitude;
+  if(reply_markup) {
+    reply_markup->get(tree);
+  }
+  return send_json_and_parse<types::message>("editMessageLiveLocation", tree);
+}
+template<typename Treply_markup = types::reply_markup::force_reply>
+inline std::optional<types::message> sender::edit_message_live_location(std::string const &inline_message_id,
+                                                                        types::location const &location,
+                                                                        types::reply_markup::base<Treply_markup> const *reply_markup) {
+  /// Edit live location messages sent by the bot or via the bot - see https://core.telegram.org/bots/api#editmessagelivelocation
+  nlohmann::json tree;
+  tree["inline_message_id"] = inline_message_id;
+  tree["latitude"] = location.latitude;
+  tree["longitude"] = location.longitude;
+  if(reply_markup) {
+    reply_markup->get(tree);
+  }
+  return send_json_and_parse<types::message>("editMessageLiveLocation", tree);
 }
 
 inline bool sender::send_chat_action(int_fast64_t chat_id,
