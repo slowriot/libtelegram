@@ -160,7 +160,10 @@ public:
                                                      types::reply_markup::reply_keyboard_markup,
                                                      types::reply_markup::reply_keyboard_remove,
                                                      types::reply_markup::force_reply> reply_markup);
-  // TODO: deleteMessage
+
+  template<typename Tchat_id = int_fast64_t>
+  inline bool delete_message(Tchat_id chat_id,
+                             int_fast32_t message_id);
 
   // TODO: sendPhoto
   // TODO: sendAudio
@@ -710,6 +713,22 @@ inline bool sender::edit_message_reply_markup(std::string const &inline_message_
   // TODO: "if edited message is sent by the bot, the edited Message is returned, otherwise True is returned"
 }
 
+template<typename Tchat_id = int_fast64_t>
+inline bool sender::delete_message(Tchat_id chat_id, int_fast32_t message_id) {
+  /// Use this method to delete a message, including service messages, with the following limitations:
+  /// - A message can only be deleted if it was sent less than 48 hours ago.
+  /// - Bots can delete outgoing messages in groups and supergroups.
+  /// - Bots granted can_post_messages permissions can delete outgoing messages in channels.
+  /// - If the bot is an administrator of a group, it can delete any message there.
+  /// - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
+  nlohmann::json tree;                                                          // a json container object for our data
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: deleting message in chat_id " << chat_id << " message_id " << message_id << std::endl;
+  #endif // NDEBUG
+  tree["chat_id"] = chat_id;
+  tree["message_id"] = message_id;
+  return send_json_and_get_bool("deleteMessage", tree);
+}
 
 template<typename Tchat_id>
 inline std::optional<types::message> sender::send_location(Tchat_id chat_id,
