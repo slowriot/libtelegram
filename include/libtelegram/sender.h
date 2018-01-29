@@ -200,7 +200,20 @@ public:
                                                                   std::optional<types::reply_markup::inline_keyboard_markup> reply_markup = std::nullopt);
   inline std::optional<types::message> stop_message_live_location(std::string const &inline_message_id,
                                                                   std::optional<types::reply_markup::inline_keyboard_markup> reply_markup = std::nullopt);
-  // TODO: sendVenue
+
+  template<typename Tchat_id = int_fast64_t>
+  inline std::optional<types::message> send_venue(Tchat_id chat_id,
+                                                  types::location const &location,
+                                                  std::string const &title,
+                                                  std::string const &address,
+                                                  std::string const &foursquare_id = {},
+                                                  bool disable_notification = false,
+                                                  int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                  std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                             types::reply_markup::reply_keyboard_markup,
+                                                                             types::reply_markup::reply_keyboard_remove,
+                                                                             types::reply_markup::force_reply>> reply_markup = std::nullopt);
+
   // TODO: sendContact
 
   template<typename Tchat_id = int_fast64_t>
@@ -823,6 +836,41 @@ inline std::optional<types::message> sender::stop_message_live_location(std::str
     reply_markup->get(tree);
   }
   return send_json_and_parse<types::message>("stopMessageLiveLocation", tree);
+}
+
+template<typename Tchat_id = int_fast64_t>
+inline std::optional<types::message> sender::send_venue(Tchat_id chat_id,
+                                                        types::location const &location,
+                                                        std::string const &title,
+                                                        std::string const &address,
+                                                        std::string const &foursquare_id,
+                                                        bool disable_notification,
+                                                        int_fast32_t reply_to_message_id,
+                                                        std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                   types::reply_markup::reply_keyboard_markup,
+                                                                                   types::reply_markup::reply_keyboard_remove,
+                                                                                   types::reply_markup::force_reply>> reply_markup) {
+  /// Send information about a venue. On success, the sent Message is returned - see https://core.telegram.org/bots/api#sendvenue
+  VERIFY_CHAT_ID
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["latitude"] = location.latitude;
+  tree["longitude"] = location.longitude;
+  tree["title"] = title;
+  tree["address"] = address;
+  if(!foursquare_id.empty()) {
+    tree["foursquare_id"] = foursquare_id;
+  }
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
+  }
+  return send_json_and_parse<types::message>("sendVenue", tree);
 }
 
 template<typename Tchat_id>
