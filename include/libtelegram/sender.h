@@ -194,7 +194,12 @@ public:
                                                                   types::location const &location,
                                                                   std::optional<types::reply_markup::inline_keyboard_markup> reply_markup = std::nullopt);
 
-  // TODO: stopMessageLiveLocation
+  template<typename Tchat_id = int_fast64_t>
+  inline std::optional<types::message> stop_message_live_location(Tchat_id chat_id,
+                                                                  int_fast32_t message_id,
+                                                                  std::optional<types::reply_markup::inline_keyboard_markup> reply_markup = std::nullopt);
+  inline std::optional<types::message> stop_message_live_location(std::string const &inline_message_id,
+                                                                  std::optional<types::reply_markup::inline_keyboard_markup> reply_markup = std::nullopt);
   // TODO: sendVenue
   // TODO: sendContact
 
@@ -790,6 +795,31 @@ inline std::optional<types::message> sender::edit_message_live_location(std::str
     reply_markup->get(tree);
   }
   return send_json_and_parse<types::message>("editMessageLiveLocation", tree);
+}
+
+template<typename Tchat_id>
+inline std::optional<types::message> sender::stop_message_live_location(Tchat_id chat_id,
+                                                                        int_fast32_t message_id,
+                                                                        std::optional<types::reply_markup::inline_keyboard_markup> reply_markup) {
+  /// Edit live location messages sent by the bot or via the bot - see https://core.telegram.org/bots/api#editmessagelivelocation
+  VERIFY_CHAT_ID
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["message_id"] = message_id;
+  if(reply_markup) {
+    reply_markup->get(tree);
+  }
+  return send_json_and_parse<types::message>("stopMessageLiveLocation", tree);
+}
+inline std::optional<types::message> sender::stop_message_live_location(std::string const &inline_message_id,
+                                                                        std::optional<types::reply_markup::inline_keyboard_markup> reply_markup) {
+  /// Edit live location messages sent by the bot or via the bot - see https://core.telegram.org/bots/api#editmessagelivelocation
+  nlohmann::json tree;
+  tree["inline_message_id"] = inline_message_id;
+  if(reply_markup) {
+    reply_markup->get(tree);
+  }
+  return send_json_and_parse<types::message>("stopMessageLiveLocation", tree);
 }
 
 template<typename Tchat_id>
