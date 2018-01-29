@@ -125,13 +125,29 @@ public:
                                                            types::reply_markup::reply_keyboard_remove,
                                                            types::reply_markup::force_reply>> reply_markup = std::nullopt);
   inline bool edit_message_text(std::string const &text,
-                                std::string const &inline_message_id = {},
+                                std::string const &inline_message_id,
                                 parse_mode parse = parse_mode::DEFAULT,
                                 web_preview_mode web_preview = web_preview_mode::DEFAULT,
                                 std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
                                                            types::reply_markup::reply_keyboard_markup,
                                                            types::reply_markup::reply_keyboard_remove,
                                                            types::reply_markup::force_reply>> reply_markup = std::nullopt);
+
+  template<typename Tchat_id = int_fast64_t>
+  inline bool edit_message_caption(Tchat_id chat_id,
+                                   int_fast32_t message_id,
+                                   std::string const &caption,
+                                   std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                              types::reply_markup::reply_keyboard_markup,
+                                                              types::reply_markup::reply_keyboard_remove,
+                                                              types::reply_markup::force_reply>> reply_markup = std::nullopt);
+  inline bool edit_message_caption(std::string const &inline_message_id,
+                                   std::string const &caption,
+                                   std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                              types::reply_markup::reply_keyboard_markup,
+                                                              types::reply_markup::reply_keyboard_remove,
+                                                              types::reply_markup::force_reply>> reply_markup = std::nullopt);
+
   // TODO: editMessageCaption
   // TODO: editMessageReplyMarkup
   // TODO: deleteMessage
@@ -558,6 +574,7 @@ inline bool sender::edit_message_text(std::string const &text,
     std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
   }
   return send_json_and_get_bool("editMessageText", tree);
+  // TODO: "if edited message is sent by the bot, the edited Message is returned, otherwise True is returned"
 }
 inline bool sender::edit_message_text(std::string const &text,
                                       std::string const &inline_message_id,
@@ -604,7 +621,51 @@ inline bool sender::edit_message_text(std::string const &text,
     std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
   }
   return send_json_and_get_bool("editMessageText", tree);
+  // TODO: "if edited message is sent by the bot, the edited Message is returned, otherwise True is returned"
 }
+
+template<typename Tchat_id = int_fast64_t>
+inline bool sender::edit_message_caption(Tchat_id chat_id,
+                                         int_fast32_t message_id,
+                                         std::string const &caption,
+                                         std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                    types::reply_markup::reply_keyboard_markup,
+                                                                    types::reply_markup::reply_keyboard_remove,
+                                                                    types::reply_markup::force_reply>> reply_markup) {
+  /// Edit captions of messages sent by the bot or via the bot (for inline bots). On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned - see https://core.telegram.org/bots/api#editmessagecaption
+  nlohmann::json tree;                                                          // a json container object for our data
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: editing caption \"" << caption << "\" in chat_id " << chat_id << " message_id " << message_id << std::endl;
+  #endif // NDEBUG
+  tree["chat_id"] = chat_id;
+  tree["message_id"] = message_id;
+  tree["caption"] = caption;
+  if(reply_markup) {
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
+  }
+  return send_json_and_get_bool("editMessageCaption", tree);
+  // TODO: "if edited message is sent by the bot, the edited Message is returned, otherwise True is returned"
+}
+inline bool sender::edit_message_caption(std::string const &inline_message_id,
+                                         std::string const &caption,
+                                         std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                    types::reply_markup::reply_keyboard_markup,
+                                                                    types::reply_markup::reply_keyboard_remove,
+                                                                    types::reply_markup::force_reply>> reply_markup) {
+  /// Edit captions of messages sent by the bot or via the bot (for inline bots). On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned - see https://core.telegram.org/bots/api#editmessagecaption
+  nlohmann::json tree;                                                          // a json container object for our data
+  #ifndef NDEBUG
+    std::cerr << "LibTelegram: Sender: DEBUG: editing caption \"" << caption << "\" in inline_message_id " << inline_message_id << std::endl;
+  #endif // NDEBUG
+  tree["inline_message_id"] = inline_message_id;
+  tree["caption"] = caption;
+  if(reply_markup) {
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
+  }
+  return send_json_and_get_bool("editMessageCaption", tree);
+  // TODO: "if edited message is sent by the bot, the edited Message is returned, otherwise True is returned"
+}
+
 
 template<typename Tchat_id>
 inline std::optional<types::message> sender::send_location(Tchat_id chat_id,
