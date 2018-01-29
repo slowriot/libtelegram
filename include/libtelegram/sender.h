@@ -214,7 +214,15 @@ public:
                                                                              types::reply_markup::reply_keyboard_remove,
                                                                              types::reply_markup::force_reply>> reply_markup = std::nullopt);
 
-  // TODO: sendContact
+  template<typename Tchat_id = int_fast64_t>
+  inline std::optional<types::message> send_contact(Tchat_id chat_id,
+                                                    types::contact const &contact,
+                                                    bool disable_notification = false,
+                                                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                    std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                               types::reply_markup::reply_keyboard_markup,
+                                                                               types::reply_markup::reply_keyboard_remove,
+                                                                               types::reply_markup::force_reply>> reply_markup = std::nullopt);
 
   template<typename Tchat_id = int_fast64_t>
   inline bool send_chat_action(Tchat_id chat_id,
@@ -871,6 +879,36 @@ inline std::optional<types::message> sender::send_venue(Tchat_id chat_id,
     std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
   }
   return send_json_and_parse<types::message>("sendVenue", tree);
+}
+
+template<typename Tchat_id = int_fast64_t>
+inline std::optional<types::message> sender::send_contact(Tchat_id chat_id,
+                                                          types::contact const &contact,
+                                                          bool disable_notification,
+                                                          int_fast32_t reply_to_message_id,
+                                                          std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                     types::reply_markup::reply_keyboard_markup,
+                                                                                     types::reply_markup::reply_keyboard_remove,
+                                                                                     types::reply_markup::force_reply>> reply_markup) {
+  /// Send phone contacts. On success, the sent Message is returned. - see https://core.telegram.org/bots/api#sendcontact
+  VERIFY_CHAT_ID
+  nlohmann::json tree;
+  tree["chat_id"] = chat_id;
+  tree["phone_number"] = contact.phone_number;
+  tree["first_name"] = contact.first_name;
+  if(contact.last_name) {
+    tree["last_name"] = *contact.last_name;
+  }
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
+  }
+  return send_json_and_parse<types::message>("sendContact", tree);
 }
 
 template<typename Tchat_id>
