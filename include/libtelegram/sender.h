@@ -165,13 +165,76 @@ public:
   inline bool delete_message(Tchat_id chat_id,
                              int_fast32_t message_id);
 
-  // TODO: sendPhoto
-  // TODO: sendAudio
-  // TODO: sendDocument
-  // TODO: sendSticker
-  // TODO: sendVideo
-  // TODO: sendVoice
-  // TODO: sendVideoNote
+  // sending files
+  template<typename Tchat_id = int_fast64_t>
+  inline std::optional<types::message> send_photo(Tchat_id chat_id,
+                                                  types::file const &photo,
+                                                  std::string caption = {},
+                                                  bool disable_notification = false,
+                                                  int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                  std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                             types::reply_markup::reply_keyboard_markup,
+                                                                             types::reply_markup::reply_keyboard_remove,
+                                                                             types::reply_markup::force_reply>> reply_markup = std::nullopt);
+  template<typename Tchat_id = int_fast64_t>
+  inline std::optional<types::message> send_audio(Tchat_id chat_id,
+                                                  types::audio const &audio,
+                                                  std::string caption = {},
+                                                  bool disable_notification = false,
+                                                  int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                  std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                             types::reply_markup::reply_keyboard_markup,
+                                                                             types::reply_markup::reply_keyboard_remove,
+                                                                             types::reply_markup::force_reply>> reply_markup = std::nullopt);
+  template<typename Tchat_id = int_fast64_t>
+  inline std::optional<types::message> send_document(Tchat_id chat_id,
+                                                     types::document const &document,
+                                                     std::string caption = {},
+                                                     bool disable_notification = false,
+                                                     int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                     std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                types::reply_markup::reply_keyboard_markup,
+                                                                                types::reply_markup::reply_keyboard_remove,
+                                                                                types::reply_markup::force_reply>> reply_markup = std::nullopt);
+  template<typename Tchat_id = int_fast64_t>
+  inline std::optional<types::message> send_video(Tchat_id chat_id,
+                                                    types::video const &video,
+                                                    std::string caption = {},
+                                                    bool disable_notification = false,
+                                                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                    std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                               types::reply_markup::reply_keyboard_markup,
+                                                                               types::reply_markup::reply_keyboard_remove,
+                                                                               types::reply_markup::force_reply>> reply_markup = std::nullopt);
+  template<typename Tchat_id = int_fast64_t>
+  inline std::optional<types::message> send_voice(Tchat_id chat_id,
+                                                  types::voice const &voice,
+                                                  std::string caption = {},
+                                                  bool disable_notification = false,
+                                                  int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                  std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                             types::reply_markup::reply_keyboard_markup,
+                                                                             types::reply_markup::reply_keyboard_remove,
+                                                                             types::reply_markup::force_reply>> reply_markup = std::nullopt);
+  template<typename Tchat_id = int_fast64_t>
+  inline std::optional<types::message> send_video_note(Tchat_id chat_id,
+                                                       types::video_note const &video_note,
+                                                       bool disable_notification = false,
+                                                       int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                       std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                  types::reply_markup::reply_keyboard_markup,
+                                                                                  types::reply_markup::reply_keyboard_remove,
+                                                                                  types::reply_markup::force_reply>> reply_markup = std::nullopt);
+  template<typename Tchat_id = int_fast64_t>
+  inline std::optional<types::message> send_sticker(Tchat_id chat_id,
+                                                    types::sticker const &sticker,
+                                                    bool disable_notification = false,
+                                                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                    std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                               types::reply_markup::reply_keyboard_markup,
+                                                                               types::reply_markup::reply_keyboard_remove,
+                                                                               types::reply_markup::force_reply>> reply_markup = std::nullopt);
+
   // TODO: sendMediaGroup
 
   template<typename Tchat_id = int_fast64_t>
@@ -758,6 +821,230 @@ inline bool sender::delete_message(Tchat_id chat_id, int_fast32_t message_id) {
   tree["message_id"] = message_id;
   return send_json_and_get_bool("deleteMessage", tree);
 }
+
+template<typename Tchat_id = int_fast64_t>
+inline std::optional<types::message> sender::send_photo(Tchat_id chat_id,
+                                                        types::file const &photo,
+                                                        std::string caption,
+                                                        bool disable_notification,
+                                                        int_fast32_t reply_to_message_id,
+                                                        std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                   types::reply_markup::reply_keyboard_markup,
+                                                                                   types::reply_markup::reply_keyboard_remove,
+                                                                                   types::reply_markup::force_reply>> reply_markup) {
+  /// Send photos. On success, the sent Message is returned - see https://core.telegram.org/bots/api#sendphoto and https://core.telegram.org/bots/api#sending-files
+  VERIFY_CHAT_ID
+  nlohmann::json tree;                                                          // a json container object for our data
+  tree["chat_id"] = chat_id;
+  tree["photo"] = photo.file_id;                                                // we can also store a fetch url in the file id
+  if(!caption.empty()) {
+    tree["caption"] = caption;
+  }
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
+  }
+  return send_json_and_parse<types::message>("sendPhoto", tree);
+}
+template<typename Tchat_id = int_fast64_t>
+inline std::optional<types::message> sender::send_audio(Tchat_id chat_id,
+                                                        types::audio const &audio,
+                                                        std::string caption,
+                                                        bool disable_notification,
+                                                        int_fast32_t reply_to_message_id,
+                                                        std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                   types::reply_markup::reply_keyboard_markup,
+                                                                                   types::reply_markup::reply_keyboard_remove,
+                                                                                   types::reply_markup::force_reply>> reply_markup) {
+  /// Send audio files, if you want Telegram clients to display them in the music player. Your audio must be in the .mp3 format. On success, the sent Message is returned. Bots can currently send audio files of up to 50 MB in size, this limit may be changed in the future - see https://core.telegram.org/bots/api#sendaudio
+  VERIFY_CHAT_ID
+  nlohmann::json tree;                                                          // a json container object for our data
+  tree["chat_id"] = chat_id;
+  tree["audio"] = audio.file_id;                                                // we can also store a fetch url in the file id
+  if(!caption.empty()) {
+    tree["caption"] = caption;
+  }
+  if(audio.duration != 0) {
+    tree["duration"] = audio.duration;
+  }
+  if(audio.performer) {
+    tree["performer"] = *audio.performer;
+  }
+  if(audio.title) {
+    tree["title"] = *audio.title;
+  }
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
+  }
+  return send_json_and_parse<types::message>("sendAudio", tree);
+}
+template<typename Tchat_id = int_fast64_t>
+inline std::optional<types::message> sender::send_document(Tchat_id chat_id,
+                                                           types::document const &document,
+                                                           std::string caption,
+                                                           bool disable_notification,
+                                                           int_fast32_t reply_to_message_id,
+                                                           std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                      types::reply_markup::reply_keyboard_markup,
+                                                                                      types::reply_markup::reply_keyboard_remove,
+                                                                                      types::reply_markup::force_reply>> reply_markup) {
+  /// Send general files. On success, the sent Message is returned. Bots can currently send files of any type of up to 50 MB in size, this limit may be changed in the future - see https://core.telegram.org/bots/api#senddocument
+  VERIFY_CHAT_ID
+  nlohmann::json tree;                                                          // a json container object for our data
+  tree["chat_id"] = chat_id;
+  tree["document"] = document.file_id;                                          // we can also store a fetch url in the file id
+  if(!caption.empty()) {
+    tree["caption"] = caption;
+  }
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
+  }
+  return send_json_and_parse<types::message>("sendDocument", tree);
+}
+template<typename Tchat_id = int_fast64_t>
+inline std::optional<types::message> sender::send_video(Tchat_id chat_id,
+                                                        types::video const &video,
+                                                        std::string caption,
+                                                        bool disable_notification,
+                                                        int_fast32_t reply_to_message_id,
+                                                        std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                   types::reply_markup::reply_keyboard_markup,
+                                                                                   types::reply_markup::reply_keyboard_remove,
+                                                                                   types::reply_markup::force_reply>> reply_markup) {
+  /// Send video files, Telegram clients support mp4 videos (other formats may be sent as Document). On success, the sent Message is returned. Bots can currently send video files of up to 50 MB in size, this limit may be changed in the future - see https://core.telegram.org/bots/api#sendvideo
+  VERIFY_CHAT_ID
+  nlohmann::json tree;                                                          // a json container object for our data
+  tree["chat_id"] = chat_id;
+  tree["video"] = video.file_id;                                                // we can also store a fetch url in the file id
+  if(video.duration != 0) {
+    tree["duration"] = video.duration;
+  }
+  if(video.duration != 0) {
+    tree["width"] = video.width;
+  }
+  if(video.duration != 0) {
+    tree["height"] = video.height;
+  }
+  if(!caption.empty()) {
+    tree["caption"] = caption;
+  }
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
+  }
+  return send_json_and_parse<types::message>("sendVideo", tree);
+}
+template<typename Tchat_id = int_fast64_t>
+inline std::optional<types::message> sender::send_voice(Tchat_id chat_id,
+                                                        types::voice const &voice,
+                                                        std::string caption,
+                                                        bool disable_notification,
+                                                        int_fast32_t reply_to_message_id,
+                                                        std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                   types::reply_markup::reply_keyboard_markup,
+                                                                                   types::reply_markup::reply_keyboard_remove,
+                                                                                   types::reply_markup::force_reply>> reply_markup) {
+  /// Send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .ogg file encoded with OPUS (other formats may be sent as Audio or Document). On success, the sent Message is returned. Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future - see https://core.telegram.org/bots/api#sendvoice
+  VERIFY_CHAT_ID
+  nlohmann::json tree;                                                          // a json container object for our data
+  tree["chat_id"] = chat_id;
+  tree["voice"] = voice.file_id;                                                // we can also store a fetch url in the file id
+  if(!caption.empty()) {
+    tree["caption"] = caption;
+  }
+  if(voice.duration != 0) {
+    tree["duration"] = voice.duration;
+  }
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
+  }
+  return send_json_and_parse<types::message>("sendVoice", tree);
+}
+template<typename Tchat_id = int_fast64_t>
+inline std::optional<types::message> sender::send_video_note(Tchat_id chat_id,
+                                                             types::video_note const &video_note,
+                                                             bool disable_notification,
+                                                             int_fast32_t reply_to_message_id,
+                                                             std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                        types::reply_markup::reply_keyboard_markup,
+                                                                                        types::reply_markup::reply_keyboard_remove,
+                                                                                        types::reply_markup::force_reply>> reply_markup) {
+  /// As of v.4.0, Telegram clients support rounded square mp4 videos of up to 1 minute long. Send video messages - see https://core.telegram.org/bots/api#sendvideonote and https://core.telegram.org/bots/api#sending-files
+  VERIFY_CHAT_ID
+  nlohmann::json tree;                                                          // a json container object for our data
+  tree["chat_id"] = chat_id;
+  tree["video_note"] = video_note.file_id;                                      // we can also store a fetch url in the file id
+  if(video_note.duration != 0) {
+    tree["duration"] = video_note.duration;
+  }
+  if(video_note.length != 0) {
+    tree["length"] = video_note.length;
+  }
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
+  }
+  return send_json_and_parse<types::message>("sendVideoNote", tree);
+}
+template<typename Tchat_id = int_fast64_t>
+inline std::optional<types::message> sender::send_sticker(Tchat_id chat_id,
+                                                          types::sticker const &sticker,
+                                                          bool disable_notification,
+                                                          int_fast32_t reply_to_message_id,
+                                                          std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                                      types::reply_markup::reply_keyboard_markup,
+                                                                                      types::reply_markup::reply_keyboard_remove,
+                                                                                      types::reply_markup::force_reply>> reply_markup) {
+  /// Send .webp stickers. On success, the sent Message is returned - see https://core.telegram.org/bots/api#sendsticker and https://core.telegram.org/bots/api#sending-files
+  VERIFY_CHAT_ID
+  nlohmann::json tree;                                                          // a json container object for our data
+  tree["chat_id"] = chat_id;
+  tree["sticker"] = sticker.file_id;                                            // we can also store a fetch url in the file id
+  if(disable_notification) {
+    tree["disable_notification"] = true;
+  }
+  if(reply_to_message_id != reply_to_message_id_none) {
+    tree["reply_to_message_id"] = reply_to_message_id;
+  }
+  if(reply_markup) {
+    std::visit([&tree](auto &&arg){arg.get(tree);}, *reply_markup);             // get the tree form of whatever variant we've passed
+  }
+  return send_json_and_parse<types::message>("sendSticker", tree);
+}
+
 
 template<typename Tchat_id>
 inline std::optional<types::message> sender::send_location(Tchat_id chat_id,
