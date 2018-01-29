@@ -651,6 +651,7 @@ inline bool sender::edit_message_caption(Tchat_id chat_id,
                                                                     types::reply_markup::reply_keyboard_remove,
                                                                     types::reply_markup::force_reply>> reply_markup) {
   /// Edit captions of messages sent by the bot or via the bot (for inline bots). On success, if edited message is sent by the bot, the edited Message is returned, otherwise True is returned - see https://core.telegram.org/bots/api#editmessagecaption
+  VERIFY_CHAT_ID
   nlohmann::json tree;                                                          // a json container object for our data
   #ifndef NDEBUG
     std::cerr << "LibTelegram: Sender: DEBUG: editing caption \"" << caption << "\" in chat_id " << chat_id << " message_id " << message_id << std::endl;
@@ -692,6 +693,7 @@ inline bool sender::edit_message_reply_markup(Tchat_id chat_id,
                                                            types::reply_markup::reply_keyboard_remove,
                                                            types::reply_markup::force_reply> reply_markup) {
   /// Edit only the reply markup of messages sent by the bot or via the bot (for inline bots) - see https://core.telegram.org/bots/api#editmessagereplymarkup
+  VERIFY_CHAT_ID
   nlohmann::json tree;                                                          // a json container object for our data
   #ifndef NDEBUG
     std::cerr << "LibTelegram: Sender: DEBUG: editing reply markup in chat_id " << chat_id << " message_id " << message_id << std::endl;
@@ -726,6 +728,7 @@ inline bool sender::delete_message(Tchat_id chat_id, int_fast32_t message_id) {
   /// - Bots granted can_post_messages permissions can delete outgoing messages in channels.
   /// - If the bot is an administrator of a group, it can delete any message there.
   /// - If the bot has can_delete_messages permission in a supergroup or a channel, it can delete any message there.
+  VERIFY_CHAT_ID
   nlohmann::json tree;                                                          // a json container object for our data
   #ifndef NDEBUG
     std::cerr << "LibTelegram: Sender: DEBUG: deleting message in chat_id " << chat_id << " message_id " << message_id << std::endl;
