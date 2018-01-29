@@ -3,31 +3,45 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="Example: Live Location" />
-		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
-		<Option compiler="null" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="example_livelocation">
 				<Option output="bin/example_livelocation" prefix_auto="1" extension_auto="0" />
 				<Option object_output="obj/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<MakeCommands>
-					<Build command="$make -f $makefile TARGET=$target -j4" />
-					<CompileFile command="$make -f $makefile TARGET=$target -j4" />
-					<Clean command="$make -f $makefile TARGET=$target clean" />
-					<DistClean command="$make -f $makefile distclean$target" />
-					<AskRebuildNeeded command="$make -q -f $makefile TARGET=$target" />
-					<SilentBuild command="$make -f $makefile TARGET=$target -j4 &gt; $(CMD_NULL)" />
-				</MakeCommands>
 			</Target>
 		</Build>
 		<VirtualTargets>
 			<Add alias="All" targets="example_livelocation;" />
 		</VirtualTargets>
 		<Compiler>
+			<Add option="-fexpensive-optimizations" />
+			<Add option="-flto" />
+			<Add option="-Wmissing-declarations" />
+			<Add option="-Wextra" />
+			<Add option="-Wall" />
+			<Add option="-std=gnu++1z" />
+			<Add option="-Wsizeof-pointer-memaccess" />
+			<Add option="-march=native" />
+			<Add option="-fexceptions" />
+			<Add option="-Ofast" />
 			<Add directory="include" />
+			<Add directory="." />
 		</Compiler>
+		<Linker>
+			<Add option="-flto" />
+			<Add option="-static-libstdc++" />
+			<Add option="-static-libgcc" />
+			<Add option="-pthread" />
+			<Add option="-flto=jobserver" />
+			<Add option="-Wl,--warn-once" />
+			<Add option="-Wl,--warn-common" />
+			<Add library="boost_system" />
+			<Add library="ssl" />
+			<Add library="crypto" />
+		</Linker>
 		<Unit filename="Makefile" />
 		<Unit filename="examples/livelocation.cpp" />
 		<Unit filename="version.h" />

@@ -20,6 +20,7 @@
 			<Add directory="include" />
 		</Compiler>
 		<Unit filename="LICENSE" />
+		<Unit filename="Makefile" />
 		<Unit filename="README.md" />
 		<Unit filename="include/libtelegram/libtelegram.h" />
 		<Unit filename="include/libtelegram/listener.h" />
