@@ -79,8 +79,8 @@ object format.
 * Detailed real time state monitoring data and lifetime statistics to help you diagnose bottlenecks and squeeze every last drop of performance from your code.
 
 # Dependencies #
-* C++17-compatible compiler with std::optional library support (G++ 7 upwards)
-* Boost 1.60 upwards
+* C++17-compatible compiler with std::optional library support (GCC/G++ 7 upwards)
+* Boost 1.60 upwards - http://www.boost.org
 * Boost CGI - https://github.com/slowriot/cgi (included)
 * URDL - https://github.com/chriskohlhoff/urdl (included)
 * JSON for Modern C++ - https://nlohmann.github.io/json/ (included)
@@ -94,7 +94,7 @@ manually through the functions that expose the json types to you.
 ## Not yet supported ##
 
 * Stickers
-* Uploading files
+* Uploading files directly
 * Native functions to export chat links and set chat pictures
 
 ## Supported ##
