@@ -95,6 +95,8 @@ manually through the functions that expose the json types to you.
 
 * Stickers
 * Uploading files directly
+* Message entities
+* Games
 * Native functions to export chat links and set chat pictures
 
 ## Supported ##
