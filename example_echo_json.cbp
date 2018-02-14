@@ -38,7 +38,6 @@
 			<Add option="-flto=jobserver" />
 			<Add option="-Wl,--warn-once" />
 			<Add option="-Wl,--warn-common" />
-			<Add library="boost_system" />
 			<Add library="ssl" />
 			<Add library="crypto" />
 		</Linker>

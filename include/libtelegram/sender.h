@@ -3,6 +3,9 @@
 
 #include <string>
 #include <variant>
+#define BOOST_SYSTEM_NO_DEPRECATED
+#define BOOST_SYSTEM_NO_LIB
+#define BOOST_ERROR_CODE_HEADER_ONLY
 #include <boost/iostreams/stream.hpp>
 #define URDL_HEADER_ONLY 1
 #ifdef LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
