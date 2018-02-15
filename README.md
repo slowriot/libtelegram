@@ -212,8 +212,10 @@ your program, and it can run standalone rather than through your webserver.
 In this case, you may wish to only `#include "libtelegram/sender.h"`.
 
 Likewise, if you want to have a bot that only receives but never sends - perhaps
-for a logging or statistics system - you can make do with the listener, and no
-senders.  In that case, you can just `#include "libtelegram/listener.h"`.
+for a logging or statistics system - you don't necessarily need to use a sender.
+If you are using one of the CGI listeners, then no sender is needed. However,
+the polling listener still needs a sender which it uses to poll Telegram for
+events.
 
 ### Managing multiple bots ###
 To send from multiple bots simultaneously, simply create multiple senders, each
@@ -301,3 +303,9 @@ The following areas especially require attention at present:
 Contributors are asked to adhere to the [VoxelStorm Style Guide](https://bitbucket.org/voxelstorm/voxelstorm/wiki/Style%20Guide) -
 code not adhering to the style guide may be accepted, but will be converted to
 match the style guide.
+
+## Projects using LibTelegram ##
+This is not an exhaustive list; if you are building a project using this
+library, please contribute your project to this list.!doctype
+* https://github.com/slowriot/telegramtrackerbot
+* https://code.voxelstorm.com/photocontestbot
