@@ -408,8 +408,10 @@ inline nlohmann::json sender::send_json(std::string const &method,
   urdl::url const url(endpoint + method);
   stream.open(url);
   if(!stream) {
-    std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << stream.error().message() << ", headers: " << stream.headers() << std::endl;
-    return nlohmann::json();                                                    // return an empty tree
+    #ifndef NDEBUG
+      std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << stream.error().message() << ", headers: " << stream.headers() << std::endl;
+    #endif // NDEBUG
+    throw std::runtime_error("Sender unable to open URL " + url.to_string() + ": " + stream.error().message());
   }
 
   std::string reply;

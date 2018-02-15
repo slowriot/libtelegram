@@ -77,22 +77,27 @@ inline void poll::run() {
 
     int offset = 0;                                                             // keep track of the last received update offset
     while(keep_running.test_and_set() && keep_running_global.test_and_set()) {  // the poller always runs sequentially, single-threaded
-      nlohmann::json tree;
-      tree["offset"] = offset;
-      //tree["limit"] = 100;
-      tree["timeout"] = poll_timeout;
-      auto reply_tree(sender.send_json("getUpdates", tree, poll_timeout));
-      for(auto const &it : reply_tree["result"]) {                              // process each reply entry individually
-        #ifndef NDEBUG
-          std::cerr << it.dump(2) << std::endl;
-        #endif // NDEBUG
-        int const update_id = it["update_id"];
-        if(update_id != 0) {
-          offset = std::max(update_id + 1, offset);
+      try {
+        nlohmann::json tree;
+        tree["offset"] = offset;
+        //tree["limit"] = 100;
+        tree["timeout"] = poll_timeout;
+        auto reply_tree(sender.send_json("getUpdates", tree, poll_timeout));
+        for(auto const &it : reply_tree["result"]) {                              // process each reply entry individually
+          #ifndef NDEBUG
+            std::cerr << it.dump(2) << std::endl;
+          #endif // NDEBUG
+          int const update_id = it["update_id"];
+          if(update_id != 0) {
+            offset = std::max(update_id + 1, offset);
+          }
+          service.post([this, subtree = it]{                                      // pass a copy of the subtree
+            execute_callbacks(subtree);
+          });
         }
-        service.post([this, subtree = it]{                                      // pass a copy of the subtree
-          execute_callbacks(subtree);
-        });
+      } catch(std::exception const &e) {                                        // catch any exceptions from the poll
+        std::cerr << "LibTelegram: Exception while trying to getUpdates, cannot continue: " << e.what() << std::endl;
+        stop_all();
       }
     }
     unset_signal_handler();
