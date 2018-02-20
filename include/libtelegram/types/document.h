@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_DOCUMENT_H_INCLUDED
 #define TELEGRAM_TYPES_DOCUMENT_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include "photosize.h"
 
 namespace telegram::types {

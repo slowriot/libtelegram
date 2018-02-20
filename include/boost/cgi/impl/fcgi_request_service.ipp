@@ -503,7 +503,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       {
         this->get_io_context().run_one();
         if (this->get_io_context().stopped())
-          this->get_io_context().reset();
+         this->get_io_context().restart();
       }
 
       return ec;

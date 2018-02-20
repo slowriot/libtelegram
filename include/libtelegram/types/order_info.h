@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_ORDER_INFO_H_INCLUDED
 #define TELEGRAM_TYPES_ORDER_INFO_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include "shipping_address.h"
 
 namespace telegram::types {

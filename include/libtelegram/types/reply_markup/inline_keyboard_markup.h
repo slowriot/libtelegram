@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_REPLY_MARKUP_INLINE_KEYBOARD_MARKUP_H_INCLUDED
 #define TELEGRAM_TYPES_REPLY_MARKUP_INLINE_KEYBOARD_MARKUP_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include "base.h"
 #include "inline_keyboard_button.h"
 

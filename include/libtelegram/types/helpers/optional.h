@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_HELPERS_OPTIONAL_H_INCLUDED
 #define TELEGRAM_TYPES_HELPERS_OPTIONAL_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include <optional>
 #include <json.hpp>
 

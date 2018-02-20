@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_CHAT_H_INCLUDED
 #define TELEGRAM_TYPES_CHAT_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include "helpers/optional.h"
 #include "helpers/shared.h"
 #include "chat_photo.h"

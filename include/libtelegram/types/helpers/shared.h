@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_HELPERS_SHARED_H_INCLUDED
 #define TELEGRAM_TYPES_HELPERS_SHARED_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include <memory>
 #include <json.hpp>
 

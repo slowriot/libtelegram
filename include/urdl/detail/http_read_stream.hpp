@@ -203,7 +203,7 @@ public:
       if (socket_.lowest_layer().is_open())
       {
         ec = boost::asio::error::already_open;
-        URDL_CORO_YIELD(socket_.get_io_context().post(
+        URDL_CORO_YIELD(boost::asio::post(socket_.get_executor(),
               boost::asio::detail::bind_handler(*this, ec)));
         handler_(ec);
         return;

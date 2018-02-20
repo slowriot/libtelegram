@@ -124,8 +124,8 @@ BOOST_CGI_NAMESPACE_BEGIN
      {
        // I've never got the default initialisation working on Windows...
 #if ! defined(BOOST_WINDOWS)
-       return acceptor_service_.assign(impl.acceptor_, boost::asio::ip::tcp::v4()
-                                      , 0, ec);
+       acceptor_service_.assign(impl.acceptor_, boost::asio::ip::tcp::v4()
+                                , 0, ec);
 #endif
        return ec;
      }
@@ -256,7 +256,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        }
      }
 
-     void handle_accept(
+      void handle_accept(
          implementation_type& impl, request_ptr new_request,
          accept_handler_type handler, const boost::system::error_code& ec __attribute__((__unused__))
       )
@@ -275,12 +275,10 @@ BOOST_CGI_NAMESPACE_BEGIN
      void async_accept(implementation_type& impl
              , accept_handler_type handler)
      {
-       //impl.service_->post(
-           strand_.post(
-             boost::bind(&self_type::do_accept,
-                 this, boost::ref(impl), handler)
-             );
-         //);
+       boost::asio::post(strand_,
+           boost::bind(&self_type::do_accept,
+               this, boost::ref(impl), handler)
+           );
      }
 
      int accept(implementation_type& impl, accept_handler_type handler

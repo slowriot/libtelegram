@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_REPLY_MARKUP_REPLY_KEYBOARD_REMOVE_H_INCLUDED
 #define TELEGRAM_TYPES_REPLY_MARKUP_REPLY_KEYBOARD_REMOVE_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include "base.h"
 
 namespace telegram::types::reply_markup {

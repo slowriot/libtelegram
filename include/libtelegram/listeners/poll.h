@@ -1,16 +1,9 @@
 #ifndef TELEGRAM_LISTENERS_POLL_H_INCLUDED
 #define TELEGRAM_LISTENERS_POLL_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include <signal.h>
-#define BOOST_SYSTEM_NO_DEPRECATED
-#define BOOST_SYSTEM_NO_LIB
-#define BOOST_ERROR_CODE_HEADER_ONLY
-#define URDL_HEADER_ONLY 1
-#ifdef LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
-  #warning "SSL is disabled for outgoing messages - that is such a bad idea."
-  #define URDL_DISABLE_SSL 1
-#else
-#endif // LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
 #include <urdl/istream.hpp>
 #include <boost/asio.hpp>
 #include "base.h"

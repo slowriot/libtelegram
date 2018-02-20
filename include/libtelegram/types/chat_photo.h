@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_CHAT_PHOTO_H_INCLUDED
 #define TELEGRAM_TYPES_CHAT_PHOTO_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 namespace telegram::types {
 
 struct chat_photo {

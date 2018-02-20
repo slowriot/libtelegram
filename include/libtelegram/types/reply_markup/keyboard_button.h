@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_REPLY_MARKUP_KEYBOARD_BUTTON_H_INCLUDED
 #define TELEGRAM_TYPES_REPLY_MARKUP_KEYBOARD_BUTTON_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 namespace telegram::types::reply_markup {
 
 struct keyboard_button {

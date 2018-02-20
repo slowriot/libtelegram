@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_CONTACT_H_INCLUDED
 #define TELEGRAM_TYPES_CONTACT_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 namespace telegram::types {
 
 struct contact {

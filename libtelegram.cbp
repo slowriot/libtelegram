@@ -22,6 +22,7 @@
 		<Unit filename="LICENSE" />
 		<Unit filename="Makefile" />
 		<Unit filename="README.md" />
+		<Unit filename="include/libtelegram/config.h" />
 		<Unit filename="include/libtelegram/libtelegram.h" />
 		<Unit filename="include/libtelegram/listener.h" />
 		<Unit filename="include/libtelegram/listeners/base.h" />

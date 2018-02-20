@@ -15,6 +15,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/asio/strand.hpp>
 #include <boost/detail/workaround.hpp>
+#include <boost/asio/post.hpp>
+#include <boost/asio/dispatch.hpp>
 ///////////////////////////////////////////////////////////
 #include "boost/cgi/config.hpp"
 #include "boost/cgi/common/protocol_traits.hpp"
@@ -114,14 +116,14 @@ BOOST_CGI_NAMESPACE_BEGIN
     template<typename Handler>
     void post(Handler handler)
     {
-      ios_provider_.get_io_context().post(handler);
+      boost::asio::post(ios_provider_.get_io_context(), handler);
     }
 
     /// Dispatch a handler through an available io_context
     template<typename Handler>
     void dispatch(Handler handler)
     {
-      ios_provider_.get_io_context().dispatch(handler);
+      boost::asio::dispatch(ios_provider_.get_io_context(), handler);
     }
 
   private:

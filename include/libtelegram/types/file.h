@@ -1,12 +1,8 @@
 #ifndef TELEGRAM_TYPES_FILE_H_INCLUDED
 #define TELEGRAM_TYPES_FILE_H_INCLUDED
 
-#define URDL_HEADER_ONLY 1
-#ifdef LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
-  #warning "SSL is disabled for outgoing messages - that is such a bad idea."
-  #define URDL_DISABLE_SSL 1
-#else
-#endif // LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
+#include "libtelegram/config.h"
+
 #include "urdl/url.hpp"
 #include "urdl/istream.hpp"
 #include "urdl/http.hpp"

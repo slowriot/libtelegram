@@ -1,10 +1,8 @@
 #ifndef TELEGRAM_LISTENERS_FCGI_H_INCLUDED
 #define TELEGRAM_LISTENERS_FCGI_H_INCLUDED
 
-#define BOOST_SYSTEM_NO_DEPRECATED
-#define BOOST_SYSTEM_NO_LIB
-#define BOOST_ERROR_CODE_HEADER_ONLY
-#define BOOST_CGI_NO_BOOST_FILESYSTEM
+#include "libtelegram/config.h"
+
 #include <boost/cgi/fcgi.hpp>
 #include <boost/iostreams/stream.hpp>
 #include "base.h"

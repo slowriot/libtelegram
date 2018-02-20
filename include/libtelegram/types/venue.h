@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_VENUE_H_INCLUDED
 #define TELEGRAM_TYPES_VENUE_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include "venue.h"
 
 namespace telegram::types {

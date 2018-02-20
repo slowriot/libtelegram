@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_LISTENERS_BASE_H_INCLUDED
 #define TELEGRAM_LISTENERS_BASE_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include <thread>
 #include "libtelegram/types/types.h"
 

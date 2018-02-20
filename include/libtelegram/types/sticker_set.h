@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_STICKER_SET_H_INCLUDED
 #define TELEGRAM_TYPES_STICKER_SET_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include "sticker.h"
 
 namespace telegram::types {

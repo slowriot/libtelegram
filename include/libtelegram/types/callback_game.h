@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_CALLBACK_GAME_H_INCLUDED
 #define TELEGRAM_TYPES_CALLBACK_GAME_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include "message.h"
 
 namespace telegram::types {

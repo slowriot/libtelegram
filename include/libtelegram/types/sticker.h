@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_STICKER_H_INCLUDED
 #define TELEGRAM_TYPES_STICKER_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include "mask_position.h"
 
 namespace telegram::types {

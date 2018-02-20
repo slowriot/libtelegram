@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_REPLY_MARKUP_BASE_H_INCLUDED
 #define TELEGRAM_TYPES_REPLY_MARKUP_BASE_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include <json.hpp>
 
 namespace telegram::types::reply_markup {

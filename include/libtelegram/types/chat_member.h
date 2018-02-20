@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_CHAT_MEMBER_H_INCLUDED
 #define TELEGRAM_TYPES_CHAT_MEMBER_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include "helpers/optional.h"
 
 namespace telegram::types {

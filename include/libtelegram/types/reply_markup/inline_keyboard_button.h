@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_TYPES_REPLY_MARKUP_INLINE_KEYBOARD_BUTTON_H_INCLUDED
 #define TELEGRAM_TYPES_REPLY_MARKUP_INLINE_KEYBOARD_BUTTON_H_INCLUDED
 
+#include "libtelegram/config.h"
+
 #include <optional>
 #include <variant>
 #include "libtelegram/types/callback_game.h"
