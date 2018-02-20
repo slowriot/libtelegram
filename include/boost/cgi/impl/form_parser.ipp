@@ -32,6 +32,10 @@ BOOST_CGI_NAMESPACE_BEGIN
       BOOST_ASSERT(!ctx.content_type.empty());
 
       if (ctx.content_type.find(
+         "application/json") != string_type::npos)
+        parse_json_form(ec);
+      else
+      if (ctx.content_type.find(
          "application/x-www-form-urlencoded") != string_type::npos)
         parse_url_encoded_form(ec);
       else
@@ -251,6 +255,26 @@ BOOST_CGI_NAMESPACE_BEGIN
 
       return ec;
     }
+
+    BOOST_CGI_INLINE
+    boost::system::error_code
+      form_parser::parse_json_form(boost::system::error_code& ec)
+    {
+      buffer_type& str(context_->buffer);
+
+      if (str.size() == 0)
+      {
+         std::string postdata("");
+         context_->data_map.insert(std::make_pair("POSTDATA", postdata));
+         return ec;
+      }
+
+      std::size_t content_length = context_->content_length.empty() ? 0 : boost::lexical_cast<std::size_t>(context_->content_length);
+      std::string postdata(str.begin(), str.end());
+      context_->data_map.insert(std::make_pair("POSTDATA", postdata.substr(0, content_length)));
+      return ec;
+    }
+
 
  } // namespace common
  

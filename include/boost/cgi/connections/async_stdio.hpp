@@ -24,7 +24,7 @@ BOOST_CGI_NAMESPACE_BEGIN
   // Asynchronous access to stdio.
   /**
    * This class doesn't do real async I/O, but fakes it by posting
-   * a read / write to an io_service, which may be run in a background
+   * a read / write to an io_context, which may be run in a background
    * thread. On most systems this won't actually mean true async I/O,
    * but this emulates it as an interim solution.
    */
@@ -37,9 +37,9 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef basic_connection<tags::async_stdio> type;
     typedef boost::shared_ptr<type>             pointer;
 
-    basic_connection(common::io_service& ios)
+    basic_connection(common::io_context& ios)
       : basic_connection<tags::stdio>()
-      , io_service_(ios)
+      , io_context_(ios)
     {
     }
 
@@ -53,7 +53,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       is_open_ = false;
     }
 
-    static pointer create(::BOOST_CGI_NAMESPACE::common::io_service& ios)
+    static pointer create(::BOOST_CGI_NAMESPACE::common::io_context& ios)
     {
       return pointer(new basic_connection<tags::async_stdio>(ios));
     }
@@ -87,7 +87,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     template<typename MutableBufferSequence, typename Handler>
     void async_read_some(const MutableBufferSequence& buf, Handler handler)
     {
-      io_service_.post(read_handler<pointer, MutableBufferSequence, Handler>
+      io_context_.post(read_handler<pointer, MutableBufferSequence, Handler>
                          (shared_from_this(), buf, handler));
     }
 
@@ -120,12 +120,12 @@ BOOST_CGI_NAMESPACE_BEGIN
     template<typename ConstBufferSequence, typename Handler>
     void async_write_some(const ConstBufferSequence& buf, Handler handler)
     {
-      io_service_.post(write_handler<pointer, ConstBufferSequence, Handler>
+      io_context_.post(write_handler<pointer, ConstBufferSequence, Handler>
                          (shared_from_this(), buf, handler));
     }
 
   private:
-    ::BOOST_CGI_NAMESPACE::common::io_service& io_service_;
+    ::BOOST_CGI_NAMESPACE::common::io_context& io_context_;
   };
 
  } // namespace common

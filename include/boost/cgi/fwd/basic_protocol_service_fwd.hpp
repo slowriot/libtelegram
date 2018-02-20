@@ -20,7 +20,7 @@ BOOST_CGI_NAMESPACE_BEGIN
 
   template<
     typename Protocol,
-    typename IoServiceProvider = common::io_service_provider<>
+    typename IoContextProvider = common::io_context_provider<>
   >
   class basic_protocol_service;
 

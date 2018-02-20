@@ -25,14 +25,14 @@ BOOST_CGI_NAMESPACE_BEGIN
    // Special service base class to keep classes header-file only.
    template <typename Type>
    class service_base
-     : public boost::asio::io_service::service
+     : public boost::asio::io_context::service
    {
    public:
      static boost::asio::detail::service_id<Type> id;
 
       // Constructor.
-     service_base(boost::asio::io_service& io_service)
-       : boost::asio::io_service::service(io_service)
+     service_base(boost::asio::io_context& io_context)
+       : boost::asio::io_context::service(io_context)
      {
      }
    };

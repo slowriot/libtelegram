@@ -28,15 +28,13 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef Protocol protocol_type;
 
     request_acceptor_service(basic_protocol_service<protocol_type>& s)
-      : detail::service_base<request_acceptor_service<Protocol>(s.io_service())
+      : detail::service_base<request_acceptor_service<Protocol>(s.io_context())
     {
     }
 
-#if BOOST_VERSION >= 104700
     void shutdown_service()
     {
     }
-#endif
 
     void construct(implementation_type& impl)
     {
@@ -60,8 +58,8 @@ BOOST_CGI_NAMESPACE_BEGIN
     {
       return service_impl_.accept(impl, request, ec);
       /*      
-      boost::thread::mutex::scoped_lock lk(io_service_.mutex_);
-      if( !io_service_.request_queue_.empty() )
+      boost::thread::mutex::scoped_lock lk(io_context_.mutex_);
+      if( !io_context_.request_queue_.empty() )
       {
 	      request = pservice_.request_queue_.front();
 	      pservice_.request_queue_.pop();
@@ -82,8 +80,8 @@ BOOST_CGI_NAMESPACE_BEGIN
     {
       service_impl_.async_accept(impl, request, handler);
       /*
-      boost::thread::mutex::scoped_lock lk(io_service_.mutex_);
-      if( !io_service_.request_queue_.empty() )
+      boost::thread::mutex::scoped_lock lk(io_context_.mutex_);
+      if( !io_context_.request_queue_.empty() )
       {
 	      request = pservice_.request_queue_.front();
 	      pservice_.request_queue_.pop();

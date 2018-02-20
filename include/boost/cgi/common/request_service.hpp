@@ -22,7 +22,7 @@ BOOST_CGI_NAMESPACE_BEGIN
   /// The generic service class for basic_request<>s
   /**
    * Note: If the protocol is an asynchronous protocol, which means it requires
-   * access to a boost::asio::io_service instance, then this class becomes a
+   * access to a boost::asio::io_context instance, then this class becomes a
    * model of the Service concept (**LINK**) and must only use the constructor
    * which takes a ProtocolService (**LINK**). If the protocol isn't async then
    * the class can be used without a ProtocolService.
@@ -37,20 +37,20 @@ BOOST_CGI_NAMESPACE_BEGIN
 
   public:
     typedef typename service_impl_type::impl_type     impl_type;
-    typedef typename 
+    typedef typename
       service_impl_type::implementation_type          implementation_type;
     typedef Protocol                                  protocol_type;
     typedef common::basic_protocol_service<Protocol>  protocol_service_type;
 
-    request_service(::BOOST_CGI_NAMESPACE::common::io_service& ios)
+    request_service(::BOOST_CGI_NAMESPACE::common::io_context& ios)
       : detail::service_base<request_service<Protocol> >(ios)
       , service_impl_(boost::asio::use_service<service_impl_type>(ios))
     {
     }
 
     request_service(protocol_service_type& ps)
-      : detail::service_base<request_service<Protocol> >(ps.io_service())
-      , service_impl_(boost::asio::use_service<service_impl_type>(ps.io_service()))
+      : detail::service_base<request_service<Protocol> >(ps.io_context())
+      , service_impl_(boost::asio::use_service<service_impl_type>(ps.io_context()))
     {
     }
 
@@ -80,7 +80,7 @@ BOOST_CGI_NAMESPACE_BEGIN
 
     //void construct
 
-    boost::system::error_code& 
+    boost::system::error_code&
       load(impl_type& impl, bool parse_stdin, boost::system::error_code& ec)
     {
       return service_impl_.load(impl, parse_stdin, ec);

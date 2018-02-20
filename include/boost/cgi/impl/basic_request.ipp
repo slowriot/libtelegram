@@ -20,7 +20,7 @@
 #include <boost/assert.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/asio/basic_io_object.hpp>
 ///////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     // Throws.
   template<typename RequestService, typename ProtocolService, typename Acceptor>
   basic_request<RequestService,ProtocolService,Acceptor>::    basic_request(implementation_type& impl)
-      : basic_io_object<service_type>(impl.service_->io_service())
+      : basic_io_object<service_type>(impl.service_->io_context())
     {
       set_protocol_service(*impl.service_);
       boost::system::error_code ec;
@@ -77,7 +77,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     // Won't throw.
   template<typename RequestService, typename ProtocolService, typename Acceptor>
   basic_request<RequestService,ProtocolService,Acceptor>::    basic_request(implementation_type& impl, boost::system::error_code& ec)
-      : basic_io_object<service_type>(impl.service_->io_service())
+      : basic_io_object<service_type>(impl.service_->io_context())
     {
       set_protocol_service(*impl.service_);
       this->service.begin_request_helper(this->implementation
@@ -412,7 +412,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       if (request_method() == "GET")
         return get_vars(this->implementation.vars_);
       else
-      if (request_method() == "POST")
+      if (request_method() == "POST" || request_method() == "PUT"))
         return post_vars(this->implementation.vars_);
       else
         return env_vars(this->implementation.vars_);

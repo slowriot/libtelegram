@@ -64,8 +64,8 @@ BOOST_CGI_NAMESPACE_BEGIN
       typedef std::basic_string<char_type>           string_type;
       typedef string_type                            buffer_type;
       typedef boost::array<unsigned char, 8>         header_buffer_type;
-      typedef boost::asio::const_buffers_1           const_buffers_type;
-      typedef boost::asio::mutable_buffers_1         mutable_buffers_type;
+      typedef boost::asio::const_buffer              const_buffers_type;
+      typedef boost::asio::mutable_buffer            mutable_buffers_type;
 #ifdef BOOST_CGI_ENABLE_SESSIONS
       typedef basic_session<
                 std::map<string_type, string_type>

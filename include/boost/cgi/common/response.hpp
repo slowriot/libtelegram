@@ -190,6 +190,10 @@ BOOST_CGI_NAMESPACE_BEGIN
     /// Get the value of a header in this response with the name `name`.
     string_type header_value(string_type const& name);
 
+    /// Returns true for existing header names.
+    bool has_header_value(string_type const& name);
+
+
     /// Clear all of the response headers.
     void clear_headers();
 

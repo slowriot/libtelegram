@@ -14,7 +14,7 @@
 BOOST_CGI_NAMESPACE_BEGIN
  namespace detail {
 
-  /// basic_io_object alternative when an io_service isn't used
+  /// basic_io_object alternative when an io_context isn't used
   template<typename Service>
   class basic_sync_io_object
     : private boost::noncopyable

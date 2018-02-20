@@ -28,17 +28,17 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef Service                                    service_type;
     typedef typename service_type::implementation_type implementation_type;
 
-    /// Get the io_service associated with the object.
+    /// Get the io_context associated with the object.
     /**
-     * This function may be used to obtain the io_service object that the I/O
+     * This function may be used to obtain the io_context object that the I/O
      * object uses to dispatch handlers for asynchronous operations.
      *
-     * @return A reference to the io_service object that the I/O object will 
+     * @return A reference to the io_context object that the I/O object will 
      * use to dispatch handlers. Ownership is not transferred to the caller.
      */
-    boost::asio::io_service& get_io_service()
+    boost::asio::io_context& get_io_context()
     {
-      return service.get_io_service();
+      return service.get_io_context();
     }
 
   protected:
@@ -56,7 +56,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     implementation_type implementation;
   };
   
-  /// basic_io_object alternative when an io_service isn't used
+  /// basic_io_object alternative when an io_context isn't used
   template<typename Service>
   class basic_io_object<
       Service,
@@ -77,17 +77,17 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef Service                                  service_type;
     typedef typename Service::implementation_type    implementation_type;
 
-    /// Get the io_service associated with the object.
+    /// Get the io_context associated with the object.
     /**
-     * This function may be used to obtain the io_service object that the I/O
+     * This function may be used to obtain the io_context object that the I/O
      * object uses to dispatch handlers for asynchronous operations.
      *
-     * @return A reference to the io_service object that the I/O object will 
+     * @return A reference to the io_context object that the I/O object will 
      * use to dispatch handlers. Ownership is not transferred to the caller.
      */
-    boost::asio::io_service& get_io_service()
+    boost::asio::io_context& get_io_context()
     {
-      return service.get_io_service();
+      return service.get_io_context();
     }
 
   protected:
@@ -96,8 +96,8 @@ BOOST_CGI_NAMESPACE_BEGIN
      * Performs:
      * @code service.construct(implementation); @endcode
      */
-    explicit basic_io_object(boost::asio::io_service& io_service)
-      : service(boost::asio::use_service<service_type>(io_service))
+    explicit basic_io_object(boost::asio::io_context& io_context)
+      : service(boost::asio::use_service<service_type>(io_context))
     {
       service.construct(implementation);
     }
@@ -111,7 +111,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     implementation_type implementation;
   };
   
-  /// basic_io_object alternative when an io_service isn't used
+  /// basic_io_object alternative when an io_context isn't used
   template<typename Service>
   class basic_io_object<
       Service,
@@ -127,17 +127,17 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef Service                                  service_type;
     typedef typename Service::implementation_type    implementation_type;
 
-    /// Get the io_service associated with the object.
+    /// Get the io_context associated with the object.
     /**
-     * This function may be used to obtain the io_service object that the I/O
+     * This function may be used to obtain the io_context object that the I/O
      * object uses to dispatch handlers for asynchronous operations.
      *
-     * @return A reference to the io_service object that the I/O object will 
+     * @return A reference to the io_context object that the I/O object will 
      * use to dispatch handlers. Ownership is not transferred to the caller.
      */
-    boost::asio::io_service& get_io_service()
+    boost::asio::io_context& get_io_context()
     {
-      return service.get_io_service();
+      return service.get_io_context();
     }
 
   protected:
@@ -158,7 +158,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       service.destroy(implementation);
     }
 
-    boost::asio::io_service ios;
+    boost::asio::io_context ios;
     service_type& service;
     implementation_type implementation;
   };

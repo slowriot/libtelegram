@@ -29,7 +29,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     struct scgi {};
     struct http {};
 
-    // IoServiceProvider PoolingPolicy types
+    // IoContextProvider PoolingPolicy types
     struct single_service {};
     struct service_pool {};
     struct round_robin {};

@@ -22,7 +22,7 @@ BOOST_CGI_NAMESPACE_BEGIN
    // Special derived service id type to keep classes header-file only.
    template <typename Type>
    class service_id
-     : public boost::asio::io_service::id
+     : public boost::asio::io_context::id
    {
   };
 

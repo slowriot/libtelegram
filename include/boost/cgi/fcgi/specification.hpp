@@ -102,8 +102,8 @@ BOOST_CGI_NAMESPACE_BEGIN
       } impl;
       
     public:
-      typedef boost::asio::const_buffers_1   const_buffers_type;
-      typedef boost::asio::mutable_buffers_1 mutable_buffers_type;
+      typedef boost::asio::const_buffer      const_buffers_type;
+      typedef boost::asio::mutable_buffer    mutable_buffers_type;
 
       Header()
       {
@@ -245,7 +245,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       } impl;
 
     public:
-      typedef boost::asio::const_buffers_1   const_buffers_type;
+      typedef boost::asio::const_buffer      const_buffers_type;
 
       EndRequestBody() {}
 

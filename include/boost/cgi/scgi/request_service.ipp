@@ -26,7 +26,7 @@
 #include "boost/cgi/common/parse_options.hpp"
 #include "boost/cgi/http/status_code.hpp"
 #include "boost/cgi/import/read.hpp"
-#include "boost/cgi/import/io_service.hpp"
+#include "boost/cgi/import/io_context.hpp"
 #include "boost/cgi/detail/service_base.hpp"
 #include "boost/cgi/detail/throw_error.hpp"
 #include "boost/cgi/config.hpp"
@@ -181,7 +181,7 @@ BOOST_CGI_NAMESPACE_BEGIN
         this->parse_get_vars(impl, ec);
       }
       else
-      if (request_method == "POST"
+      if ((request_method == "POST" || request_method == "PUT")
           && (parse_opts & common::parse_post_only))
       {
         parse_post_vars(impl, ec);

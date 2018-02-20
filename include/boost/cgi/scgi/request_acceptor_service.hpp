@@ -73,7 +73,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        endpoint_type                                 endpoint_;
      };
 
-     explicit scgi_request_acceptor_service(::BOOST_CGI_NAMESPACE::common::io_service& ios)
+     explicit scgi_request_acceptor_service(::BOOST_CGI_NAMESPACE::common::io_context& ios)
        : detail::service_base< ::BOOST_CGI_NAMESPACE::scgi_request_acceptor_service<Protocol> >(ios)
        , acceptor_service_(boost::asio::use_service<acceptor_service_type>(ios))
        , strand_(ios)
@@ -149,8 +149,6 @@ BOOST_CGI_NAMESPACE_BEGIN
        bind(implementation_type& impl, const Endpoint& endpoint
            , boost::system::error_code& ec)
      {
-       acceptor_service_.set_option(impl.acceptor_,
-           boost::asio::socket_base::reuse_address(true), ec);
        return acceptor_service_.bind(impl.acceptor_, endpoint, ec);
      }
 
@@ -168,6 +166,14 @@ BOOST_CGI_NAMESPACE_BEGIN
        listen(implementation_type& impl, int backlog, boost::system::error_code& ec)
      {
        return acceptor_service_.listen(impl.acceptor_, backlog, ec);
+     }
+
+     template<typename SettableSocketOption>
+     boost::system::error_code
+       set_option(implementation_type& impl, const SettableSocketOption& option
+                 , boost::system::error_code& ec)
+     {
+       return acceptor_service_.set_option(impl.acceptor_, option, ec);
      }
      
      void do_accept(implementation_type& impl
@@ -316,7 +322,7 @@ BOOST_CGI_NAMESPACE_BEGIN
    public:
      /// The underlying socket acceptor service.
      acceptor_service_type&          acceptor_service_;
-     boost::asio::io_service::strand strand_;
+     boost::asio::io_context::strand strand_;
    };
 
  //} // namespace scgi

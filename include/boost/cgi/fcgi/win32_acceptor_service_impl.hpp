@@ -164,7 +164,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     *       acceptor_service_impl<fcgi> acceptor_service_impl_; // etc...
     *
     * Note: If the protocol is an asynchronous protocol, which means it
-    * requires access to a boost::asio::io_service instance, then this
+    * requires access to a boost::asio::io_context instance, then this
     * class becomes a model of the Service concept (**LINK**) and must
     * only use the constructor which takes a ProtocolService (**LINK**).
     * If the protocol isn't async then the class can be used without a
@@ -215,7 +215,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        implementation_type() : async_accepts_(0) {}
      };
 
-     explicit win32_acceptor_service_impl(::BOOST_CGI_NAMESPACE::common::io_service& ios)
+     explicit win32_acceptor_service_impl(::BOOST_CGI_NAMESPACE::common::io_context& ios)
        : detail::service_base< ::BOOST_CGI_NAMESPACE::fcgi::win32_acceptor_service_impl<Protocol> >(ios)
        , acceptor_service_(boost::asio::use_service<acceptor_service_type>(ios))
        , strand_(ios)
@@ -275,8 +275,9 @@ BOOST_CGI_NAMESPACE_BEGIN
 #if BOOST_VERSION >= 104700
      void shutdown_service()
      {
-       //if (transport_ == detail::transport::socket)
-       //  acceptor_service_.shutdown_service();
+#if BOOST_VERSION < 104900
+       acceptor_service_.shutdown_service();
+#endif
      }
 #endif
 
@@ -519,7 +520,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        if (transport_ == detail::transport::pipe)
          strand_.post(detail::accept_handler<self_type, Handler>(*this, impl, request, handler));
        else // transport_ == detail::transport::socket
-         this->io_service().post(detail::accept_handler<self_type, Handler>(*this, impl, request, handler));
+         this->io_context().post(detail::accept_handler<self_type, Handler>(*this, impl, request, handler));
      }
 
      /// Close the acceptor (not implemented yet).
@@ -600,7 +601,7 @@ BOOST_CGI_NAMESPACE_BEGIN
    public:
      /// The underlying socket acceptor service.
      acceptor_service_type&          acceptor_service_;
-     boost::asio::io_service::strand strand_;
+     boost::asio::io_context::strand strand_;
      detail::transport::type transport_;
      HANDLE listen_handle_;
      bool is_cgi_;

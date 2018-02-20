@@ -18,13 +18,13 @@ BOOST_CGI_NAMESPACE_BEGIN
  namespace common {
 
    template<typename Protocol>
-   struct has_hidden_io_service
+   struct has_hidden_io_context
      : boost::mpl::bool_<false>
    {
    };
 
    template<>
-   struct has_hidden_io_service<tags::cgi>
+   struct has_hidden_io_context<tags::cgi>
     : boost::mpl::bool_<true>
    {
    };

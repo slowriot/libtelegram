@@ -126,7 +126,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     basic_request(protocol_service_type& s
                  , const parse_options opts = traits::parse_opts
                  , char** base_env = NULL)
-      : detail::basic_io_object<service_type>(s.get_io_service())
+      : detail::basic_io_object<service_type>(s.get_io_context())
     {
       set_protocol_service(s);
       if (opts > parse_none) load(opts, base_env);
@@ -137,7 +137,7 @@ BOOST_CGI_NAMESPACE_BEGIN
                  , boost::system::error_code& ec
                  , const parse_options opts = traits::parse_opts
                  , char** base_env = NULL)
-      : detail::basic_io_object<service_type>(s.get_io_service())
+      : detail::basic_io_object<service_type>(s.get_io_context())
     {
       set_protocol_service(s);
       if (opts > parse_none) load(opts, ec, base_env);
@@ -146,7 +146,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     /// Make a new mutiplexed request from an existing connection.
     // Throws.
     basic_request(implementation_type& impl)
-      : detail::basic_io_object<service_type>(impl.service_->get_io_service())
+      : detail::basic_io_object<service_type>(impl.service_->get_io_context())
     {
       set_protocol_service(*impl.service_);
       boost::system::error_code ec;
@@ -158,7 +158,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     /// Make a new mutiplexed request from an existing connection.
     // Won't throw.
     basic_request(implementation_type& impl, boost::system::error_code& ec)
-      : detail::basic_io_object<service_type>(impl.service_->get_io_service())
+      : detail::basic_io_object<service_type>(impl.service_->get_io_context())
     {
       set_protocol_service(*impl.service_);
       this->service.begin_request_helper(this->implementation
@@ -495,6 +495,8 @@ BOOST_CGI_NAMESPACE_BEGIN
      */
     string_type& query_string()
     { return env["QUERY_STRING"]; }
+    void set_query_string(string_type const& val)
+    { env["QUERY_STRING"] = val; }
 
     /// The host address of the remote user.
     string_type& remote_addr()
@@ -518,6 +520,8 @@ BOOST_CGI_NAMESPACE_BEGIN
      */
     string_type& method()
     { return env["REQUEST_METHOD"]; }
+    void set_method(string_type const& val)
+    { env["REQUEST_METHOD"] = val; }
 
     /// The method of the request (long-hand of `method()`).
     /**

@@ -242,7 +242,9 @@ BOOST_CGI_NAMESPACE_BEGIN
         if (common::request_base<Protocol>::parse_get_vars(impl, ec))
           return ec;
       }
-      else if (request_method == "POST" && (opts & common::parse_post_only))
+      else
+      if ((request_method == "POST" || request_method == "PUT")
+          && opts & common::parse_post_only)
       {
         if (opts & common::parse_post_only)
         {
@@ -350,11 +352,11 @@ BOOST_CGI_NAMESPACE_BEGIN
 
       if (request_method == "GET")
       {
-          if (common::request_base<Protocol>::parse_get_vars(impl, ec))
+        if (common::request_base<Protocol>::parse_get_vars(impl, ec))
           return;
       }
       else
-      if (request_method == "POST"
+      if ((request_method == "POST" || request_method == "PUT")
           && opts & common::parse_post_only)
       {
         //std::cerr<< "Parsing post vars now.\n";
@@ -490,7 +492,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     {
       // clear the header first (might be unneccesary).
       impl.header_buf_ = header_buffer_type();
-      this->get_io_service().poll();
+      this->get_io_context().poll();
 
       async_read(*impl.client_.connection(), buffer(impl.header_buf_), [&](boost::system::error_code const &e, std::size_t bytes_transfered __attribute__((__unused__))) -> void
       {
@@ -499,9 +501,9 @@ BOOST_CGI_NAMESPACE_BEGIN
 
       while (impl.header_buf_ == header_buffer_type() && !ec)
       {
-        this->get_io_service().run_one();
-        if (this->get_io_service().stopped())
-          ec = error::eof;
+        this->get_io_context().run_one();
+        if (this->get_io_context().stopped())
+          this->get_io_context().reset();
       }
 
       return ec;
@@ -522,7 +524,8 @@ BOOST_CGI_NAMESPACE_BEGIN
       boost::asio::async_read(
           *impl.client_.connection(), buffer(impl.header_buf_)
         , boost::asio::transfer_all()
-        , strand_.wrap(
+        , boost::asio::bind_executor(
+              strand_,
               boost::bind(&self_type::handle_read_header,
                   this, boost::ref(impl), opts, handler,
                   boost::asio::placeholders::error,
@@ -605,6 +608,8 @@ BOOST_CGI_NAMESPACE_BEGIN
         }
         else
         {
+            if (len < 4)
+                break;
             name_len = ((buf[0] & 0x7F) << 24)
                      +  (buf[1]         << 16)
                      +  (buf[2]         <<  8)
@@ -612,6 +617,8 @@ BOOST_CGI_NAMESPACE_BEGIN
             buf += 4;
             len -= 4;
         }
+        if (0 == len)
+            break;
 
         if (*buf >> 7 == 0)
         {
@@ -620,6 +627,8 @@ BOOST_CGI_NAMESPACE_BEGIN
         }
         else
         {
+            if (len < 4)
+                break;
             data_len = ((buf[0] & 0x7F) << 24)
                      +  (buf[1]         << 16)
                      +  (buf[2]         <<  8)
@@ -627,6 +636,9 @@ BOOST_CGI_NAMESPACE_BEGIN
             buf += 4;
             len -= 4;
         }
+        if (0 == len)
+            break;
+
         name.assign(reinterpret_cast<const char*>(buf), name_len);
         data.assign(reinterpret_cast<const char*>(buf)+name_len, data_len);
         buf += (name_len + data_len);
@@ -789,19 +801,19 @@ BOOST_CGI_NAMESPACE_BEGIN
       switch(fcgi::spec::get_type(impl.header_buf_))
       {
       case 1: process_begin_request(impl, fcgi::spec::get_request_id(impl.header_buf_)
-              , boost::asio::buffer_cast<unsigned char*>(buf)
+              , static_cast<unsigned char*>(buf.data())
               , boost::asio::buffer_size(buf), ec);
               break;
       case 2: process_abort_request(impl, fcgi::spec::get_request_id(impl.header_buf_)
-              , boost::asio::buffer_cast<unsigned char*>(buf)
+              , static_cast<unsigned char*>(buf.data())
               , boost::asio::buffer_size(buf), ec);
               break;
       case 4: process_params(impl, fcgi::spec::get_request_id(impl.header_buf_)
-              , boost::asio::buffer_cast<unsigned char*>(buf)
+              , static_cast<unsigned char*>(buf.data())
               , boost::asio::buffer_size(buf), ec);
               break;
       case 5: process_stdin(impl, fcgi::spec::get_request_id(impl.header_buf_)
-              , boost::asio::buffer_cast<unsigned char*>(buf)
+              , static_cast<unsigned char*>(buf.data())
               , boost::asio::buffer_size(buf), ec);
               break;
       default: break;

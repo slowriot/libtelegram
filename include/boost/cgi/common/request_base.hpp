@@ -306,7 +306,9 @@ BOOST_CGI_NAMESPACE_BEGIN
           return ec;
       }
 
-      if (env_vars(impl.vars_)["REQUEST_METHOD"] == "POST"
+      std::string const& request_method
+         = env_vars(impl.vars_)["REQUEST_METHOD"];
+      if ((request_method == "POST" || request_method == "PUT")
           && parse_opts & common::parse_post_only)
       {
         if (!parse_post_vars(impl, ec))
@@ -382,6 +384,7 @@ BOOST_CGI_NAMESPACE_BEGIN
         typename ImplType::form_parser_type::context
             context
                 = { env_vars(impl.vars_)["CONTENT_TYPE"]
+                  , env_vars(impl.vars_)["CONTENT_LENGTH"]
                   , impl.post_buffer_
                   , impl.client_.bytes_left_
                   , post_vars(impl.vars_)

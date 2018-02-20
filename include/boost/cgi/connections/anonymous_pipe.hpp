@@ -51,8 +51,8 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef boost::shared_ptr<self_type>           pointer;
     typedef HANDLE native_handle_type;
 
-      basic_connection(boost::asio::io_service& ios)
-      : io_service(ios)
+      basic_connection(boost::asio::io_context& ios)
+      : io_context(ios)
       , file_handle(INVALID_HANDLE_VALUE)
       , do_io_(true)
     {
@@ -73,7 +73,7 @@ BOOST_CGI_NAMESPACE_BEGIN
         io_thread_->join();
     }
 
-    static pointer create(boost::asio::io_service& ios)
+    static pointer create(boost::asio::io_context& ios)
     {
       return pointer(new self_type(ios));
     }
@@ -243,7 +243,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       io_.notify_one();
     }
 
-    boost::asio::io_service& io_service;
+    boost::asio::io_context& io_context;
     native_handle_type file_handle;
 
     private:
@@ -259,10 +259,10 @@ BOOST_CGI_NAMESPACE_BEGIN
       };
       typedef std::deque<std::unique_ptr<read_context>> read_queue_t;
 
-      typedef std::deque<boost::asio::const_buffer> const_buffers_t;
+      typedef std::deque<boost::asio::mutable_buffer> mutable_buffers_t;
       struct write_context
       {
-        const_buffers_t buffers;
+        mutable_buffers_t buffers;
         handler_t handler;
       };
       typedef std::deque<std::unique_ptr<write_context>> write_queue_t;
@@ -313,7 +313,7 @@ BOOST_CGI_NAMESPACE_BEGIN
                   boost::system::error_code ec;
                   std::size_t bytes_transfered = write_some(cntxt->buffers, ec);
                   handler_t handler = cntxt->handler;
-                  this->io_service.post([=]() -> void
+                  this->io_context.post([=]() -> void
                   {
                     handler(ec, bytes_transfered);
                   });
@@ -339,7 +339,7 @@ BOOST_CGI_NAMESPACE_BEGIN
               boost::system::error_code ec;
               std::size_t bytes_transfered = read_some(cntxt->buffers, ec);
               handler_t handler = cntxt->handler;
-              io_service.post([=]() -> void
+              io_context.post([=]() -> void
               {
                 handler(ec, bytes_transfered);
               });

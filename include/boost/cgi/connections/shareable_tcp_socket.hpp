@@ -62,7 +62,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     /** End FastCGI stuff      **/
 
     // A wrapper to provide condition_type::pointer
-    basic_connection(io_service& ios)
+    basic_connection(io_context& ios)
       : sock_(ios)
       , mutex_()
       , condition_()
@@ -109,7 +109,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       condition_.wait(lock);
     }
 
-    static pointer create(io_service& ios)
+    static pointer create(io_context& ios)
     {
       return //static_cast<pointer>(
         pointer(new basic_connection<tags::shareable_tcp_socket>(ios));

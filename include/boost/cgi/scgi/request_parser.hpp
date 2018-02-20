@@ -9,6 +9,7 @@
 #ifndef CGI_SCGI_REQUEST_PARSER_HPP_INCLUDED__
 #define CGI_SCGI_REQUEST_PARSER_HPP_INCLUDED__
 
+#include <iostream>
 #include <string>
 #include <boost/logic/tribool.hpp>
 #include <boost/tuple/tuple.hpp>

@@ -91,7 +91,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     };
     
 
-    cgi_request_service(common::io_service& ios)
+    cgi_request_service(common::io_context& ios)
       : detail::service_base<cgi_request_service>(ios)
     {
     }
@@ -99,15 +99,13 @@ BOOST_CGI_NAMESPACE_BEGIN
     void construct(implementation_type& impl)
     {
       impl.client_.set_connection(
-        connection_type::create(this->get_io_service())
+        connection_type::create(this->get_io_context())
       );
     }
 
-#if BOOST_VERSION >= 104700
     void shutdown_service()
     {
     }
-#endif
 
     void clear(implementation_type& impl) { }
 
@@ -162,7 +160,7 @@ BOOST_CGI_NAMESPACE_BEGIN
         parse_get_vars(impl, ec);
       }
       else
-      if (request_method == "POST"
+      if ((request_method == "POST" || request_method == "PUT")
           && (parse_opts & common::parse_post_only))
       {
         parse_post_vars(impl, ec);

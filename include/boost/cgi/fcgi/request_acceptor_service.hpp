@@ -29,7 +29,7 @@ BOOST_CGI_NAMESPACE_BEGIN
   /// The service class for FCGI basic_request_acceptor<>s
   /**
    * Note: If the protocol is an asynchronous protocol, which means it 
-   * requires access to a boost::asio::io_service instance, then this class
+   * requires access to a boost::asio::io_context instance, then this class
    * becomes a model of the Service concept (**LINK**) and must only use the
    * constructor which takes a ProtocolService (**LINK**). If the protocol
    * isn't async then the class can be used without a ProtocolService.
@@ -58,9 +58,9 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef typename service_impl_type::accept_handler_type      accept_handler_type;
 
     /// The unique service identifier
-    //static boost::asio::io_service::id id;
+    //static boost::asio::io_context::id id;
 
-    fcgi_request_acceptor_service(common::io_service& ios)
+    fcgi_request_acceptor_service(common::io_context& ios)
       : detail::service_base<fcgi_request_acceptor_service<protocol_type> >(ios)
       , service_impl_(ios)
     {
@@ -135,6 +135,14 @@ BOOST_CGI_NAMESPACE_BEGIN
       listen(implementation_type& impl, int backlog, boost::system::error_code& ec)
     {
       return service_impl_.listen(impl, backlog, ec);
+    }
+
+    template<typename SettableSocketOption>
+    boost::system::error_code
+      set_option(implementation_type& impl, const SettableSocketOption& option
+                , boost::system::error_code& ec)
+    {
+      return service_impl_.set_option(impl, option, ec);
     }
 
     int accept(implementation_type& impl, accept_handler_type handler

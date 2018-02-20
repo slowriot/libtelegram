@@ -40,43 +40,55 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef typename traits::native_handle_type    native_handle_type;
     typedef typename traits::protocol_service_type protocol_service_type;
 
-    typedef typename 
+    typedef typename
         service_type::accept_handler_type          accept_handler_type;
 
-    template<typename IoServiceProvider>
+    template<typename IoContextProvider>
     explicit basic_request_acceptor(
-          common::basic_protocol_service<protocol_type, IoServiceProvider>& ps)
-      : boost::asio::basic_io_object<service_type>(ps.get_io_service())
+          common::basic_protocol_service<protocol_type, IoContextProvider>& ps)
+      : boost::asio::basic_io_object<service_type>(ps.get_io_context())
     {
-      this->service.set_protocol_service(this->implementation, ps);
+      this->get_service().set_protocol_service(this->get_implementation(), ps);
 
       boost::system::error_code ec;
-      if (this->service.default_init(this->implementation, ec)) {
+      if (this->get_service().default_init(this->get_implementation(), ec)) {
         detail::throw_error(ec);
       }
     }
 
-    template<typename IoServiceProvider, typename InternetProtocol>
+    template<typename IoContextProvider, typename InternetProtocol>
     explicit basic_request_acceptor(
-          common::basic_protocol_service<protocol_type, IoServiceProvider>& ps,
+          common::basic_protocol_service<protocol_type, IoContextProvider>& ps,
           const boost::asio::ip::basic_endpoint<InternetProtocol>& endpoint,
           bool reuse_addr = true)
-      : boost::asio::basic_io_object<service_type>(ps.get_io_service())
+      : boost::asio::basic_io_object<service_type>(ps.get_io_context())
     {
-      this->service.set_protocol_service(this->implementation, ps);
-      this->implementation.endpoint_ = endpoint;
+      this->get_service().set_protocol_service(this->get_implementation(), ps);
+
+      boost::system::error_code ec;
+      open(endpoint.protocol(), ec);
+      detail::throw_error(ec);
+      if (reuse_addr)
+      {
+        set_option(boost::asio::socket_base::reuse_address(true), ec);
+        detail::throw_error(ec);
+      }
+      bind(endpoint, ec);
+      detail::throw_error(ec);
+      listen(boost::asio::socket_base::max_listen_connections, ec);
+      detail::throw_error(ec);
     }
 
-    template<typename IoServiceProvider, typename InternetProtocol>
+    template<typename IoContextProvider, typename InternetProtocol>
     explicit basic_request_acceptor(
-          common::basic_protocol_service<protocol_type, IoServiceProvider>& ps,
+          common::basic_protocol_service<protocol_type, IoContextProvider>& ps,
           const InternetProtocol& ip,
           const native_handle_type& native_acceptor)
-      : boost::asio::basic_io_object<service_type>(ps.get_io_service())
+      : boost::asio::basic_io_object<service_type>(ps.get_io_context())
     {
-      this->service.set_protocol_service(this->implementation, ps);
+      this->get_service().set_protocol_service(this->get_implementation(), ps);
       boost::system::error_code ec;
-      this->service.assign(this->implementation, ip, native_acceptor, ec);
+      this->get_service().assign(this->get_implementation(), ip, native_acceptor, ec);
       detail::throw_error(ec);
     }
 
@@ -86,13 +98,13 @@ BOOST_CGI_NAMESPACE_BEGIN
 
     protocol_service_type& protocol_service() const
     {
-      return this->service.protocol_service(this->implementation);
+      return this->get_service().protocol_service(this->get_implementation());
     }
 
     /// Check if the acceptor is open
     bool is_open()
     {
-      return this->service.is_open(this->implementation);
+      return this->get_service().is_open(this->get_implementation());
     }
 
     /// Open the acceptor
@@ -100,7 +112,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     void open(const InternetProtocol& protocol)
     {
       boost::system::error_code ec;
-      this->service.open(this->implementation, protocol, ec);
+      this->get_service().open(this->get_implementation(), protocol, ec);
       detail::throw_error(ec);
     }
 
@@ -109,14 +121,14 @@ BOOST_CGI_NAMESPACE_BEGIN
     boost::system::error_code
       open(const InternetProtocol& protocol, boost::system::error_code& ec)
     {
-      return this->service.open(this->implementation, protocol, ec);
+      return this->get_service().open(this->get_implementation(), protocol, ec);
     }
 
     /// Set the acceptor to listen
-    void listen(int backlog = boost::asio::socket_base::max_connections)
+    void listen(int backlog = boost::asio::socket_base::max_listen_connections)
     {
       boost::system::error_code ec;
-      this->service.listen(this->implementation, backlog, ec);
+      this->get_service().listen(this->get_implementation(), backlog, ec);
       detail::throw_error(ec);
     }
 
@@ -124,36 +136,56 @@ BOOST_CGI_NAMESPACE_BEGIN
     boost::system::error_code
       listen(int backlog, boost::system::error_code& ec)
     {
-      return this->service.listen(this->implementation, backlog, ec);
+      return this->get_service().listen(this->get_implementation(), backlog, ec);
     }
 
     template<typename Endpoint>
     void bind(Endpoint& ep)
     {
       boost::system::error_code ec;
-      this->service.bind(this->implementation, ep, ec);
+      this->get_service().bind(this->get_implementation(), ep, ec);
       detail::throw_error(ec);
+      this->get_implementation().endpoint_ = ep;
     }
 
     template<typename Endpoint>
     boost::system::error_code
       bind(Endpoint& ep, boost::system::error_code& ec)
     {
-      return this->service.bind(this->implementation, ep, ec);
+      ec = this->get_service().bind(this->get_implementation(), ep, ec);
+      this->get_implementation().endpoint_ = ep;
+      return ec;
+    }
+
+    /// Set socket option
+    template<typename SettableSocketOption>
+    void set_option(const SettableSocketOption& option)
+    {
+      boost::system::error_code ec;
+      this->get_service().set_option(this->get_implementation(), option, ec);
+      detail::throw_error(ec);
+    }
+
+    /// Set socket option
+    template<typename SettableSocketOption>
+    boost::system::error_code
+      set_option(const SettableSocketOption& option, boost::system::error_code& ec)
+    {
+      return this->get_service().set_option(this->get_implementation(), option, ec);
     }
 
     /// Cancel all asynchronous operations associated with the acceptor.
     boost::system::error_code
       cancel()
     {
-      return this->service.cancel(this->implementation);
+      return this->get_service().cancel(this->get_implementation());
     }
 
     /// Close the acceptor
     void close()
     {
       boost::system::error_code ec;
-      this->service.close(this->implementation, ec);
+      this->get_service().close(this->get_implementation(), ec);
       detail::throw_error(ec);
     }
 
@@ -161,14 +193,14 @@ BOOST_CGI_NAMESPACE_BEGIN
     boost::system::error_code
       close(boost::system::error_code& ec)
     {
-      return this->service.close(this->implementation, ec);
+      return this->get_service().close(this->get_implementation(), ec);
     }
 
     template<typename InternetProtocol>
     void assign(InternetProtocol protocol, const native_handle_type& native_acceptor)
     {
       boost::system::error_code ec;
-      this->service.assign(this->implementation, protocol, native_acceptor, ec);
+      this->get_service().assign(this->get_implementation(), protocol, native_acceptor, ec);
       detail::throw_error(ec);
     }
 
@@ -177,7 +209,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       assign(InternetProtocol protocol, const native_handle_type& native_acceptor
             , boost::system::error_code& ec)
     {
-      return this->service.assign(this->implementation, protocol
+      return this->get_service().assign(this->get_implementation(), protocol
                                  , native_acceptor, ec);
     }
 
@@ -185,26 +217,26 @@ BOOST_CGI_NAMESPACE_BEGIN
     int accept(accept_handler_type handler)
     {
       boost::system::error_code ec;
-      int status = this->service.accept(this->implementation, handler, &this->implementation.endpoint_, ec);
+      int status = this->get_service().accept(this->get_implementation(), handler, &this->get_implementation().endpoint_, ec);
       detail::throw_error(ec);
       return status;
     }
 
     int accept(accept_handler_type handler, boost::system::error_code& ec)
     {
-      return this->service.accept(this->implementation, handler, &this->implementation.endpoint_, ec);
+      return this->get_service().accept(this->get_implementation(), handler, &this->get_implementation().endpoint_, ec);
     }
 
     void async_accept(accept_handler_type handler)
     {
-      this->service.async_accept(this->implementation, handler);
+      this->get_service().async_accept(this->get_implementation(), handler);
     }
 
     template<typename CommonGatewayRequest>
     void accept(CommonGatewayRequest& request)
     {
       boost::system::error_code ec;
-      this->service.accept(this->implementation, request, &this->implementation.endpoint_, ec);
+      this->get_service().accept(this->get_implementation(), request, &this->get_implementation().endpoint_, ec);
       detail::throw_error(ec);
     }
 
@@ -213,7 +245,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     boost::system::error_code
       accept(CommonGatewayRequest& request, boost::system::error_code& ec)
     {
-      return this->service.accept(this->implementation, request, &this->implementation.endpoint_, ec);
+      return this->get_service().accept(this->get_implementation(), request, &this->get_implementation().endpoint_, ec);
     }
 
     template<typename CommonGatewayRequest>
@@ -221,21 +253,21 @@ BOOST_CGI_NAMESPACE_BEGIN
       accept(CommonGatewayRequest& request, endpoint_type& ep
             , boost::system::error_code& ec)
     {
-      return this->service.accept(this->implementation, request, &ep, ec);
+      return this->get_service().accept(this->get_implementation(), request, &ep, ec);
     }
 
     /// Asynchronously accept one request
     template<typename CommonGatewayRequest, typename Handler>
     void async_accept(CommonGatewayRequest& request, Handler handler)
     {
-      this->service.async_accept(this->implementation, request, handler);
+      this->get_service().async_accept(this->get_implementation(), request, handler);
     }
 
     endpoint_type
       local_endpoint()
     {
       boost::system::error_code ec;
-      endpoint_type ep(this->service.local_endpoint(this->implementation, ec));
+      endpoint_type ep(this->get_service().local_endpoint(this->get_implementation(), ec));
       detail::throw_error(ec);
       return ep;
     }
@@ -243,18 +275,18 @@ BOOST_CGI_NAMESPACE_BEGIN
     endpoint_type
       local_endpoint(boost::system::error_code& ec) const
     {
-      return this->service.local_endpoint(this->implementation, ec);
+      return this->get_service().local_endpoint(this->get_implementation(), ec);
     }
 
     native_handle_type
     native()
     {
-      return this->service.native(this->implementation);
+      return this->get_service().native(this->get_implementation());
     }
 
     bool is_cgi()
     {
-      return this->service.is_cgi(this->implementation);
+      return this->get_service().is_cgi(this->get_implementation());
     }
   };
 

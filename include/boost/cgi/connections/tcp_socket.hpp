@@ -30,7 +30,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef boost::shared_ptr<type>            pointer;
     typedef boost::asio::ip::tcp::socket       next_layer_type;
 
-    basic_connection(io_service& ios)
+    basic_connection(io_context& ios)
       : sock_(ios)
     {
     }
@@ -45,7 +45,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       sock_.close();
     }
 
-    static pointer create(io_service& ios)
+    static pointer create(io_context& ios)
     {
       return pointer(new basic_connection<tags::tcp_socket>(ios));
     }      

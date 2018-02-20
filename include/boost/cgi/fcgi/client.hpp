@@ -119,7 +119,7 @@ BOOST_CGI_NAMESPACE_BEGIN
   >::prepare_buffer(const ConstBufferSequence& buf)
   {
     typename ConstBufferSequence::const_iterator iter = buf.begin();
-    typename ConstBufferSequence::const_iterator end  = buf.end(); 
+    typename ConstBufferSequence::const_iterator end  = buf.end();
 
     outbuf_.clear();
     outbuf_.push_back(boost::asio::buffer(header_.data()));
@@ -158,7 +158,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     }
     header_.reset(fcgi::spec_detail::STDOUT, request_id_, total_buffer_size);
   }
-  
+
   template<>
   void
   basic_client<
@@ -167,14 +167,14 @@ BOOST_CGI_NAMESPACE_BEGIN
   {
     total_sent_bytes_ += bytes_transferred;
     total_sent_packets_ += 1;
-    
+
     std::size_t total_buffer_size = static_cast<std::size_t>(header_.content_length());
-    
+
 #if !defined(BOOST_CGI_NO_LOGGING) && !defined(NDEBUG)
     std::ofstream log("../logs/fcgi_client.log", std::ios::out | std::ios::app);
     if (ec)
       std::cerr<< "Error " << ec << ": " << ec.message() << '\n';
-    else    
+    else
       //std::cerr
       log
         << "Transferred " << total_buffer_size
@@ -201,7 +201,7 @@ BOOST_CGI_NAMESPACE_BEGIN
    */
   template<>
   template<typename ConstBufferSequence>
-  std::size_t 
+  std::size_t
   basic_client<
       ::BOOST_CGI_NAMESPACE::common::tags::fcgi
   >::write_some(
@@ -210,13 +210,13 @@ BOOST_CGI_NAMESPACE_BEGIN
   )
   {
     prepare_buffer(buf);
-    
+
     std::size_t bytes_transferred
       = boost::asio::write(*connection_, outbuf_
                           , boost::asio::transfer_all(), ec);
 
     handle_write(bytes_transferred, ec);
-    
+
     return bytes_transferred;
   }
 

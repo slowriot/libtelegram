@@ -18,7 +18,7 @@
 BOOST_CGI_NAMESPACE_BEGIN
  namespace common {
 
-  using boost::asio::io_service;
+  using boost::asio::io_context;
 
  } // namespace common
 BOOST_CGI_NAMESPACE_END

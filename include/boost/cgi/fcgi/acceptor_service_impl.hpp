@@ -70,7 +70,7 @@ BOOST_CGI_NAMESPACE_BEGIN
        >
    {
    public:
-   
+
      typedef acceptor_service_impl<Protocol>        self_type;
      typedef Protocol                               protocol_type;
      typedef common::protocol_traits<Protocol>      traits;
@@ -105,7 +105,7 @@ BOOST_CGI_NAMESPACE_BEGIN
 
      };
 
-     explicit acceptor_service_impl(::BOOST_CGI_NAMESPACE::common::io_service& ios)
+     explicit acceptor_service_impl(::BOOST_CGI_NAMESPACE::common::io_context& ios)
        : detail::service_base< ::BOOST_CGI_NAMESPACE::fcgi::acceptor_service_impl<Protocol> >(ios)
        , acceptor_service_(boost::asio::use_service<acceptor_service_type>(ios))
        , strand_(ios)
@@ -182,8 +182,6 @@ BOOST_CGI_NAMESPACE_BEGIN
        bind(implementation_type& impl, const Endpoint& endpoint
            , boost::system::error_code& ec)
      {
-       acceptor_service_.set_option(impl.acceptor_,
-           boost::asio::socket_base::reuse_address(true), ec);
        return acceptor_service_.bind(impl.acceptor_, endpoint, ec);
      }
 
@@ -201,6 +199,14 @@ BOOST_CGI_NAMESPACE_BEGIN
        listen(implementation_type& impl, int backlog, boost::system::error_code& ec)
      {
        return acceptor_service_.listen(impl.acceptor_, backlog, ec);
+     }
+
+     template<typename SettableSocketOption>
+     boost::system::error_code
+       set_option(implementation_type& impl, const SettableSocketOption& option
+                 , boost::system::error_code& ec)
+     {
+       return acceptor_service_.set_option(impl.acceptor_, option, ec);
      }
 
      void do_accept(implementation_type& impl
@@ -229,7 +235,8 @@ BOOST_CGI_NAMESPACE_BEGIN
          // ...otherwise accept a new connection.
          acceptor_service_.async_accept(impl.acceptor_,
              new_request->client().connection()->next_layer(), 0,
-             strand_.wrap(
+             boost::asio::bind_executor(
+               strand_,
                boost::bind(&self_type::handle_accept
                 , this, boost::ref(impl), new_request, handler, _1
                )
@@ -239,7 +246,8 @@ BOOST_CGI_NAMESPACE_BEGIN
        else
        {
          impl.service_->post(
-           strand_.wrap(
+           boost::asio::bind_executor(
+             strand_,
              boost::bind(&self_type::handle_accept
                  , this, boost::ref(impl), new_request, handler, boost::system::error_code()
                )
@@ -358,7 +366,7 @@ BOOST_CGI_NAMESPACE_BEGIN
 					  , typename implementation_type::request_type& request
                       , Handler handler)
      {
-       this->get_io_service().post(
+       this->get_io_context().post(
          detail::accept_handler<self_type, Handler>(*this, impl, request, handler)
        );
      }
@@ -435,7 +443,7 @@ BOOST_CGI_NAMESPACE_BEGIN
    public:
      /// The underlying socket acceptor service.
      acceptor_service_type&          acceptor_service_;
-     boost::asio::io_service::strand strand_;
+     boost::asio::io_context::strand strand_;
    };
 
  } // namespace fcgi

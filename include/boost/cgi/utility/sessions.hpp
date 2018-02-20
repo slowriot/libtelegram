@@ -11,6 +11,7 @@
 #include <boost/system/error_code.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/noncopyable.hpp>

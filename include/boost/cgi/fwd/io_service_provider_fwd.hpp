@@ -19,7 +19,7 @@ BOOST_CGI_NAMESPACE_BEGIN
  namespace common {
 
    template<typename = tags::single_service>
-   class io_service_provider;
+   class io_context_provider;
 
  } // namespace common
 BOOST_CGI_NAMESPACE_END

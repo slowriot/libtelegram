@@ -87,7 +87,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       }
      };
 
-    fcgi_request_service(::BOOST_CGI_NAMESPACE::common::io_service& ios)
+    fcgi_request_service(::BOOST_CGI_NAMESPACE::common::io_context& ios)
       : detail::service_base<fcgi_request_service<Protocol> >(ios)
       , strand_(ios)
     {
@@ -100,15 +100,13 @@ BOOST_CGI_NAMESPACE_BEGIN
     void construct(implementation_type& impl)
     {
       impl.client_.set_connection(
-        implementation_type::connection_type::create(this->get_io_service())
+        implementation_type::connection_type::create(this->get_io_context())
       );
     }
 
-#if BOOST_VERSION >= 104700
     void shutdown_service()
     {
     }
-#endif
 
     /// Close the request.
     int close(implementation_type& impl,
@@ -283,7 +281,7 @@ BOOST_CGI_NAMESPACE_BEGIN
                           , boost::system::error_code& ec);
                           
   private:
-    boost::asio::io_service::strand strand_;
+    boost::asio::io_context::strand strand_;
   };
 
  } // namespace fcgi

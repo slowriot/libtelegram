@@ -28,7 +28,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     typedef basic_connection<tags::fcgi_transport> type;
     typedef boost::shared_ptr<type>                pointer;
 
-    basic_connection(io_service& ios)
+    basic_connection(io_context& ios)
       : transport_(detail::transport_type())
     {
       if (transport_ == detail::transport::pipe)
@@ -58,7 +58,7 @@ BOOST_CGI_NAMESPACE_BEGIN
         socket_->close();
     }
 
-    static pointer create(io_service& ios)
+    static pointer create(io_context& ios)
     {
         return pointer( new basic_connection<tags::fcgi_transport>(ios));
     }      

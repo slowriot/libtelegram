@@ -118,7 +118,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       return true;
     }
 
-    //io_service& io_service() { return io_service_; }
+    //io_context& io_context() { return io_context_; }
 
     /// Associate a connection with this client
     /**
@@ -220,7 +220,7 @@ BOOST_CGI_NAMESPACE_BEGIN
       std::size_t bytes_transferred, boost::system::error_code& ec)
     { /* NOOP */ }
 
-    //io_service&                           io_service_;
+    //io_context&                           io_context_;
     connection_ptr                        connection_;
 
   public: // **FIXME**
