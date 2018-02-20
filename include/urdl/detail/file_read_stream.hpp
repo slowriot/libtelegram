@@ -86,20 +86,14 @@ public:
       return 0;
     }
 
-    typename MutableBufferSequence::const_iterator iter = buffers.begin();
-    typename MutableBufferSequence::const_iterator end = buffers.end();
-    for (; iter != end; ++iter)
+    size_t length = boost::asio::buffer_size(buffers);
+    if (length > 0)
     {
-      boost::asio::mutable_buffer buffer(*iter);
-      size_t length = boost::asio::buffer_size(buffer);
-      if (length > 0)
-      {
-        file_.read(static_cast<char*>(buffer.data()), length);
-        length = file_.gcount();
-        if (length == 0 && !file_)
-          ec = boost::asio::error::eof;
-        return length;
-      }
+      file_.read(static_cast<char*>(buffers.data()), length);
+      length = file_.gcount();
+      if (length == 0 && !file_)
+        ec = boost::asio::error::eof;
+      return length;
     }
 
     ec = boost::system::error_code();

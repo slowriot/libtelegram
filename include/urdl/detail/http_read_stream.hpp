@@ -440,17 +440,11 @@ public:
     if (reply_buffer_.size() > 0)
     {
       std::size_t bytes_transferred = 0;
-      typename MutableBufferSequence::const_iterator iter = buffers.begin();
-      typename MutableBufferSequence::const_iterator end = buffers.end();
-      for (; iter != end && reply_buffer_.size() > 0; ++iter)
+      size_t length = boost::asio::buffer_size(buffers);
+      if (length > 0)
       {
-        boost::asio::mutable_buffer buffer(*iter);
-        size_t length = boost::asio::buffer_size(buffer);
-        if (length > 0)
-        {
-          bytes_transferred += reply_buffer_.sgetn(
-              static_cast<char*>(buffer.data()), length);
-        }
+        bytes_transferred += reply_buffer_.sgetn(
+            static_cast<char*>(buffers.data()), length);
       }
       ec = boost::system::error_code();
       return bytes_transferred;
