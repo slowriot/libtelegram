@@ -12,6 +12,7 @@
 #define URDL_DETAIL_CONNECT_HPP
 
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/detail/string_view.hpp>
 #include <sstream>
 #include "urdl/detail/coroutine.hpp"
 
@@ -28,25 +29,22 @@ inline boost::system::error_code connect(
   // Create a query that corresponds to the url.
   std::ostringstream port_string;
   port_string << u.port();
-  boost::asio::ip::tcp::resolver::query query(u.host(), port_string.str());
 
   // Get a list of endpoints corresponding to the query.
-  boost::asio::ip::tcp::resolver::iterator iter = resolver.resolve(query, ec);
+  boost::asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(u.host(), port_string.str(), ec);
   if (ec)
     return ec;
 
   // Try each endpoint until we successfully establish a connection.
   ec = boost::asio::error::host_not_found;
-  while (ec && iter != boost::asio::ip::tcp::resolver::iterator())
-  {
-    socket.close(ec);
-    socket.connect(*iter++, ec);
-  }
+  boost::asio::connect(socket, endpoints, ec);
   if (ec)
     return ec;
 
   // Disable the Nagle algorithm on all sockets.
-  return socket.set_option(boost::asio::ip::tcp::no_delay(true), ec);
+  ec = boost::system::error_code();
+  socket.set_option(boost::asio::ip::tcp::no_delay(true), ec);
+  return ec;
 }
 
 template <typename Handler>
@@ -63,14 +61,15 @@ public:
   }
 
   void operator()(boost::system::error_code ec,
-      boost::asio::ip::tcp::resolver::iterator iter)
+      boost::asio::ip::tcp::resolver::results_type iter)
   {
-    iter_ = iter;
+    results_ = iter;
     (*this)(ec);
   }
 
   void operator()(boost::system::error_code ec,
-      const boost::asio::ip::tcp::resolver::query* query = 0)
+      boost::asio::string_view host = {},
+      boost::asio::string_view port = {})
   {
     URDL_CORO_BEGIN;
 
@@ -79,14 +78,14 @@ public:
     socket_.open(boost::asio::ip::tcp::v4(), ec);
     if (ec)
     {
-      URDL_CORO_YIELD(socket_.get_io_service().post(
+      URDL_CORO_YIELD(boost::asio::post(
             boost::asio::detail::bind_handler(*this, ec)));
       handler_(ec);
       return;
     }
 
     // Get a list of endpoints corresponding to the host name.
-    URDL_CORO_YIELD(resolver_.async_resolve(*query, *this));
+    URDL_CORO_YIELD(resolver_.async_resolve(host, port, *this));
     if (ec)
     {
       handler_(ec);
@@ -95,7 +94,7 @@ public:
 
     // Try each endpoint until we successfully establish a connection.
     ec = boost::asio::error::host_not_found;
-    while (ec && iter_ != boost::asio::ip::tcp::resolver::iterator())
+    while (ec && results_ != boost::asio::ip::tcp::resolver::results_type())
     {
       // Check whether the operation has been cancelled.
       if (!socket_.is_open())
@@ -107,7 +106,7 @@ public:
 
       // Try next endpoint.
       socket_.close(ec);
-      endpoint_ = *iter_++;
+      endpoint_ = *results_++;
       URDL_CORO_YIELD(socket_.async_connect(endpoint_, *this));
     }
     if (ec)
@@ -166,7 +165,7 @@ private:
   Handler handler_;
   boost::asio::ip::tcp::socket::lowest_layer_type& socket_;
   boost::asio::ip::tcp::resolver& resolver_;
-  boost::asio::ip::tcp::resolver::iterator iter_;
+  boost::asio::ip::tcp::resolver::results_type results_;
   boost::asio::ip::tcp::endpoint endpoint_;
 };
 
@@ -176,9 +175,8 @@ void async_connect(boost::asio::ip::tcp::socket::lowest_layer_type& socket,
 {
   std::ostringstream port_string;
   port_string << u.port();
-  boost::asio::ip::tcp::resolver::query query(u.host(), port_string.str());
   connect_coro<Handler>(handler, socket, resolver)(
-      boost::system::error_code(), &query);
+      boost::system::error_code(), u.host(), port_string.str());
 }
 
 } // namespace detail

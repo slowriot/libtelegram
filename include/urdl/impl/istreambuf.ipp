@@ -12,7 +12,7 @@
 #define URDL_IMPL_ISTREAMBUF_IPP
 
 #include <boost/array.hpp>
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/throw_exception.hpp>
@@ -28,15 +28,15 @@ struct istreambuf::body
   enum { buffer_size = 512 };
 
   body()
-    : read_stream_(io_service_),
-      timer_(io_service_),
+    : read_stream_(io_context_),
+      timer_(io_context_),
       open_timeout_(300 * 1000),
       read_timeout_(300 * 1000)
   {
   }
 
   boost::array<char, buffer_size> get_buffer_;
-  boost::asio::io_service io_service_;
+  boost::asio::io_context io_context_;
   boost::system::error_code error_;
   read_stream read_stream_;
   boost::asio::deadline_timer timer_;
@@ -125,8 +125,8 @@ istreambuf* istreambuf::open(const url& u)
       boost::posix_time::milliseconds(body_->open_timeout_));
   body_->timer_.async_wait(th);
 
-  body_->io_service_.reset();
-  body_->io_service_.run();
+  body_->io_context_.restart();
+  body_->io_context_.run();
 
   if (!body_->read_stream_.is_open())
     body_->error_ = make_error_code(boost::system::errc::timed_out);
@@ -205,8 +205,8 @@ std::streambuf::int_type istreambuf::underflow()
         boost::posix_time::milliseconds(body_->read_timeout_));
     body_->timer_.async_wait(th);
 
-    body_->io_service_.reset();
-    body_->io_service_.run();
+    body_->io_context_.restart();
+    body_->io_context_.run();
 
     if (!body_->read_stream_.is_open())
       body_->error_ = make_error_code(boost::system::errc::timed_out);

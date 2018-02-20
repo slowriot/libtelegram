@@ -11,7 +11,7 @@
 #ifndef URDL_READ_STREAM_HPP
 #define URDL_READ_STREAM_HPP
 
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/detail/bind_handler.hpp>
 #include <boost/throw_exception.hpp>
@@ -48,8 +48,8 @@ namespace urdl {
  * @code
  * try
  * {
- *   boost::asio::io_service io_service;
- *   urdl::read_stream read_stream(io_service);
+ *   boost::asio::io_context io_context;
+ *   urdl::read_stream read_stream(io_context);
  *   read_stream.open("http://www.boost.org/LICENSE_1_0.txt");
  *   for (;;)
  *   {
@@ -72,8 +72,8 @@ namespace urdl {
  * To asynchronously open the URL, read the content and write it to standard
  * output:
  * @code
- * boost::asio::io_service io_service;
- * urdl::read_stream read_stream(io_service)
+ * boost::asio::io_context io_context;
+ * urdl::read_stream read_stream(io_context)
  * char data[1024];
  * ...
  * read_stream.async_open("http://www.boost.org/LICENSE_1_0.txt", open_handler);
@@ -105,33 +105,33 @@ class read_stream
 public:
   /// Constructs an object of class @c read_stream.
   /**
-   * @param io_service The @c io_service object that the stream will use to
+   * @param io_context The @c io_context object that the stream will use to
    * dispatch handlers for any asynchronous operations performed on the stream.
    */
-  explicit read_stream(boost::asio::io_service& io_service)
-    : io_service_(io_service),
-      file_(io_service, options_),
-      http_(io_service, options_),
+  explicit read_stream(boost::asio::io_context& io_context)
+    : io_context_(io_context),
+      file_(io_context, options_),
+      http_(io_context, options_),
 #if !defined(URDL_DISABLE_SSL)
-      ssl_context_(io_service, boost::asio::ssl::context::sslv23),
-      https_(io_service, options_, ssl_context_),
+      ssl_context_(boost::asio::ssl::context::sslv23),
+      https_(io_context, options_, ssl_context_),
 #endif // !defined(URDL_DISABLE_SSL)
       protocol_(unknown)
   {
 #if !defined(URDL_DISABLE_SSL)
     ssl_context_.set_verify_mode(boost::asio::ssl::context::verify_peer);
-    SSL_CTX_set_default_verify_paths(ssl_context_.impl());
+    SSL_CTX_set_default_verify_paths(ssl_context_.native_handle());
 #endif // !defined(URDL_DISABLE_SSL)
   }
 
-  /// Gets the @c io_service associated with the stream.
+  /// Gets the @c io_context associated with the stream.
   /**
-   * @returns A reference to the @c io_service object that the stream will use
+   * @returns A reference to the @c io_context object that the stream will use
    * to dispatch handlers. Ownership is not transferred to the caller.
    */
-  boost::asio::io_service& get_io_service()
+  boost::asio::io_context& get_io_context()
   {
-    return io_service_;
+    return io_context_;
   }
 
   /// Sets an option to control the behaviour of the stream.
@@ -143,7 +143,7 @@ public:
    *
    * @par Example
    * @code
-   * urdl::read_stream stream(io_service);
+   * urdl::read_stream stream(io_context);
    * stream.set_option(urdl::http::max_redirects(1));
    * @endcode
    */
@@ -160,7 +160,7 @@ public:
    *
    * @par Example
    * @code
-   * urdl::read_stream stream(io_service);
+   * urdl::read_stream stream(io_context);
    * urdl::option_set options;
    * options.set_option(urdl::http::max_redirects(1));
    * options.set_option(urdl::ssl::verify_peer(false));
@@ -182,7 +182,7 @@ public:
    *
    * @par Example
    * @code
-   * urdl::read_stream stream(io_service);
+   * urdl::read_stream stream(io_context);
    * urdl::http::max_redirects option
    *   = stream.get_option<urdl::http::max_redirects>();
    * std::size_t value = option.value();
@@ -200,7 +200,7 @@ public:
    *
    * @par Example
    * @code
-   * urdl::read_stream stream(io_service);
+   * urdl::read_stream stream(io_context);
    * ...
    * urdl::option_set options(stream.get_options());
    * urdl::http::max_redirects option
@@ -242,7 +242,7 @@ public:
    *
    * @par Example
    * @code
-   * urdl::read_stream read_stream(io_service);
+   * urdl::read_stream read_stream(io_context);
    *
    * try
    * {
@@ -274,7 +274,7 @@ public:
    *
    * @par Example
    * @code
-   * urdl::read_stream read_stream(io_service);
+   * urdl::read_stream read_stream(io_context);
    *
    * boost::system::error_code ec;
    * read_stream.open("http://www.boost.org", ec);
@@ -356,7 +356,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * @c boost::asio::io_service::post().
+   * @c boost::asio::io_context::post().
    *
    * @par Example
    * @code
@@ -368,7 +368,7 @@ public:
    *   }
    * }
    * ...
-   * urdl::read_stream read_stream(io_service);
+   * urdl::read_stream read_stream(io_context);
    * read_stream.async_open("http://www.boost.org/", open_handler);
    * @endcode
    */
@@ -377,7 +377,12 @@ public:
       void (boost::system::error_code))
   async_open(const url& u, Handler handler)
   {
-#if (BOOST_VERSION >= 105400)
+#if (BOOST_VERSION >= 106600)
+    boost::asio::async_result<Handler,
+      void (boost::system::error_code)> result(handler);
+    typedef Handler real_handler_type;
+    Handler real_handler(handler);
+#elif (BOOST_VERSION >= 105400)
     typedef typename boost::asio::handler_type<Handler,
       void (boost::system::error_code)>::type real_handler_type;
     real_handler_type real_handler(handler);
@@ -632,7 +637,7 @@ public:
    * Regardless of whether the asynchronous operation completes immediately or
    * not, the handler will not be invoked from within this function. Invocation
    * of the handler will be performed in a manner equivalent to using
-   * @c boost::asio::io_service::post().
+   * @c boost::asio::io_context::post().
    *
    * @par Remarks
    * The asynchronous operation will continue until one or more bytes of data
@@ -658,7 +663,11 @@ public:
       void (boost::system::error_code, std::size_t))
   async_read_some(const MutableBufferSequence& buffers, Handler handler)
   {
-#if (BOOST_VERSION >= 105400)
+#if (BOOST_VERSION >= 106600)
+    boost::asio::async_result<Handler,
+      void (boost::system::error_code)> result(handler);
+    Handler real_handler(handler);
+#elif (BOOST_VERSION >= 105400)
     typedef typename boost::asio::handler_type<Handler,
       void (boost::system::error_code, std::size_t)>::type real_handler_type;
     real_handler_type real_handler(handler);
@@ -683,7 +692,7 @@ public:
     default:
       boost::system::error_code ec
         = boost::asio::error::operation_not_supported;
-      io_service_.post(boost::asio::detail::bind_handler(real_handler, ec, 0));
+      boost::asio::post(boost::asio::detail::bind_handler(real_handler, ec, 0));
       break;
     }
 
@@ -748,8 +757,7 @@ private:
         else
         {
           ec = boost::asio::error::operation_not_supported;
-          this_->io_service_.post(
-              boost::asio::detail::bind_handler(handler_, ec));
+          boost::asio::post(boost::asio::detail::bind_handler(handler_, ec));
           return;
         }
       }
@@ -795,7 +803,7 @@ private:
 
   template <typename Handler> friend class open_coro;
 
-  boost::asio::io_service& io_service_;
+  boost::asio::io_context& io_context_;
   option_set options_;
   detail::file_read_stream file_;
   detail::http_read_stream<boost::asio::ip::tcp::socket> http_;
