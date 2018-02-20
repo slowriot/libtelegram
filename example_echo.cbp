@@ -23,6 +23,7 @@
 			<Add option="-Wextra" />
 			<Add option="-Wall" />
 			<Add option="-std=gnu++1z" />
+			<Add option="-isystem $(#boost.include)" />
 			<Add option="-Wsizeof-pointer-memaccess" />
 			<Add option="-march=native" />
 			<Add option="-fexceptions" />
