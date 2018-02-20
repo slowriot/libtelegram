@@ -64,13 +64,13 @@ inline void poll::run() {
     keep_running.test_and_set();
     keep_running_global.test_and_set();
     set_signal_handler();
-    boost::asio::io_service service;                                            // use asio's io_service to provide a thread pool work queue
-    boost::asio::io_service::work work(service);                                // prevent the threads from running out of work
+    boost::asio::io_context context;                                            // use asio's io_context to provide a thread pool work queue
+    boost::asio::executor_work_guard work{boost::asio::make_work_guard(context)}; // prevent the threads from running out of work
     std::vector<std::thread> threads;
     threads.reserve(num_threads);
     for(unsigned int i = 0; i != num_threads; ++i) {                            // initialise the thread pool
       threads.emplace_back([&]{
-        service.run();
+        context.run();
       });
     }
     std::cout << "LibTelegram: Poll listener: Started " << threads.size() << " worker threads." << std::endl;
@@ -83,7 +83,7 @@ inline void poll::run() {
         //tree["limit"] = 100;
         tree["timeout"] = poll_timeout;
         auto reply_tree(sender.send_json("getUpdates", tree, poll_timeout));
-        for(auto const &it : reply_tree["result"]) {                              // process each reply entry individually
+        for(auto const &it : reply_tree["result"]) {                            // process each reply entry individually
           #ifndef NDEBUG
             std::cerr << it.dump(2) << std::endl;
           #endif // NDEBUG
@@ -91,7 +91,7 @@ inline void poll::run() {
           if(update_id != 0) {
             offset = std::max(update_id + 1, offset);
           }
-          service.post([this, subtree = it]{                                      // pass a copy of the subtree
+          boost::asio::post(context, [this, subtree = it]{                      // pass a copy of the subtree
             execute_callbacks(subtree);
           });
         }
@@ -101,7 +101,7 @@ inline void poll::run() {
       }
     }
     unset_signal_handler();
-    service.stop();
+    context.stop();
     std::cout << "LibTelegram: Poll listener: Harvesting " << threads.size() << " worker threads...";
     for(auto &it : threads) {                                                   // close down the thread pool
       it.join();
