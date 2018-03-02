@@ -203,7 +203,7 @@ public:
       if (socket_.lowest_layer().is_open())
       {
         ec = boost::asio::error::already_open;
-        URDL_CORO_YIELD(boost::asio::post(socket_.get_executor(),
+        URDL_CORO_YIELD(boost::asio::post(
               boost::asio::detail::bind_handler(*this, ec)));
         handler_(ec);
         return;
@@ -433,25 +433,26 @@ public:
   }
 
   template <typename MutableBufferSequence>
-  std::size_t read_some(const MutableBufferSequence& buffers,
+  std::size_t read_some(const MutableBufferSequence& buffer,
       boost::system::error_code& ec)
   {
     // If we have any data in the reply_buffer_, return that first.
     if (reply_buffer_.size() > 0)
     {
       std::size_t bytes_transferred = 0;
-      size_t length = boost::asio::buffer_size(buffers);
+      size_t length = boost::asio::buffer_size(buffer);
       if (length > 0)
       {
         bytes_transferred += reply_buffer_.sgetn(
-            static_cast<char*>(buffers.data()), length);
+            static_cast<char*>(buffer.data()), length);
       }
+
       ec = boost::system::error_code();
       return bytes_transferred;
     }
 
     // Otherwise we forward the call to the underlying socket.
-    std::size_t bytes_transferred = socket_.read_some(buffers, ec);
+    std::size_t bytes_transferred = socket_.read_some(buffer, ec);
     if (ec == boost::asio::error::shut_down)
       ec = boost::asio::error::eof;
     return bytes_transferred;

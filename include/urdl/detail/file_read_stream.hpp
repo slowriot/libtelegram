@@ -77,7 +77,7 @@ public:
   }
 
   template <typename MutableBufferSequence>
-  std::size_t read_some(const MutableBufferSequence& buffers,
+  std::size_t read_some(const MutableBufferSequence& buffer,
       boost::system::error_code& ec)
   {
     if (!file_)
@@ -86,10 +86,10 @@ public:
       return 0;
     }
 
-    size_t length = boost::asio::buffer_size(buffers);
+    size_t length = boost::asio::buffer_size(buffer);
     if (length > 0)
     {
-      file_.read(static_cast<char*>(buffers.data()), length);
+      file_.read(static_cast<char*>(buffer.data()), length);
       length = file_.gcount();
       if (length == 0 && !file_)
         ec = boost::asio::error::eof;

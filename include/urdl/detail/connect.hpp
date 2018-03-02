@@ -11,6 +11,7 @@
 #ifndef URDL_DETAIL_CONNECT_HPP
 #define URDL_DETAIL_CONNECT_HPP
 
+#include <boost/asio/connect.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/detail/string_view.hpp>
 #include <sstream>
@@ -94,21 +95,7 @@ public:
 
     // Try each endpoint until we successfully establish a connection.
     ec = boost::asio::error::host_not_found;
-    while (ec && results_ != boost::asio::ip::tcp::resolver::results_type())
-    {
-      // Check whether the operation has been cancelled.
-      if (!socket_.is_open())
-      {
-        ec = boost::asio::error::operation_aborted;
-        handler_(ec);
-        return;
-      }
-
-      // Try next endpoint.
-      socket_.close(ec);
-      endpoint_ = *results_++;
-      URDL_CORO_YIELD(socket_.async_connect(endpoint_, *this));
-    }
+    URDL_CORO_YIELD(boost::asio::connect(socket_, results_, ec));
     if (ec)
     {
       handler_(ec);
@@ -166,7 +153,6 @@ private:
   boost::asio::ip::tcp::socket::lowest_layer_type& socket_;
   boost::asio::ip::tcp::resolver& resolver_;
   boost::asio::ip::tcp::resolver::results_type results_;
-  boost::asio::ip::tcp::endpoint endpoint_;
 };
 
 template <typename Handler>
