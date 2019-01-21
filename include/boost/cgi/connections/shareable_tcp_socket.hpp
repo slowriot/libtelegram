@@ -34,7 +34,7 @@ BOOST_CGI_NAMESPACE_BEGIN
    *  I'm planning on making this class a more FastCGI-specific one since a
    *  rereading of the FastCGI spec (ie. 'Managing request IDs') made me
    *  realise that IDs are connection specific, not just application specific.
-   *  
+   *
    *  IOW when checking to see if a particular request id exists, rather than
    *  having to check a table in the protocol_service (which may imply explicit
    *  mutex use), we can just check a local array of values. Good good.
@@ -113,7 +113,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     {
       return //static_cast<pointer>(
         pointer(new basic_connection<tags::shareable_tcp_socket>(ios));
-    }      
+    }
 
     template<typename MutableBufferSequence>
     std::size_t read_some(const MutableBufferSequence& buf)
@@ -135,13 +135,13 @@ BOOST_CGI_NAMESPACE_BEGIN
     }
 
     template<typename ConstBufferSequence>
-    std::size_t write_some(ConstBufferSequence& buf)
+    std::size_t write_some(ConstBufferSequence const& buf)
     {
       return sock_.write_some(buf);
     }
 
     template<typename ConstBufferSequence>
-    std::size_t write_some(ConstBufferSequence& buf
+    std::size_t write_some(ConstBufferSequence const& buf
                           , boost::system::error_code& ec)
     {
       return sock_.write_some(buf, ec);
@@ -152,7 +152,7 @@ BOOST_CGI_NAMESPACE_BEGIN
     {
       sock_.async_write_some(buf, handler);
     }
-    
+
     next_layer_type&
       next_layer()
     {
@@ -190,11 +190,11 @@ BOOST_CGI_NAMESPACE_BEGIN
     //boost::system::error_code
     //  multiplex(RequestImpl& impl, boost::system::error_code& ec)
     //{
-    //  
+    //
     //  return ec;
     //}
   private:
-    
+
     bool locked_;
     next_layer_type sock_;
     mutex_type mutex_;
