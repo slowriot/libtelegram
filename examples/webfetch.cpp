@@ -25,29 +25,34 @@ auto main()->int {
       return;
     }
     try {
-      urdl::istream stream(url);                                                // open a stream to get that URL
-      if(!stream) {
+      std::shared_ptr<httplib::Response> http_result;
+      if(url.protocol() == "http") {
+        httplib::Client http_client(url.host().c_str(), url.port(), 10);
+        http_result = http_client.Get((url.path() + "?" + url.query()).c_str());
+      } else if(url.protocol() == "https") {
+        httplib::SSLClient https_client(url.host().c_str(), url.port(), 10);
+        http_result = https_client.Get((url.path() + "?" + url.query()).c_str());
+      } else {
         sender.send_message(message.chat.id,                                    // the chat to reply to
-                            std::string("Error when opening that URL:") + stream.error().message(), // text of the message to send including the URDL error message
+                            "Unknown protocol " + url.protocol(),               // text of the message to send including the URDL error message
                             message.message_id);                                // reply to the sender's message id
         return;
       }
-      // now read the contents of the URL line by line and concatenate them into a single message
-      std::stringstream page;                                                   // a stream buffer to collect the data together
-      std::string line;                                                         // an intermediate line buffer
-      unsigned int line_limit = 100;                                            // set a safety limit after which we stop
-      while(std::getline(stream, line) && --line_limit) {                       // read the stream line by line, until EOF or we reach our line limit
-        page << line << '\n';                                                   // and collect it together, inserting newlines ourselves - we don't use std::endl because it varies by platform
+      if(!http_result || http_result->status != 200) {
+        sender.send_message(message.chat.id,                                    // the chat to reply to
+                            std::string("Error when opening that URL: ") + std::to_string(http_result->status), // text of the message to send including the URDL error message
+                            message.message_id);                                // reply to the sender's message id
+        return;
       }
       sender.send_message(message.chat.id,                                      // the chat to reply to
-                          page.str(),                                           // send the complete collected page
+                          http_result->body,                                    // send the complete body
                           message.message_id,                                   // reply to the sender's message id
                           telegram::sender::parse_mode::HTML,                   // attempt to render HTML elements Telegram supports, see https://core.telegram.org/bots/api#html-style
                           telegram::sender::web_preview_mode::DISABLE,          // don't allow URLs to produce previews
                           telegram::sender::notification_mode::DEFAULT);        // leave notifications at the API default mode
     } catch(std::exception const &e) {
       sender.send_message(message.chat.id,                                      // the chat to reply to
-                          std::string("Exception when opening that URL:") + e.what(), // text of the message to send including the thrown exception
+                          std::string("Exception when opening that URL: ") + e.what(), // text of the message to send including the thrown exception
                           message.message_id);                                  // reply to the sender's message id
     }
   });

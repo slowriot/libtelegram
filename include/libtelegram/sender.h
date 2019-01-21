@@ -6,7 +6,8 @@
 #include <string>
 #include <variant>
 #include <boost/iostreams/stream.hpp>
-#include <urdl/istream.hpp>
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+#include <httplib.h>
 #include <json.hpp>
 #include "types/message.h"
 #include "types/file.h"
@@ -389,35 +390,21 @@ inline nlohmann::json sender::send_json(std::string const &method,
     std::cerr << tree.dump(2) << std::endl;
   #endif // NDEBUG
 
-  urdl::istream stream;
-  stream.set_options(urdl_global_options);                                      // apply the global options to this stream
-  stream.set_option(urdl::http::request_content_type("application/json"));
-  stream.set_option(urdl::http::request_content(tree.dump()));                  // write the json dump as the request body
-  unsigned int const timeout_ms = poll_timeout * 1000;                          // the stream expects timeouts in milliseconds
-  stream.open_timeout(timeout_ms);
-  stream.read_timeout(timeout_ms);
   urdl::url const url(endpoint + method);
-  stream.open(url);
-  if(!stream) {
-    #ifndef NDEBUG
-      std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << stream.error().message() << ", headers: " << stream.headers() << std::endl;
-    #endif // NDEBUG
-    throw std::runtime_error("Sender unable to open URL " + url.to_string() + ": " + stream.error().message());
-  }
+  httplib::SSLClient http_client(url.host().c_str(), url.port(), poll_timeout);
+  auto http_result{http_client.Post((url.path() + "?" + url.query()).c_str(), tree.dump().c_str(), "application/json")};
 
-  std::string reply;
-  {
-    std::string reply_line;
-    while(std::getline(stream, reply_line)) {
-      reply += reply_line + '\n';                                               // concatenate all lines of input
-    }
-    reply += reply_line;                                                        // input is not newline-terminated, so don't forget the last line
+  if(!http_result || http_result->status != 200) {
+    #ifndef NDEBUG
+      std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << http_result->status << std::endl;
+    #endif // NDEBUG
+    throw std::runtime_error("Sender unable to open URL " + url.to_string() + ": " + std::to_string(http_result->status));
   }
-  if(reply.empty()) {
+  if(http_result->body.empty()) {
     std::cerr << "LibTelegram: Sender: Received empty reply to send_json" << std::endl;
     return nlohmann::json();                                                    // return an empty tree
   }
-  boost::iostreams::stream<boost::iostreams::array_source> reply_stream(reply.data(), reply.size());
+  boost::iostreams::stream<boost::iostreams::array_source> reply_stream(http_result->body.data(), http_result->body.size());
   nlohmann::json reply_tree;                                                    // property tree to contain the reply
   try {
     reply_stream >> reply_tree;
