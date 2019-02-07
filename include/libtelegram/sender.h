@@ -709,7 +709,7 @@ inline bool sender::edit_message_text(std::string const &text,
   // TODO: "if edited message is sent by the bot, the edited Message is returned, otherwise True is returned"
 }
 
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline bool sender::edit_message_caption(Tchat_id chat_id,
                                          int_fast32_t message_id,
                                          std::string const &caption,
@@ -752,7 +752,7 @@ inline bool sender::edit_message_caption(std::string const &inline_message_id,
   // TODO: "if edited message is sent by the bot, the edited Message is returned, otherwise True is returned"
 }
 
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline bool sender::edit_message_reply_markup(Tchat_id chat_id,
                                               int_fast32_t message_id,
                                               std::variant<types::reply_markup::inline_keyboard_markup,
@@ -787,7 +787,7 @@ inline bool sender::edit_message_reply_markup(std::string const &inline_message_
   // TODO: "if edited message is sent by the bot, the edited Message is returned, otherwise True is returned"
 }
 
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline bool sender::delete_message(Tchat_id chat_id, int_fast32_t message_id) {
   /// Use this method to delete a message, including service messages, with the following limitations:
   /// - A message can only be deleted if it was sent less than 48 hours ago.
@@ -805,7 +805,7 @@ inline bool sender::delete_message(Tchat_id chat_id, int_fast32_t message_id) {
   return send_json_and_get_bool("deleteMessage", tree);
 }
 
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_photo(Tchat_id chat_id,
                                                         types::file const &photo,
                                                         std::string caption,
@@ -834,7 +834,7 @@ inline std::optional<types::message> sender::send_photo(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendPhoto", tree);
 }
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_audio(Tchat_id chat_id,
                                                         types::audio const &audio,
                                                         std::string caption,
@@ -872,7 +872,7 @@ inline std::optional<types::message> sender::send_audio(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendAudio", tree);
 }
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_document(Tchat_id chat_id,
                                                            types::document const &document,
                                                            std::string caption,
@@ -901,7 +901,7 @@ inline std::optional<types::message> sender::send_document(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendDocument", tree);
 }
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_video(Tchat_id chat_id,
                                                         types::video const &video,
                                                         std::string caption,
@@ -939,7 +939,7 @@ inline std::optional<types::message> sender::send_video(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendVideo", tree);
 }
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_voice(Tchat_id chat_id,
                                                         types::voice const &voice,
                                                         std::string caption,
@@ -971,7 +971,7 @@ inline std::optional<types::message> sender::send_voice(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendVoice", tree);
 }
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_video_note(Tchat_id chat_id,
                                                              types::video_note const &video_note,
                                                              bool disable_notification,
@@ -1002,7 +1002,7 @@ inline std::optional<types::message> sender::send_video_note(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendVideoNote", tree);
 }
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_sticker(Tchat_id chat_id,
                                                           types::sticker const &sticker,
                                                           bool disable_notification,
@@ -1116,7 +1116,7 @@ inline std::optional<types::message> sender::stop_message_live_location(std::str
   return send_json_and_parse<types::message>("stopMessageLiveLocation", tree);
 }
 
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_venue(Tchat_id chat_id,
                                                         types::location const &location,
                                                         std::string const &title,
@@ -1151,7 +1151,7 @@ inline std::optional<types::message> sender::send_venue(Tchat_id chat_id,
   return send_json_and_parse<types::message>("sendVenue", tree);
 }
 
-template<typename Tchat_id = int_fast64_t>
+template<typename Tchat_id>
 inline std::optional<types::message> sender::send_contact(Tchat_id chat_id,
                                                           types::contact const &contact,
                                                           bool disable_notification,

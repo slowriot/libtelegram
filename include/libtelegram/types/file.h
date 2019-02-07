@@ -3,6 +3,7 @@
 
 #include "libtelegram/config.h"
 
+#include <iostream>
 #include "urdl/url.hpp"
 #include "urdl/istream.hpp"
 #include "urdl/http.hpp"
