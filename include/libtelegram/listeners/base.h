@@ -12,18 +12,18 @@ template<typename T>
 class base {
   /// CRTP style static polymorphic base class for listeners
 protected:
-  std::function<void(std::string                 const&)> callback_raw                 = [](std::string                 const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_json                = [](nlohmann::json              const &input __attribute__((__unused__))){};
-  std::function<void(types::message              const&)> callback_message             = [](types::message              const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_message_json        = [](nlohmann::json              const &input __attribute__((__unused__))){};
-  std::function<void(types::message              const&)> callback_edited              = [](types::message              const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_edited_json         = [](nlohmann::json              const &input __attribute__((__unused__))){};
-  //std::function<void(types::inline_query         const&)> callback_inline              = [](types::inline_query         const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_inline_json         = [](nlohmann::json              const &input __attribute__((__unused__))){};
-  //std::function<void(types::chosen_inline_result const&)> callback_chosen_inline       = [](types::chosen_inline_result const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_chosen_inline_json  = [](nlohmann::json              const &input __attribute__((__unused__))){};
-  std::function<void(types::callback_query       const&)> callback_query_callback      = [](types::callback_query       const &input __attribute__((__unused__))){};
-  std::function<void(nlohmann::json              const&)> callback_query_callback_json = [](nlohmann::json              const &input __attribute__((__unused__))){};
+  std::function<void(std::string                 const&)> callback_raw                 = [](std::string                 const &input [[maybe_unused]]){};
+  std::function<void(nlohmann::json              const&)> callback_json                = [](nlohmann::json              const &input [[maybe_unused]]){};
+  std::function<void(types::message              const&)> callback_message             = [](types::message              const &input [[maybe_unused]]){};
+  std::function<void(nlohmann::json              const&)> callback_message_json        = [](nlohmann::json              const &input [[maybe_unused]]){};
+  std::function<void(types::message              const&)> callback_edited              = [](types::message              const &input [[maybe_unused]]){};
+  std::function<void(nlohmann::json              const&)> callback_edited_json         = [](nlohmann::json              const &input [[maybe_unused]]){};
+  //std::function<void(types::inline_query         const&)> callback_inline              = [](types::inline_query         const &input [[maybe_unused]]){};
+  std::function<void(nlohmann::json              const&)> callback_inline_json         = [](nlohmann::json              const &input [[maybe_unused]]){};
+  //std::function<void(types::chosen_inline_result const&)> callback_chosen_inline       = [](types::chosen_inline_result const &input [[maybe_unused]]){};
+  std::function<void(nlohmann::json              const&)> callback_chosen_inline_json  = [](nlohmann::json              const &input [[maybe_unused]]){};
+  std::function<void(types::callback_query       const&)> callback_query_callback      = [](types::callback_query       const &input [[maybe_unused]]){};
+  std::function<void(nlohmann::json              const&)> callback_query_callback_json = [](nlohmann::json              const &input [[maybe_unused]]){};
 
   // TODO:
   // instance start timestamp
@@ -313,7 +313,7 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
   if(callback_message_json) {                                                   // only check for a message if we've got a callback set
     try {
       callback_message_json(tree.at("message"));
-    } catch(std::out_of_range &e) {                                             // this update doesn't include a message - no problem, carry on
+    } catch(std::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a message - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling json message callback: " << e.what() << std::endl;
     }
@@ -321,7 +321,7 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
   if(callback_message) {                                                        // only check for a message if we've got a callback set
     try {
       callback_message(types::message::from_json(tree, "message"));
-    } catch(std::out_of_range &e) {                                             // this update doesn't include a message - no problem, carry on
+    } catch(std::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a message - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling message callback: " << e.what() << std::endl;
     }
@@ -329,7 +329,7 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
   if(callback_edited_json) {                                                    // only check for an edited message if we've got a callback set
     try {
       callback_edited_json(tree.at("edited_message"));
-    } catch(std::out_of_range &e) {                                             // this update doesn't include an edited message - no problem, carry on
+    } catch(std::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include an edited message - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling json edited message callback: " << e.what() << std::endl;
     }
@@ -337,7 +337,7 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
   if(callback_edited) {                                                         // only check for an edited message if we've got a callback set
     try {
       callback_edited(types::message::from_json(tree, "edited_message"));
-    } catch(std::out_of_range &e) {                                             // this update doesn't include an edited message - no problem, carry on
+    } catch(std::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include an edited message - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling edited message callback: " << e.what() << std::endl;
     }
@@ -345,7 +345,7 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
   if(callback_inline_json) {                                                    // only check for an inline query if we've got a callback set
     try {
       callback_inline_json(tree.at("inline_query"));
-    } catch(std::out_of_range &e) {                                             // this update doesn't include an inline query - no problem, carry on
+    } catch(std::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include an inline query - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling json inline query callback: " << e.what() << std::endl;
     }
@@ -354,7 +354,7 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
   if(callback_inline) {                                                         // only check for an inline query if we've got a callback set
     try {
       callback_inline(types::inline_query::from_json(tree, "inline_query"));
-    } catch(std::out_of_range &e) {                                             // this update doesn't include an inline query - no problem, carry on
+    } catch(std::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include an inline query - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling inline query callback: " << e.what() << std::endl;
     }
@@ -363,7 +363,7 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
   if(callback_chosen_inline_json) {                                             // only check for a chosen inline result if we've got a callback set
     try {
       callback_chosen_inline_json(tree.at("chosen_inline_result"));
-    } catch(std::out_of_range &e) {                                             // this update doesn't include a chosen inline result - no problem, carry on
+    } catch(std::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a chosen inline result - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling json chosen inline result callback: " << e.what() << std::endl;
     }
@@ -372,7 +372,7 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
   if(callback_chosen_inline) {                                                  // only check for a chosen inline result if we've got a callback set
     try {
       callback_chosen_inline(types::chosen_inline_result::from_json(tree, "chosen_inline_result"));
-    } catch(std::out_of_range &e) {                                             // this update doesn't include a chosen inline result - no problem, carry on
+    } catch(std::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a chosen inline result - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling chosen inline result callback: " << e.what() << std::endl;
     }
@@ -381,7 +381,7 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
   if(callback_query_callback_json) {                                            // only check for a callback query if we've got a callback callback set
     try {
       callback_query_callback_json(tree.at("callback_query"));
-    } catch(std::out_of_range &e) {                                             // this update doesn't include a callback query - no problem, carry on
+    } catch(std::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a callback query - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling json callback query callback: " << e.what() << std::endl;
     }
@@ -389,7 +389,7 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
   if(callback_query_callback) {                                                 // only check for a callback query if we've got a callback query callback set
     try {
       callback_query_callback(types::callback_query::from_json(tree, "callback_query"));
-    } catch(std::out_of_range &e) {                                             // this update doesn't include a callback query - no problem, carry on
+    } catch(std::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a callback query - no problem, carry on
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling callback query callback: " << e.what() << std::endl;
     }
