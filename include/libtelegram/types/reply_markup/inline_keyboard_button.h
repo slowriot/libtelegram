@@ -31,6 +31,13 @@ struct inline_keyboard_button {
                                 type this_type,
                                 std::variant<std::string, types::callback_game, bool> const &content = std::string{});
 
+  inline inline_keyboard_button(std::string const &this_text,
+                                type this_type,
+                                char const* const content);
+
+  inline inline_keyboard_button(std::string const &this_text,
+                                std::string const &callback_content);
+
   inline void get(nlohmann::json &tree) const;
 };
 
@@ -60,6 +67,20 @@ inline inline_keyboard_button::inline_keyboard_button(std::string const &this_te
     break;
   }
 }
+
+inline inline_keyboard_button::inline_keyboard_button(std::string const &this_text,
+                                                      type this_type,
+                                                      char const* const content)
+  : inline_keyboard_button(this_text, this_type, std::string{content}) {
+  /// Wrapper constructor for const char strings
+}
+
+inline inline_keyboard_button::inline_keyboard_button(std::string const &this_text,
+                                                      std::string const &content)
+  : inline_keyboard_button(this_text, type::CALLBACK, content) {
+  /// Wrapper constructor to default to callback type
+}
+
 
 inline void inline_keyboard_button::get(nlohmann::json &tree) const {
   /// Get this keyboard button into a json object (presuming the target is a key in a keyboard)
