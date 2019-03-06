@@ -394,7 +394,12 @@ inline nlohmann::json sender::send_json(std::string const &method,
   httplib::SSLClient http_client(url.host().c_str(), url.port(), poll_timeout);
   auto http_result{http_client.Post((url.path() + "?" + url.query()).c_str(), tree.dump().c_str(), "application/json")};
 
-  if(!http_result || http_result->status != 200) {
+  if(!http_result) {
+    #ifndef NDEBUG
+      std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << std::endl;
+    #endif // NDEBUG
+    throw std::runtime_error("Sender unable to open URL " + url.to_string());
+  } else if (http_result->status != 200) {
     #ifndef NDEBUG
       std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << http_result->status << std::endl;
     #endif // NDEBUG
