@@ -41,6 +41,16 @@ public:
   static bool is_signal_handler_set();
 };
 
+template<typename T>
+std::string constexpr plural(T value) {
+  /// Helper function to provide a pluralising "s" suffix to words if a number is plural
+  if(value == 1) {
+    return "";
+  } else {
+    return "s";
+  }
+}
+
 bool poll::signal_handler_is_set = false;
 std::atomic_flag poll::keep_running_global;
 
@@ -66,7 +76,7 @@ inline void poll::run() {
         context.run();
       });
     }
-    std::cout << "LibTelegram: Poll listener: Started " << threads.size() << " worker threads." << std::endl;
+    std::cout << "LibTelegram: Poll listener: Started " << threads.size() << " worker thread" << plural(threads.size()) << "." << std::endl;
 
     int offset = 0;                                                             // keep track of the last received update offset
     while(keep_running.test_and_set() && keep_running_global.test_and_set()) {  // the poller always runs sequentially, single-threaded
@@ -95,7 +105,7 @@ inline void poll::run() {
     }
     unset_signal_handler();
     context.stop();
-    std::cout << "LibTelegram: Poll listener: Harvesting " << threads.size() << " worker threads...";
+    std::cout << "LibTelegram: Poll listener: Harvesting " << threads.size() << " worker thread" << plural(threads.size()) << "...";
     for(auto &it : threads) {                                                   // close down the thread pool
       it.join();
     }
