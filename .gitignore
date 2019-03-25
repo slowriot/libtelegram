@@ -2,3 +2,4 @@
 *.depend
 obj/
 bin/
+build/
