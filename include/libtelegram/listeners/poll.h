@@ -42,13 +42,9 @@ public:
 };
 
 template<typename T>
-std::string constexpr plural(T value) {
+std::string_view constexpr plural(T value) {
   /// Helper function to provide a pluralising "s" suffix to words if a number is plural
-  if(value == 1) {
-    return "";
-  } else {
-    return "s";
-  }
+  return (value == 1 ? "" : "s");
 }
 
 bool poll::signal_handler_is_set = false;
