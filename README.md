@@ -134,11 +134,21 @@ For that reason, there's a suggested reading order for the examples:
 1. Stateful calculator, using a custom keyboard: [examples/calculator.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/calculator.cpp)
 1. Accept locations and update a live location: [examples/livelocation.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/livelocation.cpp)
 
-### How to build the examples ###
+## How to build the examples ##
+### Make
 Each example can be built with the included `Makefile`, by using
 `make TARGET=example_echo -j4` where `echo` is the example and `4` is the number
 of threads to use to build.
 
+### CMake
+```
+mkdir -p examples/build
+cd examples/build
+cmake ..
+make -j$(nproc)
+```
+
+### Others
 Also included are project files for the Code::Blocks IDE - just open the
 libtelegram.workspace file in Code::Blocks and you can build all of the examples.
 
