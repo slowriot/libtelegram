@@ -27,7 +27,7 @@ inline std::optional<T> make_optional_from_json(nlohmann::json const &tree, std:
   try {
     auto const child_optional(tree.at(path));                                   // first try to get the path
     return T::from_json(child_optional);
-  } catch(std::out_of_range &e [[maybe_unused]]) {
+  } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {
     return std::nullopt;                                                        // we fail, so return an empty optional
   }
 }
@@ -36,7 +36,7 @@ inline std::optional<std::string> make_optional_from_json(nlohmann::json const &
   /// Attempt to read an object of the specified type from the tree at the given path, and return it
   try {
     return tree.at(path).get<std::string>();                                    // try to get the path and the target as the right type
-  } catch(std::out_of_range &e [[maybe_unused]]) {
+  } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {
     return std::nullopt;                                                        // we fail, so return an empty optional
   }
 }
@@ -45,7 +45,7 @@ inline std::optional<int32_t> make_optional_from_json(nlohmann::json const &tree
   /// Attempt to read an object of the specified type from the tree at the given path, and return it
   try {
     return tree.at(path).get<int32_t>();                                        // try to get the path and the target as the right type
-  } catch(std::out_of_range &e [[maybe_unused]]) {
+  } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {
     return std::nullopt;                                                        // we fail, so return an empty optional
   }
 }
@@ -54,7 +54,7 @@ inline std::optional<bool> make_optional_from_json(nlohmann::json const &tree, s
   /// Attempt to read an object of the specified type from the tree at the given path, and return it
   try {
     return tree.at(path).get<bool>();                                           // try to get the path and the target as the right type
-  } catch(std::out_of_range &e [[maybe_unused]]) {
+  } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {
     return std::nullopt;                                                        // we fail, so return an empty optional
   }
 }
@@ -63,7 +63,7 @@ inline std::optional<int64_t> make_optional_from_json(nlohmann::json const &tree
   /// Attempt to read an object of the specified type from the tree at the given path, and return it
   try {
     return tree.at(path).get<int64_t>();                                        // try to get the path and the target as the right type
-  } catch(std::out_of_range &e [[maybe_unused]]) {
+  } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {
     return std::nullopt;                                                        // we fail, so return an empty optional
   }
 }
@@ -82,7 +82,7 @@ inline std::optional<std::vector<T>> make_optional_vector_from_json(nlohmann::js
       out.emplace_back(T::from_json(it));                                       // and populate the vector with the right constructed types
     }
     return out;
-  } catch(std::out_of_range &e [[maybe_unused]]) {
+  } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {
     return std::nullopt;                                                        // if we fail, return an empty optional
   }
 }
