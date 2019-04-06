@@ -17,7 +17,7 @@ inline std::shared_ptr<T> make_shared_from_json(nlohmann::json const &tree, std:
   try {
     auto const child_shared_ptr(tree.at(path));                                 // first try to get the path
     return std::make_shared<T>(T::from_json(child_shared_ptr));
-  } catch(std::out_of_range &e [[maybe_unused]]) {
+  } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {
     return nullptr;                                                             // we fail, so return an empty shared_ptr
   }
 }
