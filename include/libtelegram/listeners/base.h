@@ -314,6 +314,9 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
     try {
       callback_message_json(tree.at("message"));
     } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a message - no problem, carry on
+      #ifndef NDEBUG
+        std::cerr << "LibTelegram: JSON out_of_range exception calling json message callback: " << e.what() << std::endl;
+      #endif // NDEBUG
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling json message callback: " << e.what() << std::endl;
     }
@@ -322,6 +325,9 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
     try {
       callback_message(types::message::from_json(tree, "message"));
     } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a message - no problem, carry on
+      #ifndef NDEBUG
+        std::cerr << "LibTelegram: JSON out_of_range exception exception calling message callback: " << e.what() << std::endl;
+      #endif // NDEBUG
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling message callback: " << e.what() << std::endl;
     }
@@ -330,6 +336,9 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
     try {
       callback_edited_json(tree.at("edited_message"));
     } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include an edited message - no problem, carry on
+      #ifndef NDEBUG
+        std::cerr << "LibTelegram: JSON out_of_range exception calling json edited message callback: " << e.what() << std::endl;
+      #endif // NDEBUG
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling json edited message callback: " << e.what() << std::endl;
     }
@@ -338,6 +347,9 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
     try {
       callback_edited(types::message::from_json(tree, "edited_message"));
     } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include an edited message - no problem, carry on
+      #ifndef NDEBUG
+        std::cerr << "LibTelegram: JSON out_of_range exception calling edited message callback: " << e.what() << std::endl;
+      #endif // NDEBUG
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling edited message callback: " << e.what() << std::endl;
     }
@@ -346,6 +358,9 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
     try {
       callback_inline_json(tree.at("inline_query"));
     } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include an inline query - no problem, carry on
+      #ifndef NDEBUG
+        std::cerr << "LibTelegram: JSON out_of_range exception calling json inline query callback: " << e.what() << std::endl;
+      #endif // NDEBUG
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling json inline query callback: " << e.what() << std::endl;
     }
@@ -355,6 +370,9 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
     try {
       callback_inline(types::inline_query::from_json(tree, "inline_query"));
     } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include an inline query - no problem, carry on
+      #ifndef NDEBUG
+        std::cerr << "LibTelegram: JSON out_of_range exception calling inline query callback: " << e.what() << std::endl;
+      #endif // NDEBUG
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling inline query callback: " << e.what() << std::endl;
     }
@@ -364,6 +382,9 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
     try {
       callback_chosen_inline_json(tree.at("chosen_inline_result"));
     } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a chosen inline result - no problem, carry on
+      #ifndef NDEBUG
+        std::cerr << "LibTelegram: JSON out_of_range exception calling json chosen inline result callback: " << e.what() << std::endl;
+      #endif // NDEBUG
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling json chosen inline result callback: " << e.what() << std::endl;
     }
@@ -373,6 +394,9 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
     try {
       callback_chosen_inline(types::chosen_inline_result::from_json(tree, "chosen_inline_result"));
     } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a chosen inline result - no problem, carry on
+      #ifndef NDEBUG
+        std::cerr << "LibTelegram: JSON out_of_range exception calling chosen inline result callback: " << e.what() << std::endl;
+      #endif // NDEBUG
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling chosen inline result callback: " << e.what() << std::endl;
     }
@@ -382,6 +406,9 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
     try {
       callback_query_callback_json(tree.at("callback_query"));
     } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a callback query - no problem, carry on
+      #ifndef NDEBUG
+        std::cerr << "LibTelegram: JSON out_of_range exception calling json callback query callback: " << e.what() << std::endl;
+      #endif // NDEBUG
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling json callback query callback: " << e.what() << std::endl;
     }
@@ -390,6 +417,9 @@ void base<T>::execute_callbacks(nlohmann::json const &tree) {
     try {
       callback_query_callback(types::callback_query::from_json(tree, "callback_query"));
     } catch(nlohmann::json::out_of_range &e [[maybe_unused]]) {                                             // this update doesn't include a callback query - no problem, carry on
+      #ifndef NDEBUG
+        std::cerr << "LibTelegram: JSON out_of_range exception calling callback query callback: " << e.what() << std::endl;
+      #endif // NDEBUG
     } catch(std::exception &e) {
       std::cerr << "LibTelegram: Exception calling callback query callback: " << e.what() << std::endl;
     }
