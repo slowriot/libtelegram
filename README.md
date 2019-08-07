@@ -80,8 +80,8 @@ object format.
 
 # Dependencies #
 * C++17-compatible compiler with std::optional library support (GCC/G++ 7 upwards)
-* Boost 1.60 upwards - http://www.boost.org
-* Boost CGI - https://github.com/slowriot/cgi (included)
+* Boost 1.66 upwards - http://www.boost.org
+* Boost CGI - https://github.com/slowriot/cgi (included, only needed for CGI / FastCGI listener)
 * URDL - https://github.com/chriskohlhoff/urdl (included)
 * JSON for Modern C++ - https://nlohmann.github.io/json/ (included)
 
