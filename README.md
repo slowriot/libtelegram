@@ -87,6 +87,7 @@ object format.
 * <del>Boost CGI - https://github.com/slowriot/cgi (included, only needed for CGI / FastCGI listener)</del> (see above re. FastCGI])
 * URDL - https://github.com/chriskohlhoff/urdl (included)
 * JSON for Modern C++ - https://nlohmann.github.io/json/ (included)
+* cpp-httplib - https://github.com/yhirose/cpp-httplib (included)
 
 # Project status #
 The project is currently in an intermediate stage, so some native convenience
