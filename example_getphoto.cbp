@@ -42,7 +42,7 @@
 			<Add library="ssl" />
 			<Add library="crypto" />
 		</Linker>
-		<Unit filename="Makefile" />
+		<Unit filename="CMakeLists.txt" />
 		<Unit filename="examples/getphoto.cpp" />
 		<Unit filename="version.h" />
 		<Extensions>

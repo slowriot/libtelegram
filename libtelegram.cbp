@@ -19,8 +19,8 @@
 		<Compiler>
 			<Add directory="include" />
 		</Compiler>
+		<Unit filename="CMakeLists.txt" />
 		<Unit filename="LICENSE" />
-		<Unit filename="Makefile" />
 		<Unit filename="README.md" />
 		<Unit filename="include/libtelegram/config.h" />
 		<Unit filename="include/libtelegram/libtelegram.h" />
