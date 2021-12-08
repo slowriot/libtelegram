@@ -138,15 +138,11 @@ For that reason, there's a suggested reading order for the examples:
 1. Accept locations and update a live location: [examples/livelocation.cpp](https://github.com/slowriot/libtelegram/blob/master/examples/livelocation.cpp)
 
 ## How to build the examples ##
-### Make
-Each example can be built with the included `Makefile`, by using
-`make TARGET=example_echo -j4` where `echo` is the example and `4` is the number
-of threads to use to build.
-
 ### CMake
+All examples can be built with CMake, by doing the following:
 ```
-mkdir -p examples/build
-cd examples/build
+mkdir build
+cd build
 cmake ..
 make -j$(nproc)
 ```
@@ -196,7 +192,7 @@ send to those.  Don't try to output anything to `std::cout`.
 # Crossplatform Compatibility #
 All components used in this library should be fully cross-platform compatible;
 that means at the very least Linux, OS X and Windows.  However, it has not been
-tested anywhere but Linux yet, and the examples and their Makefile may require
+tested anywhere but Linux yet, and the examples and the CMakeLists.txt may require
 modificaiton to build on other platforms.  Let's face it, though, real servers
 are always going to be Linux.
 
