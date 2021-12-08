@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(client)
 
-include_directories(include SYSTEM BEFORE)
-include_directories(. BEFORE)
+include_directories(SYSTEM BEFORE include)
+include_directories(BEFORE .)
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 
 set(CMAKE_CXX_STANDARD 20)
