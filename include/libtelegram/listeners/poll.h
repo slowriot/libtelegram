@@ -19,9 +19,9 @@ namespace listener {
 
 class poll : public base<poll> {
   telegram::sender &sender;
-  static bool signal_handler_is_set;                                            // track the state of the signal handler
+  inline static bool signal_handler_is_set = false;                             // track the state of the signal handler
   std::atomic_flag keep_running;                                                // used to stop the poll externally from other threads
-  static std::atomic_flag keep_running_global;                                  // used by the signal handler to terminate the poll loop, and can be modified externally
+  inline static std::atomic_flag keep_running_global;                           // used by the signal handler to terminate the poll loop, and can be modified externally
 
 public:
   static unsigned int constexpr const poll_timeout_default = 60 * 60;           // default poll timeout in seconds
@@ -46,9 +46,6 @@ std::string_view constexpr plural(T value) {
   /// Helper function to provide a pluralising "s" suffix to words if a number is plural
   return (value == 1 ? "" : "s");
 }
-
-bool poll::signal_handler_is_set = false;
-std::atomic_flag poll::keep_running_global;
 
 inline poll::poll(telegram::sender &this_sender,
                   unsigned int this_poll_timeout)
