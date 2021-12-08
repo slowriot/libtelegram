@@ -1,6 +1,10 @@
 #ifndef TELEGRAM_LISTENERS_FCGI_H_INCLUDED
 #define TELEGRAM_LISTENERS_FCGI_H_INCLUDED
 
+#if defined TELEGRAM_NO_LISTENER_FCGI
+#error The FastCGI listener is disabled - please do not include fcgi.h directly, use listener.h to select available implementations.
+#else
+
 #include "libtelegram/config.h"
 
 #include <boost/cgi/fcgi.hpp>
@@ -99,5 +103,7 @@ inline int fcgi::handle_request_async(boost::fcgi::acceptor &acceptor, boost::fc
 }
 
 }
+
+#endif // TELEGRAM_NO_LISTENER_FCGI
 
 #endif // TELEGRAM_LISTENERS_FCGI_H_INCLUDED

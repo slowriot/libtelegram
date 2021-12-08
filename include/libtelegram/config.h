@@ -1,6 +1,8 @@
 #ifndef TELEGRAM_CONFIG_H_INCLUDED
 #define TELEGRAM_CONFIG_H_INCLUDED
 
+#include <boost/version.hpp>
+
 #define BOOST_SYSTEM_NO_DEPRECATED
 //#define BOOST_ASIO_NO_DEPRECATED
 
@@ -10,6 +12,10 @@
 #define URDL_NO_LIB 1
 
 #define BOOST_CGI_NO_BOOST_FILESYSTEM
+
+#if BOOST_VERSION > 106900
+  #define TELEGRAM_NO_LISTENER_FCGI
+#endif // BOOST_VERSION
 
 #ifdef LIBTELEGRAM_DISABLE_SSL_NO_REALLY_I_MEAN_IT_AND_I_KNOW_WHAT_IM_DOING
   #warning "SSL is disabled for outgoing messages - that is such a bad idea."

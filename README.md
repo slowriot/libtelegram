@@ -30,6 +30,9 @@ is required, and a moderately high level of traffic is expected (one or more
 interactions per minute at all times of day).
 
 ### FastCGI Listener ###
+
+** NOTE: FastCGI is disabled in the current version, due to the underlying library becoming outdated vs ASIO.  It only with Boost 1.69 and earlier - see https://github.com/darrengarvey/cgi/issues/16.  Contributors are welcome to migrate to an alternative fastcgi library.  Meanwhile, the polling listener works, and is now the default. **
+
 This listener speaks fastcgi and is designed to be launched by your webserver.
 It runs multithreaded.  You set callbacks, and it asynchronously listens for
 events from Telegram and calls them when needed.  The listener takes care of
@@ -70,7 +73,7 @@ object format.
 * Persistent operation - with both the fastcgi and polling listener, the bot keeps running between multiple requests, unlike slow cgi where a new instance has to spawn for each request.
 * Persistence means it's also possible to preserve state between calls without resorting to writing to disk or a database!
 * Efficient fastcgi protocol - data is transferred from the webserver by a binary format for minimal cpu overhead in repeat encoding and decoding.
-* No wasteful polling - cgi architecture means the bot is active only when a message from telegram is received, and your callback functions are called instantly rather than after a poll interval.
+* <del>No wasteful polling - cgi architecture means the bot is active only when a message from telegram is received, and your callback functions are called instantly rather than after a poll interval.</del> (see above re. FastCGI])
 * No need to run on its own port, works with your existing fastcgi-capable webserver.
 * Each command is optimised and tailored to only send non-default parameters, even when the default is manually specified, to save every little bit of bandwidth.
 * Both high and low level callbacks and sending functions available - send messages with a single short command, or craft and decode your own custom json however you like.
@@ -81,7 +84,7 @@ object format.
 # Dependencies #
 * C++20-compatible compiler with std::optional library support (GCC/G++ 7 upwards)
 * Boost 1.76 upwards - http://www.boost.org
-* Boost CGI - https://github.com/slowriot/cgi (included, only needed for CGI / FastCGI listener)
+* <del>Boost CGI - https://github.com/slowriot/cgi (included, only needed for CGI / FastCGI listener)</del> (see above re. FastCGI])
 * URDL - https://github.com/chriskohlhoff/urdl (included)
 * JSON for Modern C++ - https://nlohmann.github.io/json/ (included)
 
@@ -107,7 +110,7 @@ The library itself is header-only so there is nothing to build.  Simply
 `#include "libtelegram/libtelegram.h"` and off you go.
 
 ## Setting the webhook ##
-A bash script is provided to make it convenient to set the web hook for your bot.
+A bash script is provided to make it convenient to set the web hook for your bot.  This is only required if using FastCGI.
 Simply run:
 `./set_webhook.sh 229029247:AAHfNUvcGS_ttvvulZG3Qi4NmMrjebH8F6w "https://mywebsite.com/fcgi-bin/my_fastcgi_webhook"`
 (obviously substituting your own token and website).
@@ -159,6 +162,8 @@ building it with your own build system.
 The default examples use polling, so simply execute them in the terminal.
 
 ### Setting up FastCGI ###
+** Note - FastCGI is currently non-functional - see above **
+
 There are a number of fastcgi systems, and it will depend largely on your
 webserver.  Below are some example instructions for how to set up fastcgi on
 Apache2:
