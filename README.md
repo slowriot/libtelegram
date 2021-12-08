@@ -5,7 +5,7 @@ This Telegram library is for anyone who is building serious Telegram bots where
 performance, scalability and maintainability matter.  Whether you're writing a
 bot to do heavy lifting, servicing thousands of users concurrently through a
 single webserver, or you just want to write your bot using clean, safe modern
-C++11/14/17, this is your framework.
+C++20, this is your framework.
 
 # What does it do? #
 LibTelegram handles the business of communicating with Telegram for you.  It
@@ -59,7 +59,7 @@ json, and to write the outgoing json yourself, either raw or in convenient json
 object format.
 
 # Features #
-* Modern, paradigmatic, clean and professional C++14 / C++17 programming style.
+* Modern, paradigmatic, clean and professional C++20 programming style.
 * Header-only - nothing to compile.
 * Completely permissive MIT license - no restrictions on what you can do with the library.
 * Minimum dependencies - the only external requirement is the ubiquitously available boost_system.
@@ -79,8 +79,8 @@ object format.
 * Detailed real time state monitoring data and lifetime statistics to help you diagnose bottlenecks and squeeze every last drop of performance from your code.
 
 # Dependencies #
-* C++17-compatible compiler with std::optional library support (GCC/G++ 7 upwards)
-* Boost 1.66 upwards - http://www.boost.org
+* C++20-compatible compiler with std::optional library support (GCC/G++ 7 upwards)
+* Boost 1.76 upwards - http://www.boost.org
 * Boost CGI - https://github.com/slowriot/cgi (included, only needed for CGI / FastCGI listener)
 * URDL - https://github.com/chriskohlhoff/urdl (included)
 * JSON for Modern C++ - https://nlohmann.github.io/json/ (included)
