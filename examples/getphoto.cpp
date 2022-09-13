@@ -11,7 +11,7 @@ auto main()->int {
   telegram::sender sender(token);
   telegram::listener::poll listener(sender);
 
-  auto to_kb = [](auto value){                                                  // helper lambda to convert values in bytes to kylobytes
+  auto to_kb = [](auto value){                                                  // helper lambda to convert values in bytes to kilobytes
     std::stringstream ss;
     ss << static_cast<float>(value) / 1024 << "KB";
     return ss.str();
