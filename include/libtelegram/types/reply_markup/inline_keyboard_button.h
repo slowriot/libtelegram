@@ -77,7 +77,7 @@ inline inline_keyboard_button::inline_keyboard_button(std::string const &this_te
 
 inline inline_keyboard_button::inline_keyboard_button(std::string const &this_text,
                                                       std::string const &content)
-  : inline_keyboard_button(this_text, type::CALLBACK, content) {
+  : inline_keyboard_button(this_text, type::BUTTON_CALLBACK, content) {
   /// Wrapper constructor to default to callback type
 }
 
