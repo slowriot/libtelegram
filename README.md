@@ -318,6 +318,7 @@ match the style guide.
 
 ## Projects using LibTelegram ##
 This is not an exhaustive list; if you are building a project using this
-library, please contribute your project to this list.!doctype
+library, please contribute your project to this list.
 * https://github.com/slowriot/telegramtrackerbot
 * https://code.voxelstorm.com/photocontestbot
+* https://github.com/Shadouw/tbSheena
