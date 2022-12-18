@@ -12,12 +12,12 @@ namespace telegram::types::reply_markup {
 struct inline_keyboard_button {
   std::string text;                                                             // Label text on the button.
   enum class type : char {
-    URL,
-    CALLBACK,
-    SWITCH,
-    SWITCH_CURRENT,
-    GAME,
-    PAY
+    BUTTON_URL,
+    BUTTON_CALLBACK,
+    BUTTON_SWITCH,
+    BUTTON_SWITCH_CURRENT,
+    BUTTON_GAME,
+    BUTTON_PAY
   };
 
   std::optional<std::string> url;                                               // Optional. HTTP url to be opened when button is pressed.
@@ -47,22 +47,22 @@ inline inline_keyboard_button::inline_keyboard_button(std::string const &this_te
   : text(this_text) {
   /// Constructor
   switch(this_type) {
-  case type::URL:
+  case type::BUTTON_URL:
     url = std::get<std::string>(content);
     break;
-  case type::CALLBACK:
+  case type::BUTTON_CALLBACK:
     callback_data = std::get<std::string>(content);
     break;
-  case type::SWITCH:
+  case type::BUTTON_SWITCH:
     switch_inline_query = std::get<std::string>(content);
     break;
-  case type::SWITCH_CURRENT:
+  case type::BUTTON_SWITCH_CURRENT:
     switch_inline_query_current_chat = std::get<std::string>(content);
     break;
-  case type::GAME:
+  case type::BUTTON_GAME:
     callback_game = std::get<types::callback_game>(content);
     break;
-  case type::PAY:
+  case type::BUTTON_PAY:
     pay = true;
     break;
   }
