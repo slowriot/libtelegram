@@ -296,6 +296,10 @@ tell it to stop (from another thread); to do this you can call the
 queue a global halt for all poll listeners that exist in your program (which is
 what the signal handler does).
 
+Windows users: The default signal handler requires `sigaction` and will not
+compile on Windows; as a result, TELEGRAM_NO_SIGNAL_HANDLER is defined by
+default for Windows builds.
+
 ### Disabling specific components ###
 You can exclude individual modular components you're not using, which may remove
 compile time dependencies on certain libraries.  Specific parts can be

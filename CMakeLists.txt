@@ -26,6 +26,11 @@ set(link_libs
   PRIVATE OpenSSL::SSL
 )
 
+IF(WIN32)
+  # sigaction is not available on Windows - see "signal handlers" in README
+  add_compile_definitions(TELEGRAM_NO_SIGNAL_HANDLER)
+ENDIF()
+
 macro(add_tg_example name)
   add_executable(example_${name} examples/${name}.cpp)
   target_link_libraries(example_${name} ${link_libs})
