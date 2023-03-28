@@ -193,14 +193,14 @@ public:
                                                                                 types::reply_markup::force_reply>> reply_markup = std::nullopt);
   template<typename Tchat_id = int_fast64_t>
   inline std::optional<types::message> send_video(Tchat_id chat_id,
-                                                    types::video const &video,
-                                                    std::string caption = {},
-                                                    bool disable_notification = false,
-                                                    int_fast32_t reply_to_message_id = reply_to_message_id_none,
-                                                    std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
-                                                                               types::reply_markup::reply_keyboard_markup,
-                                                                               types::reply_markup::reply_keyboard_remove,
-                                                                               types::reply_markup::force_reply>> reply_markup = std::nullopt);
+                                                  types::video const &video,
+                                                  std::string caption = {},
+                                                  bool disable_notification = false,
+                                                  int_fast32_t reply_to_message_id = reply_to_message_id_none,
+                                                  std::optional<std::variant<types::reply_markup::inline_keyboard_markup,
+                                                                             types::reply_markup::reply_keyboard_markup,
+                                                                             types::reply_markup::reply_keyboard_remove,
+                                                                             types::reply_markup::force_reply>> reply_markup = std::nullopt);
   template<typename Tchat_id = int_fast64_t>
   inline std::optional<types::message> send_voice(Tchat_id chat_id,
                                                   types::voice const &voice,
