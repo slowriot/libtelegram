@@ -67,7 +67,7 @@ inline void poll::run() {
     } else {
       boost::asio::executor_work_guard work{boost::asio::make_work_guard(context)}; // prevent the threads from running out of work
       threads.reserve(num_threads);
-      for(unsigned int i = 0; i != num_threads; ++i) {                            // initialise the thread pool
+      for(unsigned int i = 0; i != num_threads; ++i) {                          // initialise the thread pool
         threads.emplace_back([&]{
           context.run();
         });
