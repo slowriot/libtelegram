@@ -61,15 +61,19 @@ inline void poll::run() {
     keep_running_global.test_and_set();
     set_signal_handler();
     boost::asio::io_context context;                                            // use asio's io_context to provide a thread pool work queue
-    boost::asio::executor_work_guard work{boost::asio::make_work_guard(context)}; // prevent the threads from running out of work
     std::vector<std::thread> threads;
-    threads.reserve(num_threads);
-    for(unsigned int i = 0; i != num_threads; ++i) {                            // initialise the thread pool
-      threads.emplace_back([&]{
-        context.run();
-      });
+    if(num_threads == 1) {
+      std::cout << "LibTelegram: Poll listener: Started single-threaded." << std::endl;
+    } else {
+      boost::asio::executor_work_guard work{boost::asio::make_work_guard(context)}; // prevent the threads from running out of work
+      threads.reserve(num_threads);
+      for(unsigned int i = 0; i != num_threads; ++i) {                            // initialise the thread pool
+        threads.emplace_back([&]{
+          context.run();
+        });
+      }
+      std::cout << "LibTelegram: Poll listener: Started " << threads.size() << " worker thread" << plural(threads.size()) << "." << std::endl;
     }
-    std::cout << "LibTelegram: Poll listener: Started " << threads.size() << " worker thread" << plural(threads.size()) << "." << std::endl;
 
     int offset = 0;                                                             // keep track of the last received update offset
     while(keep_running.test_and_set() && keep_running_global.test_and_set()) {  // the poller always runs sequentially, single-threaded
@@ -87,9 +91,14 @@ inline void poll::run() {
           if(update_id != 0) {
             offset = std::max(update_id + 1, offset);
           }
-          boost::asio::post(context, [this, subtree = it]{                      // pass a copy of the subtree
+          if(num_threads == 1) {                                                // if running single-threaded, execute immediately on this thread
+            auto subtree = it;                                                  // copy the subtree
             execute_callbacks(subtree);
-          });
+          } else {                                                              // otherwise post to the thread pool
+            boost::asio::post(context, [this, subtree = it]{                    // pass a copy of the subtree
+              execute_callbacks(subtree);
+            });
+          }
         }
       } catch(std::exception const &e) {                                        // catch any exceptions from the poll
         std::cerr << "LibTelegram: Exception while trying to getUpdates, cannot continue: " << e.what() << std::endl;
@@ -98,9 +107,11 @@ inline void poll::run() {
     }
     unset_signal_handler();
     context.stop();
-    std::cout << "LibTelegram: Poll listener: Harvesting " << threads.size() << " worker thread" << plural(threads.size()) << "...";
-    for(auto &it : threads) {                                                   // close down the thread pool
-      it.join();
+    if(num_threads != 1) {
+      std::cout << "LibTelegram: Poll listener: Harvesting " << threads.size() << " worker thread" << plural(threads.size()) << "...";
+      for(auto &it : threads) {                                                 // close down the thread pool
+        it.join();
+      }
     }
     std::cout << " Finished." << std::endl;
   } catch(boost::system::system_error const &se) {                              // this is the type of error thrown by the fcgi library.
