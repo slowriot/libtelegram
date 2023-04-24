@@ -391,7 +391,9 @@ inline nlohmann::json sender::send_json(std::string const &method,
   #endif // NDEBUG
 
   urdl::url const url(endpoint + method);
-  httplib::SSLClient http_client(url.host().c_str(), url.port(), poll_timeout);
+  httplib::SSLClient http_client(url.host(), url.port());
+  http_client.set_connection_timeout(15, 0);
+  http_client.set_read_timeout(poll_timeout, 0);
   auto http_result{http_client.Post((url.path() + "?" + url.query()).c_str(), tree.dump().c_str(), "application/json")};
 
   if(!http_result) {
