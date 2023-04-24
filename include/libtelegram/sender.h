@@ -841,6 +841,7 @@ inline std::optional<types::message> sender::send_photo(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendPhoto", tree);
 }
+
 template<typename Tchat_id>
 inline std::optional<types::message> sender::send_audio(Tchat_id chat_id,
                                                         types::audio const &audio,
@@ -879,6 +880,7 @@ inline std::optional<types::message> sender::send_audio(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendAudio", tree);
 }
+
 template<typename Tchat_id>
 inline std::optional<types::message> sender::send_document(Tchat_id chat_id,
                                                            types::document const &document,
@@ -908,6 +910,7 @@ inline std::optional<types::message> sender::send_document(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendDocument", tree);
 }
+
 template<typename Tchat_id>
 inline std::optional<types::message> sender::send_video(Tchat_id chat_id,
                                                         types::video const &video,
@@ -946,6 +949,7 @@ inline std::optional<types::message> sender::send_video(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendVideo", tree);
 }
+
 template<typename Tchat_id>
 inline std::optional<types::message> sender::send_voice(Tchat_id chat_id,
                                                         types::voice const &voice,
@@ -978,6 +982,7 @@ inline std::optional<types::message> sender::send_voice(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendVoice", tree);
 }
+
 template<typename Tchat_id>
 inline std::optional<types::message> sender::send_video_note(Tchat_id chat_id,
                                                              types::video_note const &video_note,
@@ -1009,6 +1014,7 @@ inline std::optional<types::message> sender::send_video_note(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendVideoNote", tree);
 }
+
 template<typename Tchat_id>
 inline std::optional<types::message> sender::send_sticker(Tchat_id chat_id,
                                                           types::sticker const &sticker,
@@ -1034,7 +1040,6 @@ inline std::optional<types::message> sender::send_sticker(Tchat_id chat_id,
   }
   return send_json_and_parse<types::message>("sendSticker", tree);
 }
-
 
 template<typename Tchat_id>
 inline std::optional<types::message> sender::send_location(Tchat_id chat_id,
