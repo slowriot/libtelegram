@@ -398,16 +398,24 @@ inline nlohmann::json sender::send_json(std::string const &method,
 
   if(!http_result) {
     #ifndef NDEBUG
-      std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << std::endl;
+      std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << httplib::to_string(http_result.error()) << std::endl;
       std::cerr << "Post data: " << std::endl << tree.dump(2) << std::endl;
     #endif // NDEBUG
-    throw std::runtime_error("Sender unable to open URL " + url.to_string());
+    throw std::runtime_error("Sender unable to open URL " + url.to_string() + ": " + httplib::to_string(http_result.error()));
   } else if (http_result->status != 200) {
+    boost::iostreams::stream<boost::iostreams::array_source> reply_error_stream(http_result->body.data(), http_result->body.size());
+    nlohmann::json reply_error_tree;                                            // property tree to contain the error reply
+    try {
+      reply_error_stream >> reply_error_tree;
+    } catch(std::exception &e) {
+      reply_error_tree["description"] = std::string(http_result->body.data(), http_result->body.size());
+    }
     #ifndef NDEBUG
-      std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": " << http_result->status << std::endl;
+      std::cerr << "LibTelegram: Sender: Unable to open URL " << url.to_string() << ": code " << http_result->status << std::endl;
+      std::cerr << "Error: " << std::endl << reply_error_tree.dump(2) << std::endl;
       std::cerr << "Post data: " << std::endl << tree.dump(2) << std::endl;
     #endif // NDEBUG
-    throw std::runtime_error("Sender unable to open URL " + url.to_string() + ": " + std::to_string(http_result->status));
+    throw std::runtime_error("Sender unable to open URL " + url.to_string() + ": " + std::to_string(http_result->status) + ", error: " + reply_error_tree["description"].get<std::string>());
   }
   if(http_result->body.empty()) {
     std::cerr << "LibTelegram: Sender: Received empty reply to send_json" << std::endl;
